@@ -17,7 +17,7 @@ CFLAGS = -Wall -Wextra -Werror -lreadline -lhistory -I $(INC_DIR) -I $(LIBFT_DIR
 SRC_DIR = srcs
 INC_DIR = includes
 
-SRC = $(addprefix $(SRC_DIR)/, main.c split_improved.c utils.c put_err.c)
+SRC = $(addprefix $(SRC_DIR)/, get_fullpath.c main.c split_improved.c utils.c put_err.c)
 OBJ = $(SRC:.c=.o)
 
 LIBFT = $(LIBFT_DIR)/libft.a
