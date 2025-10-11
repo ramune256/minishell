@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/08/22 14:06:01 by shunwata         ###   ########.fr        #
+#    Updated: 2025/10/11 21:25:43 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CFLAGS = -Wall -Wextra -Werror -lreadline -lhistory -I $(INC_DIR) -I $(LIBFT_DIR
 SRC_DIR = srcs
 INC_DIR = includes
 
-SRC = $(addprefix $(SRC_DIR)/, get_fullpath.c main.c split_improved.c utils.c put_err.c)
+SRC = $(addprefix $(SRC_DIR)/, debug.c execution.c get_fullpath.c main.c parser.c tokenizer.c utils.c)
 OBJ = $(SRC:.c=.o)
 
 LIBFT = $(LIBFT_DIR)/libft.a

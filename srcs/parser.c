@@ -1,0 +1,99 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
+/*   Updated: 2025/10/11 21:24:24 by shunwata         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+// 前方宣言
+static t_cmd	*parse_pipeline(t_token **tokens);
+static t_cmd	*parse_command(t_token **tokens);
+
+// `WORD` トークンを解析して EXEC ノードを作成
+static t_cmd	*parse_simple_command(t_token **tokens)
+{
+	t_cmd	*cmd;
+	int		argc = 0;
+	t_token *start = *tokens;
+
+	while (start && start->type == TOKEN_WORD)
+	{
+		argc++;
+		start = start->next;
+	}
+	if (argc == 0)
+		return (NULL);
+	cmd = exec_cmd_constructor();
+	cmd->argv = (char **)malloc(sizeof(char *) * (argc + 1));
+	for (int i = 0; i < argc; i++)
+	{
+		cmd->argv[i] = strdup((*tokens)->value);
+		*tokens = (*tokens)->next;
+	}
+	cmd->argv[argc] = NULL;
+	return (cmd);
+}
+
+// リダイレクションとコマンドを解析
+static t_cmd	*parse_command(t_token **tokens)
+{
+	t_cmd *cmd;
+
+	// まずは左側にリダイレクションがあるか確認
+	// (この実装では簡単化のため、コマンド本体の解析のみ)
+	cmd = parse_simple_command(tokens);
+
+	// 次に右側にリダイレクションがあるか確認
+	// (実際にはここにリダイレクションを処理するループが必要)
+
+	return (cmd);
+}
+
+// パイプライン全体を解析
+static t_cmd	*parse_pipeline(t_token **tokens)
+{
+	t_cmd	*cmd = parse_command(tokens);
+	if (!cmd)
+		return (NULL);
+
+	if ((*tokens)->type == TOKEN_PIPE)
+	{
+		*tokens = (*tokens)->next;
+		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
+		{
+			fprintf(stderr, "minishell: syntax error\n");
+			free_ast(cmd);
+			return (NULL);
+		}
+		t_cmd *right = parse_pipeline(tokens);
+		if (!right)
+		{
+			free_ast(cmd);
+			return (NULL);
+		}
+		cmd = pipe_cmd_constructor(cmd, right);
+	}
+	return (cmd);
+}
+
+// パーサーのエントリーポイント
+t_cmd	*parse(t_token **tokens)
+{
+	if (!tokens || !*tokens || (*tokens)->type == TOKEN_EOF)
+		return (NULL);
+	t_cmd *ast = parse_pipeline(tokens);
+	if ((*tokens)->type != TOKEN_EOF)
+	{
+		fprintf(stderr, "minishell: syntax error\n");
+		free_ast(ast);
+		return (NULL);
+	}
+	return (ast);
+}
