@@ -6,34 +6,60 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/11 21:20:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/14 21:48:34 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// トークンリストの末尾に新しいトークンを追加するヘルパー
-static void	append_token(t_token **head, t_token *new_token)
+// // トークンリストの末尾に新しいトークンを追加するヘルパー
+// static void	append_token(t_token **head, t_token *new_token)
+// {
+// 	if (!*head)
+// 	{
+// 		*head = new_token;
+// 		return ;
+// 	}
+// 	t_token *current = *head;
+// 	while (current->next)
+// 		current = current->next;
+// 	current->next = new_token;
+// }
+
+// // 新しいトークンを作成するヘルパー
+// static t_token *new_token(t_token_type type, char *value)
+// {
+// 	t_token *token = (t_token *)malloc(sizeof(t_token));
+// 	token->type = type;
+// 	token->value = value;
+// 	token->next = NULL;
+// 	return (token);
+// }
+
+static bool	append_token(t_token **head, t_token_type token_type, char *value)
 {
+	t_token	*new_token;
+	t_token	*tmp;
+
+	new_token = (t_token *)malloc(sizeof(t_token));
+	if (!new_token)
+		return (false);
+	ft_memset(new_token, 0, sizeof(t_token));
+	new_token->type = token_type;
+	new_token->value = value;
+	if (value == NULL && token_type != TOKEN_EOF)
+		return (false);
+	new_token->next = NULL;
 	if (!*head)
 	{
 		*head = new_token;
-		return ;
+		return (true);
 	}
-	t_token *current = *head;
-	while (current->next)
-		current = current->next;
-	current->next = new_token;
-}
-
-// 新しいトークンを作成するヘルパー
-static t_token *new_token(t_token_type type, char *value)
-{
-	t_token *token = (t_token *)malloc(sizeof(t_token));
-	token->type = type;
-	token->value = value;
-	token->next = NULL;
-	return (token);
+	tmp = *head;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new_token;
+	return (true);
 }
 
 // メタ文字かどうかを判定
@@ -42,7 +68,6 @@ static bool is_metachar(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
-// NOTE: このTokenizerは簡単化のためクォートを扱いません
 t_token	*tokenize(const char *line)
 {
 	t_token	*head = NULL;
@@ -50,15 +75,15 @@ t_token	*tokenize(const char *line)
 
 	while (line[i])
 	{
-		while (line[i] && strchr(" \t\n", line[i]))
+		while (line[i] && ft_strchr(" \t\n", line[i])) //空白・タブ・改行を読み飛ばす
 			i++;
 		if (!line[i])
 			break;
+
 		if (line[i] == '|')
-		{
-			append_token(&head, new_token(TOKEN_PIPE, strndup(line + i, 1)));
-			i++;
-		}
+			(append_token(&head, TOKEN_PIPE, ft_strndup(line + i, 1)), i++);
+
+		// ここより下を直す！！！！！！！！！！！！！！
 		else if (line[i] == '<' && line[i + 1] == '<')
 		{
 			append_token(&head, new_token(TOKEN_HEREDOC, strndup(line + i, 2)));

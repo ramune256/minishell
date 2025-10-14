@@ -65,6 +65,8 @@ typedef struct s_cmd
 	int				fd;
 }	t_cmd;
 
+char	*ft_strndup(const char *s1, size_t n);
+
 // tokenizer.c
 t_token	*tokenize(const char *line);
 void	free_tokens(t_token *tokens);
