@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/11 21:44:08 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/27 20:52:15 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,38 @@
 
 int	main(void)
 {
-	char	*line;
-	t_token	*tokens;
-	t_cmd	*ast;
+	t_alloc		alloc;
+	t_token		*tmp;
 
+	ft_bzero(&alloc, sizeof(t_alloc));
 	while (1)
 	{
-		line = readline("minishell> ");
-		if (line == NULL)
+		alloc.line = readline("minishell> ");
+		if (alloc.line == NULL)
 		{
 			printf("exit\n");
 			break;
 		}
-		if (*line)
-			add_history(line);
+		if (*alloc.line)
+			add_history(alloc.line);
 
 		// 1. Tokenize
-		tokens = tokenize(line);
+		tokenize(&alloc, alloc.line);
 
 		// 2. Parse
-		t_token *tmp = tokens; // ポインタを消費するためコピーを渡す
-		ast = parse(&tmp);
+		tmp = alloc.head; // ポインタを消費するためコピーを渡す
+		alloc.ast = parse(&tmp);
 
 		// 3. Print AST for debugging
-		if (ast)
+		if (alloc.ast)
 		{
 			printf("--- AST ---\n");
-			print_ast(ast, 0);
+			print_ast(alloc.ast, 0);
 			printf("-----------\n");
 		}
 
 		// 4. Cleanup
-		free_ast(ast);
-		free_tokens(tokens);
-		free(line);
+		cleanup(&alloc);
 	}
 	return (0);
 }

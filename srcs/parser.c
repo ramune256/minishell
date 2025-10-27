@@ -6,15 +6,11 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/11 21:24:24 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/27 20:26:29 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// 前方宣言
-static t_cmd	*parse_pipeline(t_token **tokens);
-static t_cmd	*parse_command(t_token **tokens);
 
 // `WORD` トークンを解析して EXEC ノードを作成
 static t_cmd	*parse_simple_command(t_token **tokens)
@@ -34,7 +30,7 @@ static t_cmd	*parse_simple_command(t_token **tokens)
 	cmd->argv = (char **)malloc(sizeof(char *) * (argc + 1));
 	for (int i = 0; i < argc; i++)
 	{
-		cmd->argv[i] = strdup((*tokens)->value);
+		cmd->argv[i] = ft_strdup((*tokens)->value);
 		*tokens = (*tokens)->next;
 	}
 	cmd->argv[argc] = NULL;

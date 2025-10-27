@@ -65,10 +65,18 @@ typedef struct s_cmd
 	int				fd;
 }	t_cmd;
 
+typedef struct s_alloc
+{
+	char	*line;
+	t_token	*head;
+	t_cmd	*ast;
+}	t_alloc;
+
 char	*ft_strndup(const char *s1, size_t n);
+void	cleanup(t_alloc *alloc);
 
 // tokenizer.c
-t_token	*tokenize(const char *line);
+void	tokenize(t_alloc *alloc, char *line);
 void	free_tokens(t_token *tokens);
 
 // parser.c
