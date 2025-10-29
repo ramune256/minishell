@@ -6,46 +6,50 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/27 20:52:15 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/29 16:11:01 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int ac, char **av, char **ep)
 {
-	t_alloc		alloc;
-	t_token		*tmp;
+	t_alloc		heap;
+	// t_token		*tmp;
 
-	ft_bzero(&alloc, sizeof(t_alloc));
+	(void)ac;
+	(void)av;
+	ft_bzero(&heap, sizeof(t_alloc));
 	while (1)
 	{
-		alloc.line = readline("minishell> ");
-		if (alloc.line == NULL)
+		heap.line = readline("minishell> ");
+		if (heap.line == NULL)
 		{
 			printf("exit\n");
 			break;
 		}
-		if (*alloc.line)
-			add_history(alloc.line);
+		if (*heap.line)
+			add_history(heap.line);
 
 		// 1. Tokenize
-		tokenize(&alloc, alloc.line);
+		tokenize(&heap, heap.line);
 
 		// 2. Parse
-		tmp = alloc.head; // ポインタを消費するためコピーを渡す
-		alloc.ast = parse(&tmp);
+		parse(&heap);
+		// tmp = heap.head; // ポインタを消費するためコピーを渡す
+		// heap.ast = parse(&tmp);
 
-		// 3. Print AST for debugging
-		if (alloc.ast)
+		// 3. Execute
+		if (heap.ast)
 		{
-			printf("--- AST ---\n");
-			print_ast(alloc.ast, 0);
-			printf("-----------\n");
+			execute();
+			// printf("--- AST ---\n");
+			// print_ast(alloc.ast, 0);
+			// printf("-----------\n");
 		}
 
 		// 4. Cleanup
-		cleanup(&alloc);
+		cleanup(&heap);
 	}
 	return (0);
 }

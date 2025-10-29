@@ -1,16 +1,56 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executer.c                                         :+:      :+:    :+:   */
+/*   core_executer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/27 20:28:01 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/29 17:28:52 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// NODE_EXEC を実行する
+static void	execute_exec(t_alloc *heap, t_cmd *ast, char **envp)
+{
+	pid_t	pid;
+	char	*fullpath;
+
+	fullpath = get_fullpath(ast->argv[0], envp, heap);
+	pid = fork();
+	if (pid == -1)
+		(perror("fork"), cleanup(heap), exit(1));
+	if (pid == 0)
+	{
+		if (execve(fullpath, ast->argv, envp) == -1)
+			(perror(ast->argv[0]), exit(127)); //not foundは127
+	}
+	waitpid(pid, NULL, 0); // TODO: 終了ステータスを受け取る
+}
+
+// ASTを再帰的にたどって実行するエントリーポイント
+void	execute(t_alloc *heap, char **envp)
+{
+	t_cmd	*ast;
+
+	ast = heap->ast;
+	if (ast == NULL)
+		return ;
+	if (ast->type == NODE_EXEC)
+		execute_exec(heap, ast, envp);
+	else if (ast->type == NODE_PIPE)
+	{
+		printf("Pipe execution is not implemented yet.\n");
+		// TODO: execute_pipe(ast, envp);
+	}
+	else if (ast->type == NODE_REDIR)
+	{
+		printf("Redirection is not implemented yet.\n");
+		// TODO: execute_redir(ast, envp);
+	}
+}
 
 // int	exec_command(char *input, char **envp)
 // {
