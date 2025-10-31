@@ -82,6 +82,7 @@ t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
 t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd);
 void	free_ast(t_cmd *cmd);
 
+void	execute(t_cmd *ast, t_alloc *heap, char **ev);
 char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
 
 char	*ft_strndup(const char *s1, size_t n);

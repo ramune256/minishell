@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/29 17:16:20 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/31 20:05:49 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,7 @@ char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap)
 	if (ft_strchr(cmd_name, '/'))
 	{
 		fullpath = check_absolute_path(cmd_name, heap);
-		if (fullpath)
-			return (fullpath);
-		else
-			return (NULL);
+		return (fullpath);
 	}
 	envp_path = find_envp_path(envp);
 	if (!envp_path)

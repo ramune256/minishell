@@ -6,13 +6,13 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/29 16:11:01 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/31 20:46:46 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(int ac, char **av, char **ep)
+int	main(int ac, char **av, char **ev)
 {
 	t_alloc		heap;
 	// t_token		*tmp;
@@ -42,7 +42,7 @@ int	main(int ac, char **av, char **ep)
 		// 3. Execute
 		if (heap.ast)
 		{
-			execute();
+			execute(heap.ast, &heap, ev);
 			// printf("--- AST ---\n");
 			// print_ast(alloc.ast, 0);
 			// printf("-----------\n");
