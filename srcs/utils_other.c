@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/29 16:55:39 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/31 21:52:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,5 @@ void	cleanup(t_alloc *alloc)
 	free_ast(alloc->ast);
 	free_tokens(alloc->head);
 	free(alloc->line);
+	ft_bzero(alloc, sizeof(t_alloc));
 }

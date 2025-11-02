@@ -6,25 +6,25 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/10/27 20:48:44 by shunwata         ###   ########.fr        #
+#    Updated: 2025/11/02 16:10:59 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -lreadline -lhistory -I $(INC_DIR) -I $(LIBFT_DIR)/includes -I $(FT_PRINTF_DIR) -I $(GET_NEXT_LINE_DIR)
+CFLAGS = -Wall -Wextra -Werror -lreadline -lhistory -I $(INC_DIR) -I $(LIBFT_DIR)/includes
 
 SRC_DIR = srcs
 INC_DIR = includes
 
-SRC = $(addprefix $(SRC_DIR)/, debug.c main.c parser_utils.c parser.c tokenizer.c utils.c)
+SRC = $(addprefix $(SRC_DIR)/, core_executer.c core_parser.c core_tokenizer.c get_fullpath.c main.c utils_other.c utils_parser.c)
 OBJ = $(SRC:.c=.o)
 
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_DIR = Libft
 
-FT_PRINTF_DIR = $(LIBFT_DIR)/srcs/ft_printf
-GET_NEXT_LINE_DIR = $(LIBFT_DIR)/srcs/get_next_line
+# FT_PRINTF_DIR = $(LIBFT_DIR)/srcs/ft_printf
+# GET_NEXT_LINE_DIR = $(LIBFT_DIR)/srcs/get_next_line
 
 all: $(NAME)
 

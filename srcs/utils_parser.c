@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/29 14:37:51 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:07:10 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,13 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 
 static void	free_argv(char **argv)
 {
+	int	i;
+
 	if (!argv)
 		return;
-	for (int i = 0; argv[i]; i++)
-		free(argv[i]);
+	i = 0;
+	while (argv[i])
+		free(argv[i++]);
 	free(argv);
 }
 
