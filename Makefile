@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/11/02 16:10:59 by shunwata         ###   ########.fr        #
+#    Updated: 2025/11/02 16:15:15 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,8 +23,8 @@ OBJ = $(SRC:.c=.o)
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_DIR = Libft
 
-# FT_PRINTF_DIR = $(LIBFT_DIR)/srcs/ft_printf
-# GET_NEXT_LINE_DIR = $(LIBFT_DIR)/srcs/get_next_line
+FT_PRINTF_DIR = $(LIBFT_DIR)/srcs/ft_printf
+GET_NEXT_LINE_DIR = $(LIBFT_DIR)/srcs/get_next_line
 
 all: $(NAME)
 
