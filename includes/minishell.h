@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
+/*   Updated: 2025/11/02 16:34:39 by shunwata         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -12,20 +24,6 @@
 # include <sys/wait.h>
 
 # include "libft.h"
-
-// typedef enum e_split_err
-// {
-// 	NO_ERR,
-// 	SYNTAX_ERR
-// }	t_split_err;
-
-// typedef enum e_error
-// {
-// 	NO_ERR,
-// 	MALLOC_FAILED,
-// 	NO_SUCH_FORD,
-// 	PERM_DENIED
-// }	t_error;
 
 /* --- トークンのデータ構造 --- */
 typedef enum e_token_type
@@ -73,6 +71,20 @@ typedef struct s_alloc
 	t_cmd	*ast;
 }	t_alloc;
 
+// typedef enum e_split_err
+// {
+// 	NO_ERR,
+// 	SYNTAX_ERR
+// }	t_split_err;
+
+// typedef enum e_error
+// {
+// 	NO_ERR,
+// 	MALLOC_FAILED,
+// 	NO_SUCH_FORD,
+// 	PERM_DENIED
+// }	t_error;
+
 void	tokenize(t_alloc *alloc, char *line);
 void	free_tokens(t_token *tokens);
 
@@ -85,10 +97,12 @@ void	free_ast(t_cmd *cmd);
 void	execute(t_cmd *ast, t_alloc *heap, char **ev);
 char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
 
+void	free_2d_array(char **array);
+
 char	*ft_strndup(const char *s1, size_t n);
 void	cleanup(t_alloc *alloc);
 
 //for debug
-void	print_ast(t_cmd *cmd, int level);
+// void	print_ast(t_cmd *cmd, int level);
 
 #endif

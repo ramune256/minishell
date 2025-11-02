@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/31 22:22:38 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:20:00 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@ static t_cmd	*parse_simple_command(t_token **tokens, t_alloc *heap)
 	cmd = exec_cmd_constructor();
 	cmd->argv = (char **)malloc(sizeof(char *) * (argc + 1));
 	if (!cmd->argv)
-		(clenaup(heap), exit(1));
+		(cleanup(heap), exit(1));
 	i = 0;
 	while (i < argc)
 	{
 		cmd->argv[i] = ft_strdup((*tokens)->value);
 		if (!cmd->argv[i])
-			(clenaup(heap), exit(1));
+			(cleanup(heap), exit(1));
 		*tokens = (*tokens)->next;
 		i++;
 	}
