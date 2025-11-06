@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/31 21:48:48 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:50:55 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,59 @@
 // 	waitpid(pid, NULL, 0); // 親プロセスは待つだけ
 // }
 
+static bool	is_parent_builtin(t_cmd *ast)
+{
+	char	*cmd;
+
+	if (ast == NULL || ast->type != NODE_EXEC || ast->argv == NULL)
+		return (false);
+	cmd = ast->argv[0];
+	if (cmd == NULL)
+		return (false);
+	if (ft_strncmp(cmd, "cd", 2) == 0)
+		return (true);
+	if (ft_strncmp(cmd, "exit", 4) == 0)
+		return (true);
+	if (ft_strncmp(cmd, "export", 6) == 0 && ast->argv[1] != NULL)
+		return (true); // 引数ありのexport
+	if (ft_strncmp(cmd, "unset", 5) == 0)
+		return (true);
+	return (false);
+}
+
+static int	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
+{
+	char	*cmd;
+	int		status_code;
+
+	if (exec_node == NULL || exec_node->argv == NULL)
+		return (0);
+	cmd = exec_node->argv[0];
+	if (cmd == NULL)
+		return (0);
+
+	status_code = 0; // TODO: 終了ステータスを heap->exit_status に保存
+	if (ft_strncmp(cmd, "echo", 4) == 0)
+		status_code = ft_echo(exec_node->argv);
+	else if (ft_strncmp(cmd, "cd", 2) == 0)
+		status_code = ft_cd(exec_node->argv, envp); // (実装によります)
+	else if (ft_strncmp(cmd, "pwd", 3) == 0)
+		status_code = ft_pwd();
+	else if (ft_strncmp(cmd, "export", 6) == 0)
+		status_code = ft_export(exec_node->argv, envp); // (実装によります)
+	else if (ft_strncmp(cmd, "unset", 5) == 0)
+		status_code = ft_unset(exec_node->argv, envp); // (実装によります)
+	else if (ft_strncmp(cmd, "env", 3) == 0)
+		status_code = ft_env(envp);
+	else if (ft_strncmp(cmd, "exit", 4) == 0)
+		ft_exit(exec_node->argv, heap); // exitは戻らない
+	else
+		return (0); // ビルトインではなかった
+
+	// (TODO: status_code を heap->exit_status に保存する処理)
+	return (1); // ビルトインを実行した
+}
+
 static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
 {
 	int	file_fd;
@@ -78,6 +131,11 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap, char **ev)
 	if (pid == 0)
 	{
 		exec_node = handle_redirections(ast, heap);
+		if (execute_builtin(exec_node, heap, ev))
+		{
+			// ビルトインが実行されたら、子プロセスはここで終了
+			(cleanup(heap), exit(0)); // TODO: 本当は終了ステータスを渡す
+		}
 		fullpath = get_fullpath(exec_node->argv[0], ev, heap);
 		if (fullpath == NULL)
 			(cleanup(heap), exit(127));
@@ -131,8 +189,15 @@ void	execute(t_cmd *ast, t_alloc *heap, char **ev)
 		return ;
 	if (ast->type == NODE_PIPE)
 		execute_pipe(ast, heap, ev);
-	else if (ast->type == NODE_EXEC || ast->type == NODE_REDIR)
+	else if (ast->type == NODE_REDIR)
 		execute_simple_command(ast, heap, ev);
+	else if (ast->type == NODE_EXEC)
+	{
+		if (is_parent_builtin(ast))
+			execute_builtin(ast, heap, ev); // forkせずに、親プロセスでそのまま実行
+		else
+			execute_simple_command(ast, heap, ev); // forkする
+	}
 }
 
 // int	exec_command(char *input, char **envp)

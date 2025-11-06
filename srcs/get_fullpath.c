@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/31 20:05:49 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:20:57 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*join_path(char *bin_dir, char *cmd_name)
 	char	*fullpath;
 
 	total_len = ft_strlen(bin_dir) + ft_strlen(cmd_name) + 1;
-	fullpath = malloc(sizeof(char) * (total_len + 1));
+	fullpath = ft_calloc(1, sizeof(char) * (total_len + 1));
 	if (!fullpath)
 		return (NULL);
 	ft_strlcpy(fullpath, bin_dir, total_len + 1);
@@ -91,7 +91,7 @@ char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap)
 	}
 	envp_path = find_envp_path(envp);
 	if (!envp_path)
-		return (NULL); //←?
+		return (NULL);
 	bin_dir = ft_split(envp_path, ':');
 	if (!bin_dir)
 		(cleanup(heap), exit(1));

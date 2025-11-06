@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/31 20:46:46 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:19:20 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,10 @@ int	main(int ac, char **av, char **ev)
 
 		// 2. Parse
 		parse(&heap);
-		// tmp = heap.head; // ポインタを消費するためコピーを渡す
-		// heap.ast = parse(&tmp);
 
 		// 3. Execute
 		if (heap.ast)
-		{
 			execute(heap.ast, &heap, ev);
-			// printf("--- AST ---\n");
-			// print_ast(alloc.ast, 0);
-			// printf("-----------\n");
-		}
 
 		// 4. Cleanup
 		cleanup(&heap);
