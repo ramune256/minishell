@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/02 16:34:39 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/09 20:35:14 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_alloc
 	char	*line;
 	t_token	*head;
 	t_cmd	*ast;
+	t_list	*temp_files;
 }	t_alloc;
 
 // typedef enum e_split_err
@@ -102,7 +103,17 @@ void	free_2d_array(char **array);
 char	*ft_strndup(const char *s1, size_t n);
 void	cleanup(t_alloc *alloc);
 
-//for debug
+// for debug.c
 // void	print_ast(t_cmd *cmd, int level);
+
+// for builtin_test.c
+int		c_echo(char **argv);
+int		c_cd(char **argv);
+int		c_pwd(char **argv);
+int		c_export(char **argv);
+int		c_echo(char **argv);
+int		c_unset(char **argv);
+int		c_env(char **argv);
+int		c_exit(char **argv);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/06 19:50:55 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/09 20:25:13 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,103 @@
 // 	waitpid(pid, NULL, 0); // 親プロセスは待つだけ
 // }
 
+static char	*generate_temp_filename(t_alloc *heap)
+{
+	static int	id = 0;
+	char		*num;
+	char		*filename;
+
+	num = ft_itoa(id++);
+	if (!num)
+		(cleanup(heap), exit(1));
+	filename = ft_strjoin("/tmp/.minishell_heredoc_", num);
+	free(num);
+	if (!filename)
+		(cleanup(heap), exit(1));
+	return (filename); // 例: /tmp/.minishell_heredoc_0
+}
+
+// ヒアドキュメントの入力を読み取る
+static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
+{
+	char	*line;
+	int		tmp_fd;
+	char	*delimiter;
+	char	*temp_filename;
+
+	delimiter = node->file;
+	temp_filename = generate_temp_filename(heap);
+
+	// 一時ファイルを書き込みモードで開く
+	tmp_fd = open(temp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	if (tmp_fd == -1)
+		(perror("open"), cleanup(heap), exit(1));
+
+	// 区切り文字が入力されるまで readline で読み込む
+	while (1)
+	{
+		line = readline("> ");
+		if (line == NULL || ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break;
+		}
+		write(tmp_fd, line, ft_strlen(line));
+		write(tmp_fd, "\n", 1);
+		free(line);
+	}
+	close(tmp_fd);
+
+	// ★ ASTノードを「書き換える」
+	free(node->file); // 元の "EOF" (区切り文字) を解放
+	node->file = temp_filename; // 新しい一時ファイル名を設定
+	node->mode = O_RDONLY;      // modeをTOKEN_HEREDOCからO_RDONLYに変更
+	// node->fd は STDIN_FILENO のまま
+
+	// ★ 後でunlinkするために、一時ファイル名をリストに追加
+	ft_lstadd_back(&heap->temp_files, ft_lstnew(ft_strdup(temp_filename)));
+}
+
+// ASTを再帰的に探索し、ヒアドキュメントを処理する
+static void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap)
+{
+	if (!ast)
+		return ;
+
+	// パイプの場合は、左右両方を探索
+	if (ast->type == NODE_PIPE)
+	{
+		find_and_process_heredocs(ast->left, heap);
+		find_and_process_heredocs(ast->right, heap);
+	}
+	// リダイレクトの場合
+	else if (ast->type == NODE_REDIR)
+	{
+		if (ast->mode == TOKEN_HEREDOC)
+			read_heredoc_input(ast, heap); // ★ ヒアドキュメントを見つけたら、入力を読み取る
+		// サブコマンドも再帰的に探索
+		find_and_process_heredocs(ast->subcmd, heap);
+	}
+	// EXECの場合は何もしない
+}
+
+static void	cleanup_temp_files(t_list **list)
+{
+	t_list	*current;
+	t_list	*tmp;
+
+	current = *list;
+	while (current)
+	{
+		tmp = current->next;
+		unlink((char *)current->content); // 一時ファイルを削除
+		free(current->content); // strdupしたファイル名を解放
+		free(current); // リストのノードを解放
+		current = tmp;
+	}
+	*list = NULL;
+}
+
 static bool	is_parent_builtin(t_cmd *ast)
 {
 	char	*cmd;
@@ -82,19 +179,19 @@ static int	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
 
 	status_code = 0; // TODO: 終了ステータスを heap->exit_status に保存
 	if (ft_strncmp(cmd, "echo", 4) == 0)
-		status_code = ft_echo(exec_node->argv);
+		status_code = c_echo(exec_node->argv);
 	else if (ft_strncmp(cmd, "cd", 2) == 0)
-		status_code = ft_cd(exec_node->argv, envp); // (実装によります)
+		status_code = c_cd(exec_node->argv, envp); // (実装によります)
 	else if (ft_strncmp(cmd, "pwd", 3) == 0)
-		status_code = ft_pwd();
+		status_code = c_pwd();
 	else if (ft_strncmp(cmd, "export", 6) == 0)
-		status_code = ft_export(exec_node->argv, envp); // (実装によります)
+		status_code = c_export(exec_node->argv, envp); // (実装によります)
 	else if (ft_strncmp(cmd, "unset", 5) == 0)
-		status_code = ft_unset(exec_node->argv, envp); // (実装によります)
+		status_code = c_unset(exec_node->argv, envp); // (実装によります)
 	else if (ft_strncmp(cmd, "env", 3) == 0)
-		status_code = ft_env(envp);
+		status_code = c_env(envp);
 	else if (ft_strncmp(cmd, "exit", 4) == 0)
-		ft_exit(exec_node->argv, heap); // exitは戻らない
+		c_exit(exec_node->argv, heap); // exitは戻らない
 	else
 		return (0); // ビルトインではなかった
 
@@ -125,6 +222,8 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap, char **ev)
 	t_cmd	*exec_node;
 	char	*fullpath;
 
+	if (ast->type != NODE_PIPE)
+		find_and_process_heredocs(ast, heap);
 	pid = fork();
 	if (pid == -1)
 		(perror("fork"), cleanup(heap), exit(1));
@@ -143,6 +242,7 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap, char **ev)
 			(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 	}
 	waitpid(pid, NULL, 0);
+	cleanup_temp_files(&heap->temp_files);
 }
 
 static void	change_fd(int pipefd[2], int target_fd, int fd_num)

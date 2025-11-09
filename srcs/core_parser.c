@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/02 16:20:00 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/09 19:47:18 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static t_cmd	*parse_simple_command(t_token **tokens, t_alloc *heap)
 	if (argc == 0)
 		return (NULL);
 	cmd = exec_cmd_constructor();
-	cmd->argv = (char **)malloc(sizeof(char *) * (argc + 1));
+	cmd->argv = ft_calloc(1, sizeof(char *) * (argc + 1));
 	if (!cmd->argv)
 		(cleanup(heap), exit(1));
 	i = 0;
@@ -80,40 +80,39 @@ static t_cmd	*parse_command(t_token **tokens, t_alloc *heap)
 	int		mode;
 	int		fd;
 
-	// 1. まずはコマンド本体 (NODE_EXEC) を解析
-	cmd = parse_simple_command(tokens, heap);
+	cmd = parse_simple_command(tokens, heap); // 1. まずはコマンド本体 (NODE_EXEC) を解析
+	if (!cmd) // コマンドが空の場合（例: `> out` のみ）
+		cmd = exec_cmd_constructor(); // 空のEXECノードを作成
 	// 2. リダイレクションが続く限り、ループで処理
-	// (注: `cmd > out < in` のように、コマンドの後にリダイレクトが続く構文のみ対応)
 	while (is_redirection((*tokens)->type))
 	{
-		// ヒアドキュメント(<<)は特別な処理が必要なので、ここではスキップ
-		if ((*tokens)->type == TOKEN_HEREDOC)
-		{
-			// TODO: ヒアドキュメントの処理を実装
-			// (例: `parse_heredoc(tokens)`)
-			// ここでは実装を簡単にするため、2トークン進めます
-			*tokens = (*tokens)->next; // "<<" を消費
-			*tokens = (*tokens)->next; // "DELIMITER" を消費
-			continue; // 次のループへ
-		}
-		// 3. リダイレクト情報を保存
+		// 3. リダイレクトトークン(>, <, <<, >>)を保存・消費
 		redir_token = *tokens;
-		*tokens = (*tokens)->next; // リダイレクトトークン (>, <, >>) を消費
-		// 4. 次がファイル名でなければ構文エラー
+		*tokens = (*tokens)->next;
+		// 4. 次がファイル名（または区切り文字）でなければ構文エラー
 		if ((*tokens)->type != TOKEN_WORD)
-		{
-			fprintf(stderr, "minishell: syntax error near unexpected token\n");
-			return (free_ast(cmd), NULL);
-		}
-		// 5. mode と fd を設定
-		set_redir_mode_fd(redir_token, &mode, &fd);
+			return (fprintf(stderr, "minishell: syntax error near unexpected token\n"), free_ast(cmd), NULL);
+		// 5. ファイル名（または区切り文字）を複製
 		filename = ft_strdup((*tokens)->value);
-		// TODO: filenameのstrdup失敗チェック
-		// 6. トークンを消費し、コマンドを「ラップ」する
-		*tokens = (*tokens)->next; // ファイル名トークンを消費
+		if (!filename)
+			(cleanup(heap), exit(1)); // malloc失敗
+		// 6. ファイル名トークンを消費
+		*tokens = (*tokens)->next;
+		// 7. ★★★ ここが変更点 ★★★
+		//    ヒアドキュメントかどうかで処理を分岐
+		if (redir_token->type == TOKEN_HEREDOC)
+		{
+			mode = TOKEN_HEREDOC; // executorが見分けるための「目印」
+			fd = STDIN_FILENO;   // ヒアドキュメントは標準入力(0)
+		}
+		else
+			set_redir_mode_fd(redir_token, &mode, &fd);
+		// 8. コマンドをリダイレクトノードで「ラップ」する
 		cmd = redir_cmd_constructor(cmd, filename, mode, fd);
+		if (!cmd)
+			(free_ast(cmd), cleanup(heap), exit(1)); // malloc失敗
 	}
-	// 7. 完成したノード (EXEC または REDIR) を返す
+	// 9. 完成したノード (EXEC または REDIR) を返す
 	return (cmd);
 }
 
