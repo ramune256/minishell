@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 21:18:38 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/09 21:23:44 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,9 @@ static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
 			free(line);
 			break;
 		}
-		write(tmp_fd, line, ft_strlen(line));
-		write(tmp_fd, "\n", 1);
+		// write(tmp_fd, line, ft_strlen(line));
+		// write(tmp_fd, "\n", 1);
+		ft_putendl_fd(line, tmp_fd);
 		free(line);
 	}
 	close(tmp_fd);
