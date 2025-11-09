@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 20:25:13 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/09 21:18:38 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
 	while (1)
 	{
 		line = readline("> ");
-		if (line == NULL || ft_strcmp(line, delimiter) == 0)
+		if (line == NULL || ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0)
 		{
 			free(line);
 			break;
@@ -166,7 +166,7 @@ static bool	is_parent_builtin(t_cmd *ast)
 	return (false);
 }
 
-static int	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
+static bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
 {
 	char	*cmd;
 	int		status_code;
@@ -176,27 +176,29 @@ static int	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
 	cmd = exec_node->argv[0];
 	if (cmd == NULL)
 		return (0);
-
 	status_code = 0; // TODO: 終了ステータスを heap->exit_status に保存
-	if (ft_strncmp(cmd, "echo", 4) == 0)
-		status_code = c_echo(exec_node->argv);
-	else if (ft_strncmp(cmd, "cd", 2) == 0)
-		status_code = c_cd(exec_node->argv, envp); // (実装によります)
-	else if (ft_strncmp(cmd, "pwd", 3) == 0)
-		status_code = c_pwd();
-	else if (ft_strncmp(cmd, "export", 6) == 0)
-		status_code = c_export(exec_node->argv, envp); // (実装によります)
-	else if (ft_strncmp(cmd, "unset", 5) == 0)
-		status_code = c_unset(exec_node->argv, envp); // (実装によります)
-	else if (ft_strncmp(cmd, "env", 3) == 0)
-		status_code = c_env(envp);
-	else if (ft_strncmp(cmd, "exit", 4) == 0)
-		c_exit(exec_node->argv, heap); // exitは戻らない
+
+	// if (ft_strncmp(cmd, "echo", 4) == 0)
+	// 	status_code = c_echo(exec_node->argv);
+	// else if (ft_strncmp(cmd, "cd", 2) == 0)
+	// 	status_code = c_cd(exec_node->argv, envp); // (実装によります)
+	// else if (ft_strncmp(cmd, "pwd", 3) == 0)
+	// 	status_code = c_pwd();
+	// else if (ft_strncmp(cmd, "export", 6) == 0)
+	// 	status_code = c_export(exec_node->argv, envp); // (実装によります)
+	// else if (ft_strncmp(cmd, "unset", 5) == 0)
+	// 	status_code = c_unset(exec_node->argv, envp); // (実装によります)
+	// else if (ft_strncmp(cmd, "env", 3) == 0)
+	// 	status_code = c_env(envp);
+	// else if (ft_strncmp(cmd, "exit", 4) == 0)
+	// 	c_exit(exec_node->argv, heap); // exitは戻らない
+	if (ft_strncmp(cmd, "pwd", 3) == 0)
+		status_code = c_pwd(exec_node->argv);
 	else
-		return (0); // ビルトインではなかった
+		return (false); // ビルトインではなかった
 
 	// (TODO: status_code を heap->exit_status に保存する処理)
-	return (1); // ビルトインを実行した
+	return (true); // ビルトインを実行した
 }
 
 static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)

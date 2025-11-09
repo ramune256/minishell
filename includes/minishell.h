@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 20:35:14 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/09 21:13:03 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ int		c_echo(char **argv);
 int		c_cd(char **argv);
 int		c_pwd(char **argv);
 int		c_export(char **argv);
-int		c_echo(char **argv);
 int		c_unset(char **argv);
 int		c_env(char **argv);
 int		c_exit(char **argv);
