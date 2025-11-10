@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_other.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/14 22:04:29 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/10/31 21:52:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,12 @@ char	*ft_strndup(const char *s1, size_t n)
 		return (NULL);
 	ft_strlcpy(result, s1, size);
 	return (result);
+}
+
+void	cleanup(t_alloc *alloc)
+{
+	free_ast(alloc->ast);
+	free_tokens(alloc->head);
+	free(alloc->line);
+	ft_bzero(alloc, sizeof(t_alloc));
 }

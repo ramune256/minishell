@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/11 21:10:04 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:20:57 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*join_path(char *bin_dir, char *cmd_name)
 	char	*fullpath;
 
 	total_len = ft_strlen(bin_dir) + ft_strlen(cmd_name) + 1;
-	fullpath = malloc(sizeof(char) * (total_len + 1));
+	fullpath = ft_calloc(1, sizeof(char) * (total_len + 1));
 	if (!fullpath)
 		return (NULL);
 	ft_strlcpy(fullpath, bin_dir, total_len + 1);
@@ -41,7 +41,7 @@ static char	*join_path(char *bin_dir, char *cmd_name)
 	return (fullpath);
 }
 
-static char	*check_path_and_perm(char **bin_dir, char **cmd_args, t_get_fpath_err *get_fpath_err)
+static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 {
 	char	*fullpath;
 	size_t	i;
@@ -49,14 +49,14 @@ static char	*check_path_and_perm(char **bin_dir, char **cmd_args, t_get_fpath_er
 	i = 0;
 	while (bin_dir[i])
 	{
-		fullpath = join_path(bin_dir[i], cmd_args[0]);
+		fullpath = join_path(bin_dir[i], cmd_name);
 		if (!fullpath)
-			return (free_2d_array(bin_dir), free_2d_array(cmd_args), get_fpath_err = MALLOC_FAILED, (NULL));
+			(free_2d_array(bin_dir), cleanup(heap), exit(1));
 		if (access(fullpath, F_OK) == 0)
 		{
 			if (access(fullpath, X_OK) == 0)
 				return (fullpath);
-			get_fpath_err = PERM_DENIED;
+			return (perror(cmd_name), NULL);
 		}
 		free(fullpath);
 		i++;
@@ -64,41 +64,37 @@ static char	*check_path_and_perm(char **bin_dir, char **cmd_args, t_get_fpath_er
 	return (NULL);
 }
 
-static char	*check_absolute_path(char **cmd_args, t_get_fpath_err *get_fpath_err)
+static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
 {
-	if (ft_strchr(cmd_args[0], '/'))
-	{
-		if (access(cmd_args[0], F_OK) != 0)
-			return (get_fpath_err = NO_SUCH_FORD, NULL);
-		if (access(cmd_args[0], X_OK) != 0)
-			return (get_fpath_err = PERM_DENIED, NULL);;
-		return (ft_strdup(cmd_args[0]));
-	}
-	return (NULL);
+	char	*result;
+
+	if (access(tentative_path, X_OK) != 0)
+		return (perror(tentative_path), NULL);
+	result = ft_strdup(tentative_path);
+	if (!result)
+		(cleanup(heap), exit(1));
+	return (result);
 }
 
-char	*get_fullpath(char **cmd_args, char **envp, t_get_fpath_err get_fpath_err)
+char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap)
 {
 	char				**bin_dir;
 	char				*fullpath;
 	char				*envp_path;
 
-	get_fpath_err = NO_ERR;
-	if (!cmd_args[0])
+	if (!cmd_name)
 		return (NULL);
-	fullpath = check_absolute_path(cmd_args, &get_fpath_err);
-	if (fullpath)
+	if (ft_strchr(cmd_name, '/'))
+	{
+		fullpath = check_absolute_path(cmd_name, heap);
 		return (fullpath);
-	if (get_fpath_err == NO_SUCH_FORD || get_fpath_err == PERM_DENIED)
-		return (NULL);
+	}
 	envp_path = find_envp_path(envp);
 	if (!envp_path)
 		return (NULL);
 	bin_dir = ft_split(envp_path, ':');
 	if (!bin_dir)
-		malloc_failed(cmd_args);
-	fullpath = check_path_and_perm(bin_dir, cmd_args, &get_fpath_err);
-	if (fullpath)
-		return (free_2d_array(bin_dir), fullpath);
-	return (free_2d_array(bin_dir), NULL);
+		(cleanup(heap), exit(1));
+	fullpath = check_path_and_perm(bin_dir, cmd_name, heap);
+	return (free_2d_array(bin_dir), fullpath);
 }

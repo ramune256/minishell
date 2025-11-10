@@ -6,48 +6,43 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/11 21:44:08 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/06 19:19:20 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	main(void)
+int	main(int ac, char **av, char **ev)
 {
-	char	*line;
-	t_token	*tokens;
-	t_cmd	*ast;
+	t_alloc		heap;
+	// t_token		*tmp;
 
+	(void)ac;
+	(void)av;
+	ft_bzero(&heap, sizeof(t_alloc));
 	while (1)
 	{
-		line = readline("minishell> ");
-		if (line == NULL)
+		heap.line = readline("minishell> ");
+		if (heap.line == NULL)
 		{
 			printf("exit\n");
 			break;
 		}
-		if (*line)
-			add_history(line);
+		if (*heap.line)
+			add_history(heap.line);
 
 		// 1. Tokenize
-		tokens = tokenize(line);
+		tokenize(&heap, heap.line);
 
 		// 2. Parse
-		t_token *tmp = tokens; // ポインタを消費するためコピーを渡す
-		ast = parse(&tmp);
+		parse(&heap);
 
-		// 3. Print AST for debugging
-		if (ast)
-		{
-			printf("--- AST ---\n");
-			print_ast(ast, 0);
-			printf("-----------\n");
-		}
+		// 3. Execute
+		if (heap.ast)
+			execute(heap.ast, &heap, ev);
 
 		// 4. Cleanup
-		free_ast(ast);
-		free_tokens(tokens);
-		free(line);
+		cleanup(&heap);
 	}
 	return (0);
 }
