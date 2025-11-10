@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 21:23:44 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/10 19:46:52 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,20 +84,19 @@ static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
 	// 区切り文字が入力されるまで readline で読み込む
 	while (1)
 	{
-		line = readline("> ");
-		if (line == NULL || ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0)
+		get_input(&line, "> ");
+		if (line == NULL) // EOF (Ctrl+D)
+			break;
+		if (put_line_to_tmpfile(line, delimiter, tmp_fd))
 		{
-			free(line);
+			free(line); // 最後に line を free して break
 			break;
 		}
-		// write(tmp_fd, line, ft_strlen(line));
-		// write(tmp_fd, "\n", 1);
-		ft_putendl_fd(line, tmp_fd);
 		free(line);
 	}
 	close(tmp_fd);
 
-	// ★ ASTノードを「書き換える」
+	// ノードを書き換える
 	free(node->file); // 元の "EOF" (区切り文字) を解放
 	node->file = temp_filename; // 新しい一時ファイル名を設定
 	node->mode = O_RDONLY;      // modeをTOKEN_HEREDOCからO_RDONLYに変更
@@ -128,23 +127,6 @@ static void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap)
 		find_and_process_heredocs(ast->subcmd, heap);
 	}
 	// EXECの場合は何もしない
-}
-
-static void	cleanup_temp_files(t_list **list)
-{
-	t_list	*current;
-	t_list	*tmp;
-
-	current = *list;
-	while (current)
-	{
-		tmp = current->next;
-		unlink((char *)current->content); // 一時ファイルを削除
-		free(current->content); // strdupしたファイル名を解放
-		free(current); // リストのノードを解放
-		current = tmp;
-	}
-	*list = NULL;
 }
 
 static bool	is_parent_builtin(t_cmd *ast)
@@ -246,13 +228,6 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap, char **ev)
 	}
 	waitpid(pid, NULL, 0);
 	cleanup_temp_files(&heap->temp_files);
-}
-
-static void	change_fd(int pipefd[2], int target_fd, int fd_num)
-{
-	dup2(fd_num, target_fd);
-	close(pipefd[0]);
-	close(pipefd[1]);
 }
 
 static void	execute_pipe(t_cmd *ast, t_alloc *heap, char **envp)

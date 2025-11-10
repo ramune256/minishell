@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 21:13:03 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/10 19:47:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,15 @@ void	free_ast(t_cmd *cmd);
 
 void	execute(t_cmd *ast, t_alloc *heap, char **ev);
 char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
-
-void	free_2d_array(char **array);
+bool	put_line_to_tmpfile(char *line,char *delimiter, int tmp_fd);
+void	change_fd(int pipefd[2], int target_fd, int fd_num);
+void	cleanup_temp_files(t_list **list);
 
 char	*ft_strndup(const char *s1, size_t n);
 void	cleanup(t_alloc *alloc);
+void	get_input(char **line, const char *message);
+void	print_exit(void);
+void	free_2d_array(char **array);
 
 // for debug.c
 // void	print_ast(t_cmd *cmd, int level);
