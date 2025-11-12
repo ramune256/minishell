@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/02 16:07:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 22:39:45 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,22 @@
 
 t_cmd	*exec_cmd_constructor(void)
 {
-	t_cmd	*cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
 	cmd->type = NODE_EXEC;
 	return (cmd);
 }
 
 t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right)
 {
-	t_cmd	*cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
 	cmd->type = NODE_PIPE;
 	cmd->left = left;
 	cmd->right = right;
@@ -30,7 +38,11 @@ t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right)
 
 t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 {
-	t_cmd	*cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
+	t_cmd	*cmd;
+
+	cmd = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
 	cmd->type = NODE_REDIR;
 	cmd->subcmd = subcmd;
 	cmd->file = file;

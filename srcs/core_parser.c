@@ -6,14 +6,14 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 18:10:26 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 22:44:31 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // `WORD` トークンを解析して EXEC ノードを作成
-static t_cmd	*parse_simple_command(t_token **tokens, t_alloc *heap)
+static t_cmd	*parse_exec_node(t_token **tokens, t_alloc *heap)
 {
 	t_cmd	*cmd;
 	int		argc;
@@ -27,18 +27,20 @@ static t_cmd	*parse_simple_command(t_token **tokens, t_alloc *heap)
 		argc++;
 		start = start->next;
 	}
-	if (argc == 0)
+	if (argc == 0) // WORDがなければ EXECノード は作らない
 		return (NULL);
 	cmd = exec_cmd_constructor();
+	if (!cmd)
+		(cleanup(heap), exit(1));
 	cmd->argv = ft_calloc(1, sizeof(char *) * (argc + 1));
 	if (!cmd->argv)
-		(cleanup(heap), exit(1));
+		(free_ast(cmd), cleanup(heap), exit(1));
 	i = 0;
 	while (i < argc)
 	{
 		cmd->argv[i] = ft_strdup((*tokens)->value);
 		if (!cmd->argv[i])
-			(cleanup(heap), exit(1));
+			(free_ast(cmd), cleanup(heap), exit(1));
 		*tokens = (*tokens)->next;
 		i++;
 	}
@@ -46,46 +48,31 @@ static t_cmd	*parse_simple_command(t_token **tokens, t_alloc *heap)
 	return (cmd);
 }
 
-static t_cmd	*parse_command(t_token **tokens, t_alloc *heap)
+static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
 {
 	t_cmd	*cmd;
-	t_token	*redir_token;
-	char	*filename;
-	int		mode;
-	int		fd;
 
-	cmd = parse_simple_command(tokens, heap); // 1. まずはコマンド本体 (NODE_EXEC) を解析
-	if (!cmd) // コマンドが空の場合（例: `> out` のみ）
-		cmd = exec_cmd_constructor(); // 空のEXECノードを作成
+	// 1. まずはコマンド本体 (NODE_EXEC) を解析
+	// (この時点ではリダイレクトは考慮しない)
+	cmd = parse_exec_node(tokens, heap);
+
 	// 2. リダイレクションが続く限り、ループで処理
 	while (is_redirection((*tokens)->type))
 	{
-		// 3. リダイレクトトークン(>, <, <<, >>)を保存・消費
-		redir_token = *tokens;
-		*tokens = (*tokens)->next;
-		// 4. 次がファイル名（または区切り文字）でなければ構文エラー
-		if ((*tokens)->type != TOKEN_WORD)
-			return (fprintf(stderr, "minishell: syntax error near unexpected token\n"), free_ast(cmd), NULL);
-		// 5. ファイル名（または区切り文字）を複製
-		filename = ft_strdup((*tokens)->value);
-		if (!filename)
-			(cleanup(heap), exit(1)); // malloc失敗
-		// 6. ファイル名トークンを消費
-		*tokens = (*tokens)->next;
-		// 7. ヒアドキュメントかどうかで処理を分岐
-		if (redir_token->type == TOKEN_HEREDOC)
+		// 3. コマンドが空だった場合 (例: `> out`)、
+		//    空のEXECノードを作成して `cmd` に設定する
+		if (cmd == NULL)
 		{
-			mode = TOKEN_HEREDOC; // executorが見分けるための「目印」
-			fd = STDIN_FILENO;   // ヒアドキュメントは標準入力(0)
+			cmd = exec_cmd_constructor();
+			if (!cmd)
+				(cleanup(heap), exit(1));
 		}
-		else
-			set_redir_mode_fd(redir_token, &mode, &fd);
-		// 8. コマンドをリダイレクトノードで「ラップ」する
-		cmd = redir_cmd_constructor(cmd, filename, mode, fd);
-		if (!cmd)
-			(free_ast(cmd), cleanup(heap), exit(1)); // malloc失敗
+		// 4. `parse_redirection` が `cmd` をラップし、新しい `cmd` を返す
+		cmd = parse_redirection(cmd, tokens, heap);
+		if (cmd == NULL)
+			return (NULL); // エラー（freeはparse_redirection内で行われる）
 	}
-	// 9. 完成したノード (EXEC または REDIR) を返す
+	// 5. 完成したノード (EXEC または REDIR) を返す
 	return (cmd);
 }
 
@@ -94,8 +81,9 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 {
 	t_cmd	*cmd;
 	t_cmd	*right;
+	t_cmd	*new_pipe_node;
 
-	cmd = parse_command(tokens, heap);
+	cmd = parse_command_unit(tokens, heap);
 	if (!cmd)
 		return (NULL);
 	if ((*tokens)->type == TOKEN_PIPE)
@@ -106,7 +94,10 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 		right = parse_pipeline(tokens, heap);
 		if (!right)
 			return (free_ast(cmd), NULL);
-		cmd = pipe_cmd_constructor(cmd, right);
+		new_pipe_node = pipe_cmd_constructor(cmd, right);
+		if (!new_pipe_node)
+			(free_ast(cmd), free_ast(right), cleanup(heap), exit(1));
+		cmd = new_pipe_node;
 	}
 	return (cmd);
 }

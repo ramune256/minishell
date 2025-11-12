@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 18:09:19 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:47:54 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd);
 void	free_ast(t_cmd *cmd);
 
 bool	is_redirection(t_token_type type);
-void	set_redir_mode_fd(t_token *redir_token, int *mode, int *fd);
+t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
 void	execute(t_cmd *ast, t_alloc *heap, char **ev);
 char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
