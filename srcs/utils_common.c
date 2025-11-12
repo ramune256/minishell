@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_common.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/10 19:42:30 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 22:26:31 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,9 @@ void	print_exit(void)
 	if (isatty(STDIN_FILENO))
 		printf("exit\n");
 }
+
+//isatty 1  readline
+//       0  gnl 
 
 void	free_2d_array(char **array)
 {

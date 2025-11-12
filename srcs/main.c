@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/10 19:34:33 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/13 03:22:02 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,35 @@
 int	main(int ac, char **av, char **ev)
 {
 	t_alloc		heap;
+	int exit_status = 0;  //終了ステータス
 
 	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));
+	init_signal();
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
-		if (heap.line)
-		{
-			if (isatty(STDIN_FILENO))
-				add_history(heap.line);
-			tokenize(&heap, heap.line);
-			parse(&heap);
-			if (heap.ast)
-				execute(heap.ast, &heap, ev);
-		}
+		if(g_signal_flag)
+			signal_readline_reset();
 		else
-			print_exit();
-		cleanup(&heap);
+		{
+			if (heap.line)
+			{
+				if (isatty(STDIN_FILENO))
+					add_history(heap.line);
+				tokenize(&heap, heap.line, exit_status);
+				parse(&heap);
+				if (heap.ast)
+					execute(heap.ast, &heap, ev,&exit_status);
+			}
+			else
+				print_exit();
+			cleanup(&heap);
+		}
 	}
 	return (0);
 }
+
 
 // int	main(int argc, char **argv, char **envp)
 // {

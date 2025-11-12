@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core_executer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 18:01:12 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/13 03:47:03 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,4 +104,16 @@ void	execute(t_cmd *ast, t_alloc *heap, char **ev)
 		else
 			execute_simple_command(ast, heap, ev); // forkする
 	}
+}
+
+
+//fork pid==0 子プロセス　
+// else 親プロセス
+
+void set_exit_status(int &exit_status)
+{
+	if (WIFEXITED(exit_status))
+		g_exit_status = WEXITSTATUS(exit_status);
+	else if (WIFSIGNALED(exit_status))
+		g_exit_status = 128 + WTERMSIG(exit_status);
 }
