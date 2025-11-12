@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/10 19:47:19 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 18:09:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,11 +95,18 @@ t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
 t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd);
 void	free_ast(t_cmd *cmd);
 
+bool	is_redirection(t_token_type type);
+void	set_redir_mode_fd(t_token *redir_token, int *mode, int *fd);
+
 void	execute(t_cmd *ast, t_alloc *heap, char **ev);
 char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
-bool	put_line_to_tmpfile(char *line,char *delimiter, int tmp_fd);
 void	change_fd(int pipefd[2], int target_fd, int fd_num);
+
+bool	is_parent_builtin(t_cmd *ast);
+bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp);
+
 void	cleanup_temp_files(t_list **list);
+void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
 
 char	*ft_strndup(const char *s1, size_t n);
 void	cleanup(t_alloc *alloc);

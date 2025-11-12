@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 19:47:18 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 18:10:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,32 +46,6 @@ static t_cmd	*parse_simple_command(t_token **tokens, t_alloc *heap)
 	return (cmd);
 }
 
-static bool	is_redirection(t_token_type type)
-{
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT ||
-			type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
-}
-
-static void	set_redir_mode_fd(t_token *redir_token, int *mode, int *fd)
-{
-	if (redir_token->type == TOKEN_REDIR_OUT) // >
-	{
-		*mode = O_WRONLY | O_CREAT | O_TRUNC;
-		*fd = STDOUT_FILENO;
-	}
-	else if (redir_token->type == TOKEN_REDIR_APPEND) // >>
-	{
-		*mode = O_WRONLY | O_CREAT | O_APPEND;
-		*fd = STDOUT_FILENO;
-	}
-	else if (redir_token->type == TOKEN_REDIR_IN) // <
-	{
-		*mode = O_RDONLY;
-		*fd = STDIN_FILENO;
-	}
-	// (ヒアドキュメント(<<)の処理は、executor側で別途実装が必要です)
-}
-
 static t_cmd	*parse_command(t_token **tokens, t_alloc *heap)
 {
 	t_cmd	*cmd;
@@ -98,8 +72,7 @@ static t_cmd	*parse_command(t_token **tokens, t_alloc *heap)
 			(cleanup(heap), exit(1)); // malloc失敗
 		// 6. ファイル名トークンを消費
 		*tokens = (*tokens)->next;
-		// 7. ★★★ ここが変更点 ★★★
-		//    ヒアドキュメントかどうかで処理を分岐
+		// 7. ヒアドキュメントかどうかで処理を分岐
 		if (redir_token->type == TOKEN_HEREDOC)
 		{
 			mode = TOKEN_HEREDOC; // executorが見分けるための「目印」
