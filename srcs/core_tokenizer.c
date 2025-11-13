@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 07:54:31 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/14 07:59:04 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void	append_token(t_alloc *heap, t_token_type token_type, char *value)
 		(cleanup(heap), exit(1));
 	new_token->type = token_type;
 	if(token_type == TOKEN_WORD)
-		value = test(heap,value);
+		value = test(heap,value);//expand_ev_valueの中のものに変える
 	if(!value)
 		(cleanup(heap), exit(1));
 	new_token->value = value;
