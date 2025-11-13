@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/09 21:13:03 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/12 21:47:54 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,24 @@ t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
 t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd);
 void	free_ast(t_cmd *cmd);
 
+bool	is_redirection(t_token_type type);
+t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
+
 void	execute(t_cmd *ast, t_alloc *heap, char **ev);
 char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
+void	change_fd(int pipefd[2], int target_fd, int fd_num);
 
-void	free_2d_array(char **array);
+bool	is_parent_builtin(t_cmd *ast);
+bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp);
+
+void	cleanup_temp_files(t_list **list);
+void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
 
 char	*ft_strndup(const char *s1, size_t n);
 void	cleanup(t_alloc *alloc);
+void	get_input(char **line, const char *message);
+void	print_exit(void);
+void	free_2d_array(char **array);
 
 // for debug.c
 // void	print_ast(t_cmd *cmd, int level);

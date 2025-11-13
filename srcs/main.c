@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/06 19:19:20 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/10 19:34:33 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,23 @@
 int	main(int ac, char **av, char **ev)
 {
 	t_alloc		heap;
-	// t_token		*tmp;
 
-	(void)ac;
-	(void)av;
+	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));
 	while (1)
 	{
-		heap.line = readline("minishell> ");
-		if (heap.line == NULL)
+		get_input(&heap.line, "minishell> ");
+		if (heap.line)
 		{
-			printf("exit\n");
-			break;
+			if (isatty(STDIN_FILENO))
+				add_history(heap.line);
+			tokenize(&heap, heap.line);
+			parse(&heap);
+			if (heap.ast)
+				execute(heap.ast, &heap, ev);
 		}
-		if (*heap.line)
-			add_history(heap.line);
-
-		// 1. Tokenize
-		tokenize(&heap, heap.line);
-
-		// 2. Parse
-		parse(&heap);
-
-		// 3. Execute
-		if (heap.ast)
-			execute(heap.ast, &heap, ev);
-
-		// 4. Cleanup
+		else
+			print_exit();
 		cleanup(&heap);
 	}
 	return (0);
