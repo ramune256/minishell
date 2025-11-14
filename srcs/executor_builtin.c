@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executer_builtin.c                                 :+:      :+:    :+:   */
+/*   executor_builtin.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:00:39 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 18:01:49 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/14 19:31:50 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ bool	is_parent_builtin(t_cmd *ast)
 	return (false);
 }
 
-bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
+bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 {
 	char	*cmd;
 	int		status_code;
@@ -59,7 +59,7 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
 	// else if (ft_strncmp(cmd, "exit", 4) == 0)
 	// 	c_exit(exec_node->argv, heap); // exitは戻らない
 	if (ft_strncmp(cmd, "pwd", 3) == 0)
-		status_code = c_pwd(exec_node->argv);
+		status_code = c_pwd(exec_node->argv, heap);
 	else
 		return (false); // ビルトインではなかった
 

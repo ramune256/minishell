@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   core_executer.c                                    :+:      :+:    :+:   */
+/*   core_executor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 18:01:12 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/14 19:00:29 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
 	return (ast->subcmd);
 }
 
-static void	execute_simple_command(t_cmd *ast, t_alloc *heap, char **ev)
+static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 {
 	pid_t	pid;
 	t_cmd	*exec_node;
@@ -43,22 +43,22 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap, char **ev)
 	if (pid == 0)
 	{
 		exec_node = handle_redirections(ast, heap);
-		if (execute_builtin(exec_node, heap, ev))
+		if (execute_builtin(exec_node, heap))
 		{
 			// ビルトインが実行されたら、子プロセスはここで終了
 			(cleanup(heap), exit(0)); // TODO: 本当は終了ステータスを渡す
 		}
-		fullpath = get_fullpath(exec_node->argv[0], ev, heap);
+		fullpath = get_fullpath(exec_node->argv[0], heap);
 		if (fullpath == NULL)
 			(cleanup(heap), exit(127));
-		if (execve(fullpath, exec_node->argv, ev) == -1)
+		if (execve(fullpath, exec_node->argv, heap->new_ev) == -1)
 			(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 	}
 	waitpid(pid, NULL, 0);
 	cleanup_temp_files(&heap->temp_files);
 }
 
-static void	execute_pipe(t_cmd *ast, t_alloc *heap, char **envp)
+static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 {
 	int		pipefd[2]; // [0]は読み込み口, [1]は書き込み口
 	pid_t	pid_left;
@@ -72,7 +72,7 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap, char **envp)
 	if (pid_left == 0)
 	{
 		change_fd(pipefd, STDOUT_FILENO, pipefd[1]);
-		execute(ast->left, heap, envp); // 左側のASTを再帰的に実行
+		execute(ast->left, heap); // 左側のASTを再帰的に実行
 		(cleanup(heap), exit(0)); // 子プロセスをクリーンアップ
 	}
 	pid_right = fork(); // 2. 右側の子プロセス (パイプから読み込む側)
@@ -81,7 +81,7 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap, char **envp)
 	if (pid_right == 0)
 	{
 		change_fd(pipefd, STDIN_FILENO, pipefd[0]);
-		execute(ast->right, heap, envp); // 右側のASTを再帰的に実行
+		execute(ast->right, heap); // 右側のASTを再帰的に実行
 		(cleanup(heap), exit(0)); // 子プロセスをクリーンアップ
 	}
 	(close(pipefd[0]), close(pipefd[1]));
@@ -89,19 +89,19 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap, char **envp)
 }
 
 // ASTを再帰的にたどって実行するエントリーポイント
-void	execute(t_cmd *ast, t_alloc *heap, char **ev)
+void	execute(t_cmd *ast, t_alloc *heap)
 {
 	if (ast == NULL)
 		return ;
 	if (ast->type == NODE_PIPE)
-		execute_pipe(ast, heap, ev);
+		execute_pipe(ast, heap);
 	else if (ast->type == NODE_REDIR)
-		execute_simple_command(ast, heap, ev);
+		execute_simple_command(ast, heap);
 	else if (ast->type == NODE_EXEC)
 	{
 		if (is_parent_builtin(ast))
-			execute_builtin(ast, heap, ev); // forkせずに、親プロセスでそのまま実行
+			execute_builtin(ast, heap); // forkせずに、親プロセスでそのまま実行
 		else
-			execute_simple_command(ast, heap, ev); // forkする
+			execute_simple_command(ast, heap); // forkする
 	}
 }

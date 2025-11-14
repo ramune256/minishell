@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 21:47:54 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/14 19:36:31 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ typedef struct s_alloc
 	t_token	*head;
 	t_cmd	*ast;
 	t_list	*temp_files;
+	char	**new_ev; //←cleanupの必要あり
 }	t_alloc;
 
 // typedef enum e_split_err
@@ -86,9 +87,11 @@ typedef struct s_alloc
 // 	PERM_DENIED
 // }	t_error;
 
+//tokenizer
 void	tokenize(t_alloc *alloc, char *line);
 void	free_tokens(t_token *tokens);
 
+//parser
 void	parse(t_alloc *heap);
 t_cmd	*exec_cmd_constructor(void);
 t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
@@ -98,32 +101,37 @@ void	free_ast(t_cmd *cmd);
 bool	is_redirection(t_token_type type);
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
-void	execute(t_cmd *ast, t_alloc *heap, char **ev);
-char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap);
+//executor
+void	execute(t_cmd *ast, t_alloc *heap);
+char	*get_fullpath(char *cmd_name, t_alloc *heap);
 void	change_fd(int pipefd[2], int target_fd, int fd_num);
 
 bool	is_parent_builtin(t_cmd *ast);
-bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp);
+bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
 void	cleanup_temp_files(t_list **list);
 void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
 
+//utils
 char	*ft_strndup(const char *s1, size_t n);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
 void	print_exit(void);
 void	free_2d_array(char **array);
 
+//initialize
+void	clone_ev(char **ev, t_alloc *heap);
+
 // for debug.c
 // void	print_ast(t_cmd *cmd, int level);
 
 // for builtin_test.c
-int		c_echo(char **argv);
-int		c_cd(char **argv);
-int		c_pwd(char **argv);
-int		c_export(char **argv);
-int		c_unset(char **argv);
-int		c_env(char **argv);
-int		c_exit(char **argv);
+// int		c_echo(char **argv);
+// int		c_cd(char **argv);
+// int		c_pwd(char **argv);
+// int		c_export(char **argv);
+// int		c_unset(char **argv);
+// int		c_env(char **argv);
+// int		c_exit(char **argv);
 
 #endif

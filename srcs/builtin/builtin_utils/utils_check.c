@@ -1,32 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   serch.c                                            :+:      :+:    :+:   */
+/*   utils_check.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 18:15:32 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/10 18:21:47 by nmasuda          ###   ########.fr       */
+/*   Created: 2025/10/12 18:08:09 by nmasuda           #+#    #+#             */
+/*   Updated: 2025/11/14 19:08:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-char	*serch_get_env(char **ev, char *serch)
+void	c_check(char *bash, char **check)
 {
-	int		i;
-	size_t	len;
+	int	i;
 
 	i = 0;
-	len = ft_strlen(serch);
-	while (ev[i])
+	if (!check)
+		error(bash, NULL, NULL, 0);
+	while (check[i])
 	{
-		if (!ft_strncmp(ev[i], serch, len))
-		{
-			if (ev[i][len] == '=')
-				return (&ev[i][len + 1]);
-		}
+		printf("%s\n", check[i]);
 		i++;
 	}
-	return (NULL);
 }

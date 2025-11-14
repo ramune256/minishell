@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/10 18:24:58 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/14 19:59:14 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+# include "minishell.h"
 
 typedef struct s_pwd
 {
@@ -37,16 +38,16 @@ typedef struct s_pwd
 }			t_pwd;
 
 //-----main---------
-char		**built_in_check(char **line, char **ev);
+// char		**built_in_check(char **line, char **ev);
 
 //-----command------
-char		**c_echo(char **line, char **ev);
-char		**c_pwd(char **line, char **ev);
-char		**c_env(char **line, char **ev);
-char		**c_unset(char **line, char **ev);
-char		**c_exit(char **line, char **ev);
-char		**c_export(char **line, char **ev);
-char		**c_cd(char **line, char **ev);
+int		c_echo(char **line, t_alloc *heap);
+int		c_pwd(char **line, t_alloc *heap);
+int		c_env(char **line,t_alloc *heap);
+int		c_unset(char **line,t_alloc *heap);
+int		c_exit(char **line, t_alloc *heap);
+int		c_export(char **line, t_alloc *heap);
+int		c_cd(char **line, t_alloc *heap);
 
 //-----仮置系--------
 void		error(char *bash, char *mess, char **line, int exit_num);
@@ -56,7 +57,7 @@ void		free_all(char **res);
 //-----utils---------
 long long	ft_atol(char *st, int *error);
 char		*ft_export_strjoin(char const *s1, char const *s2);
-int			ev_strlen(char *line);
+size_t		ev_strlen(char *line);
 char		**change(char **new_ev, int i, int j);
 char		**sort(char **new_ev);
 void		join_error_check(char **new_ev, char **line, int i, int j);

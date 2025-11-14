@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 22:44:31 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/14 18:49:01 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static t_cmd	*parse_exec_node(t_token **tokens, t_alloc *heap)
 	cmd = exec_cmd_constructor();
 	if (!cmd)
 		(cleanup(heap), exit(1));
-	cmd->argv = ft_calloc(1, sizeof(char *) * (argc + 1));
+	cmd->argv = ft_calloc(argc + 1, sizeof(char *));
 	if (!cmd->argv)
 		(free_ast(cmd), cleanup(heap), exit(1));
 	i = 0;

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/10 16:07:35 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/14 19:49:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,17 @@ static void	echo_exit(char **line, int exit_num, char *mess, int many_arg)
 	exit(exit_num);
 }
 
-char	**c_exit(char **line, char **ev)
+int	c_exit(char **line, t_alloc *heap)
 {
 	int			error;
 	long long	num;
 
 	error = 0;
+	if (!line)
+		return ;
 	if (line[CMD + 1])
 	{
-		num = ft_atoi(line[CMD + 1], &error);
+		num = ft_atol(line[CMD + 1], &error);
 		if (error)
 			echo_exit(line, 2, line[CMD + 1], 0);
 		if (line[CMD + 2])
@@ -42,8 +44,6 @@ char	**c_exit(char **line, char **ev)
 		echo_exit(line, num, NULL, 0);
 	}
 	else
-	{
 		echo_exit(NULL, 0, NULL, 0);
-	}
-	return (ev);
+	return (0); // ←おそらく到達しない
 }
