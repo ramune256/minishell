@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 22:39:45 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/15 16:58:02 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,24 +51,24 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 	return (cmd);
 }
 
-static void	free_argv(char **argv)
-{
-	int	i;
+// void	free_argv(char **argv)
+// {
+// 	int	i;
 
-	if (!argv)
-		return;
-	i = 0;
-	while (argv[i])
-		free(argv[i++]);
-	free(argv);
-}
+// 	if (!argv)
+// 		return;
+// 	i = 0;
+// 	while (argv[i])
+// 		free(argv[i++]);
+// 	free(argv);
+// }
 
 void	free_ast(t_cmd *cmd)
 {
 	if (!cmd)
 		return;
 	if (cmd->type == NODE_EXEC)
-		free_argv(cmd->argv);
+		free_2d_array(cmd->argv);
 	else if (cmd->type == NODE_PIPE)
 	{
 		free_ast(cmd->left);

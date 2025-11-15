@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/10 19:42:30 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:01:56 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,11 @@ char	*ft_strndup(const char *s1, size_t n)
 
 void	cleanup(t_alloc *alloc)
 {
-	free_ast(alloc->ast);
-	free_tokens(alloc->head);
 	free(alloc->line);
+	free_tokens(alloc->head);
+	free_ast(alloc->ast);
 	cleanup_temp_files(&alloc->temp_files);
+	free_2d_array(alloc->new_ev);
 	ft_bzero(alloc, sizeof(t_alloc));
 }
 
