@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/15 16:06:46 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:31:42 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
 
 //utils
 char	*ft_strndup(const char *s1, size_t n);
+int		ft_strcmp(const char *s1, const char *s2);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
 void	print_exit(void);
