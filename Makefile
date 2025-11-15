@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/11/12 18:07:55 by shunwata         ###   ########.fr        #
+#    Updated: 2025/11/14 18:47:44 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CFLAGS = -Wall -Wextra -Werror -lreadline -lhistory -I $(INC_DIR) -I $(LIBFT_DIR
 SRC_DIR = srcs
 INC_DIR = includes
 
-SRC = $(addprefix $(SRC_DIR)/, builtin_test.c core_executer.c core_parser.c core_tokenizer.c executer_builtin.c executer_heredoc.c get_fullpath.c main.c parser_redir.c utils_common.c utils_parser.c utils_executer.c)
+SRC = $(addprefix $(SRC_DIR)/, builtin_test.c core_executor.c core_parser.c core_tokenizer.c executor_builtin.c executor_heredoc.c get_fullpath.c init.c main.c parser_redir.c utils_common.c utils_parser.c utils_executor.c)
 OBJ = $(SRC:.c=.o)
 
 LIBFT = $(LIBFT_DIR)/libft.a

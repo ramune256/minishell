@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/06 19:20:57 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/14 18:59:11 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static char	*join_path(char *bin_dir, char *cmd_name)
 	char	*fullpath;
 
 	total_len = ft_strlen(bin_dir) + ft_strlen(cmd_name) + 1;
-	fullpath = ft_calloc(1, sizeof(char) * (total_len + 1));
+	fullpath = ft_calloc(total_len + 1, sizeof(char));
 	if (!fullpath)
 		return (NULL);
 	ft_strlcpy(fullpath, bin_dir, total_len + 1);
@@ -76,7 +76,7 @@ static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
 	return (result);
 }
 
-char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap)
+char	*get_fullpath(char *cmd_name, t_alloc *heap)
 {
 	char				**bin_dir;
 	char				*fullpath;
@@ -89,7 +89,7 @@ char	*get_fullpath(char *cmd_name, char **envp, t_alloc *heap)
 		fullpath = check_absolute_path(cmd_name, heap);
 		return (fullpath);
 	}
-	envp_path = find_envp_path(envp);
+	envp_path = find_envp_path(heap->new_ev);
 	if (!envp_path)
 		return (NULL);
 	bin_dir = ft_split(envp_path, ':');

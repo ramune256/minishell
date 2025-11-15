@@ -1,44 +1,57 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   echo.c                                             :+:      :+:    :+:   */
+/*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/08 18:20:48 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/14 20:00:09 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-static void	echo_print(char **line)
+static bool	echo_print(char **line)
 {
 	int	i;
 
 	i = CMD + 1;
 	while (line[i])
 	{
-		printf("%s", line[i++]);
+		if (printf("%s", line[i++]) == ERROR)
+			return (false);
 		if (line[i])
-			printf(" ");
+		{
+			if (printf(" ") == ERROR)
+				return (false);
+		}
 	}
+	return (true);
 }
 
-char	**c_echo(char **line, char **ev)
+int	c_echo(char **line, t_alloc *heap)
 {
+	if (!line)
+		return (1);
 	if (!line[OPT])
-		printf("\n");
+	{
+		if (printf("\n") == ERROR)
+			return (1);
+	}
 	else if (!ft_strncmp(line[OPT], "-n", 3))
 	{
 		while (!ft_strncmp(line[OPT], "-n", 3))
 			line++;
-		echo_print(line);
+		if (echo_print(line) == false)
+			return (1);
 	}
 	else
 	{
-		echo_print(line);
-		printf("\n");
+		if (echo_print(line) == false)
+			return (1);
+		if (printf("\n") == ERROR)
+			return (1);
 	}
-	return (ev);
+	return (0);
 }

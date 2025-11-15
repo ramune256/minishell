@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/10 19:42:30 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:30:18 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,23 @@ char	*ft_strndup(const char *s1, size_t n)
 	return (result);
 }
 
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] != '\0')
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
 void	cleanup(t_alloc *alloc)
 {
-	free_ast(alloc->ast);
-	free_tokens(alloc->head);
 	free(alloc->line);
+	free_tokens(alloc->head);
+	free_ast(alloc->ast);
 	cleanup_temp_files(&alloc->temp_files);
+	free_2d_array(alloc->new_ev);
 	ft_bzero(alloc, sizeof(t_alloc));
 }
 

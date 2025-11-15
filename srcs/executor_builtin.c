@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executer_builtin.c                                 :+:      :+:    :+:   */
+/*   executor_builtin.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:00:39 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/12 18:01:49 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/15 17:37:54 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 bool	is_parent_builtin(t_cmd *ast)
 {
@@ -32,37 +33,22 @@ bool	is_parent_builtin(t_cmd *ast)
 	return (false);
 }
 
-bool	execute_builtin(t_cmd *exec_node, t_alloc *heap, char **envp)
+bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 {
 	char	*cmd;
-	int		status_code;
 
 	if (exec_node == NULL || exec_node->argv == NULL)
 		return (0);
 	cmd = exec_node->argv[0];
-	if (cmd == NULL)
+	if (!cmd)
 		return (0);
-	status_code = 0; // TODO: 終了ステータスを heap->exit_status に保存
 
-	// if (ft_strncmp(cmd, "echo", 4) == 0)
-	// 	status_code = c_echo(exec_node->argv);
-	// else if (ft_strncmp(cmd, "cd", 2) == 0)
-	// 	status_code = c_cd(exec_node->argv, envp); // (実装によります)
-	// else if (ft_strncmp(cmd, "pwd", 3) == 0)
-	// 	status_code = c_pwd();
-	// else if (ft_strncmp(cmd, "export", 6) == 0)
-	// 	status_code = c_export(exec_node->argv, envp); // (実装によります)
-	// else if (ft_strncmp(cmd, "unset", 5) == 0)
-	// 	status_code = c_unset(exec_node->argv, envp); // (実装によります)
-	// else if (ft_strncmp(cmd, "env", 3) == 0)
-	// 	status_code = c_env(envp);
-	// else if (ft_strncmp(cmd, "exit", 4) == 0)
-	// 	c_exit(exec_node->argv, heap); // exitは戻らない
-	if (ft_strncmp(cmd, "pwd", 3) == 0)
-		status_code = c_pwd(exec_node->argv);
+	if (ft_strcmp(cmd, "pwd") == 0) //←ft_strncmpじゃなくてft_strcmpにした
+		heap->exit_status = c_pwd(exec_node->argv, heap);
+	else if (ft_strcmp(cmd, "echo") == 0)
+		heap->exit_status = c_echo(exec_node->argv, heap);
 	else
 		return (false); // ビルトインではなかった
 
-	// (TODO: status_code を heap->exit_status に保存する処理)
 	return (true); // ビルトインを実行した
 }

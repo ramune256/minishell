@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_utils.c                                     :+:      :+:    :+:   */
+/*   utils_export.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/10 17:59:30 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/14 19:56:54 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-int	ev_strlen(char *line)
+size_t	ev_strlen(char *line)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (line[i] != '=')
@@ -41,7 +41,7 @@ char	**sort(char **new_ev)
 	j = i + 1;
 	while (new_ev[j] != NULL)
 	{
-		if (ft_memcmp(new_ev[i], new_ev[j]) > 0)
+		if (ft_memcmp(new_ev[i], new_ev[j]) > 0) // ←？？
 		{
 			new_ev = change(new_ev, i, j);
 			i = 0;
