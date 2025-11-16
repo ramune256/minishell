@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/10 18:05:20 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/17 04:40:54 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static bool	unset_arg_skip(char **line, char **ev, int j)
 	return (false);
 }
 
-char	**input_new_ev(char **line, char **ev, char **new_ev)
+void  input_new_ev(char **line, char **ev, char **new_ev)
 {
 	int		i;
 	int		j;
@@ -53,31 +53,34 @@ char	**input_new_ev(char **line, char **ev, char **new_ev)
 			break ;
 		new_line = ft_strdup(ev[j]);
 		if (!new_line)
-			error(NULL, "unset_newline_malloc_error\n", new_ev, 2);
+		{
+//			all_free(new_ev); freeしていいのかわからない
+			return 1;
+		}
 		new_ev[j - i] = new_line;
 		j++;
 	}
 	new_ev[j - i] = NULL;
-	return (new_ev);
+	return 0;
 }
 
-char	**c_unset(char **line, char **ev)
+char	**c_unset(char **line, t_alloc *heap)
 {
-	char	**new_ev;
+	char	**res_ev;
 	int		j;
 	int		i;
 
-	new_ev = NULL;
+	res_ev = NULL;
 	i = 0;
 	j = 0;
-	while (ev[j])
+	while (heap->new_ev[j])
 	{
-		if (unset_arg_skip(line, ev, j) == true)
+		if (unset_arg_skip(line, heap->new_ev, j) == true)
 			i++;
 		j++;
 	}
-	new_ev = malloc(sizeof(char *) * (j - i + 1));
-	if (!new_ev)
-		error(NULL, "unset_newev_malloc_error\n", NULL, 2);
-	return (input_new_ev(line, ev, new_ev));
+	res_ev = malloc(sizeof(char *) * (j - i + 1));
+	if (!res_ev)
+		return(1);
+	return (input_new_ev(line, heap->new_ev, res_ev));
 }

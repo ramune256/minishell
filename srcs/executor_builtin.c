@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_builtin.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:00:39 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/15 17:37:54 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/16 06:05:58 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,16 @@ bool	is_parent_builtin(t_cmd *ast)
 	if (cmd == NULL)
 		return (false);
 	if (ft_strncmp(cmd, "cd", 2) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "exit", 4) == 0)
-		return (true);
-	if (ft_strncmp(cmd, "export", 6) == 0 && ast->argv[1] != NULL)
-		return (true); // 引数ありのexport
-	if (ft_strncmp(cmd, "unset", 5) == 0)
-		return (true);
-	return (false);
+		heap->exit_status = c_cd(exec_node->argv, heap);
+	else if (ft_strncmp(cmd, "exit", 4) == 0)
+		heap->exit_status = c_exit(exec_node->argv, heap);
+	else if (ft_strncmp(cmd, "export", 6) == 0 && ast->argv[1] != NULL)
+		heap->exit_status = c_export(exec_node->argv, heap); // 引数ありのexport
+	else if (ft_strncmp(cmd, "unset", 5) == 0)
+		heap->exit_status = c_unset(exec_node->argv, heap);
+	else
+		return (false);
+	return (true);
 }
 
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
