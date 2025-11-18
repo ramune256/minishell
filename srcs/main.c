@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 19:03:58 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/19 07:03:34 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ int	main(int ac, char **av, char **ev)
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
+		if(g_signal_flag)
+			signal_readline_reset();
 		if (heap.line)
 		{
 			if (isatty(STDIN_FILENO))
