@@ -1,12 +1,11 @@
 
 #include "../includes/signal.h"
 
-static volatile sig_atomic_t g_signal_flag = 0;
+static volatile sig_atomic_t g_signal_flag = signal;
 
 static void	handler(int signal)//引数返り値固定 int main(void) みたいな感じ
 {
-    (void)signal;
-	g_signal_flag = 1;
+	g_signal_flag = signal;
 }
 
 void init_signal(void)
@@ -37,9 +36,14 @@ void signal_readline_reset(void)//もしreadlineの途中にシグナルが来�
 
 
 //修正
-void defalt_signal(void)
+void ko_signal(void)
 {
-	signal(SIGINT,SIG_DFL);
-    signal(SIGQUIT,SIG_IGN);//??
-    //標準動作
+	signal(SIGINT,SIG_DFL);//cntrl-Cを標準動作に
+    signal(SIGQUIT,SIG_IGN);
+}
+
+void oya_signal(void)
+{
+	signal(SIGINT,SIG_IGN);//cntrl-Cを無視設定に
+    signal(SIGQUIT,SIG_IGN);
 }

@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/19 07:03:34 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/19 07:23:32 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	main(int ac, char **av, char **ev)
 	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));
 	clone_ev(ev, &heap);
+	init_signal();
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
