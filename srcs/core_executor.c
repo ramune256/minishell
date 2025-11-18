@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core_executor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/15 16:52:35 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/19 07:43:20 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 	char	*fullpath;
 	int		status;
 
+	oya_signal();
 	if (ast->type != NODE_PIPE)
 		find_and_process_heredocs(ast, heap);
 	pid = fork();
@@ -43,6 +44,7 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 		(perror("fork"), cleanup(heap), exit(1));
 	if (pid == 0)
 	{
+		ko_signal();
 		exec_node = handle_redirections(ast, heap);
 		if (execute_builtin(exec_node, heap))
 			(cleanup(heap), exit(heap->exit_status));
@@ -53,6 +55,7 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 			(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 	}
 	waitpid(pid, &status, 0);
+	init_signal();
 	if (WIFEXITED(status)) //ステータスを解析
 		heap->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
@@ -69,11 +72,13 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 
 	if (pipe(pipefd) == -1)
 		(perror("pipe"), cleanup(heap), exit(1)); // パイプ作成失敗は致命的
+	oya_signal();
 	pid_left = fork(); // 1. 左側の子プロセス (パイプに書き込む側)
 	if (pid_left == -1)
 		(perror("fork"), cleanup(heap), exit(1));
 	if (pid_left == 0)
 	{
+		ko_signal();
 		change_fd(pipefd, STDOUT_FILENO, pipefd[1]);
 		execute(ast->left, heap); // 左側のASTを再帰的に実行
 		(cleanup(heap), exit(heap->exit_status)); // 子プロセスをクリーンアップ
@@ -83,12 +88,14 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 		(perror("fork"), cleanup(heap), exit(1));
 	if (pid_right == 0)
 	{
+		ko_signal();
 		change_fd(pipefd, STDIN_FILENO, pipefd[0]);
 		execute(ast->right, heap); // 右側のASTを再帰的に実行
 		(cleanup(heap), exit(heap->exit_status)); // 子プロセスをクリーンアップ
 	}
 	(close(pipefd[0]), close(pipefd[1]));
 	(waitpid(pid_left, NULL, 0), waitpid(pid_right, &status, 0));
+	init_signal();
 	if (WIFEXITED(status))
 		heap->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
