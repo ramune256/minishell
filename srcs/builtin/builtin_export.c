@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export.c                                           :+:      :+:    :+:   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/10 18:22:25 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/17 05:11:08 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,36 +90,45 @@ int	overwrite_ev(int ev_cnt, char **ev, char **new_ev, char **line)
 			i++;
 		}
 		if (!skip)
-			join_error_check(new_ev, ev, k, j++);
+		{
+			if(join_error_check(new_ev, ev, k, j++))
+				return(all_free(new_ev),-1);
+		}
 		k++;
 	}
 	return (j);
 }
 
-char	**c_export(char **line, char **ev)
+char	**c_export(char **line, t_alloc *heap)
 {
-	char	**new_ev;
+	char	**res_ev;
 	int		i;
 	int		j;
 	int		ev_cnt;
 
 	ev_cnt = 0;
-	while (ev[ev_cnt])
+	while (heap->new_ev[ev_cnt])
 		ev_cnt++;
-	new_ev = malloc(sizeof(char *) * (malloc_cnt(line, ev) + 1));
-	if (!new_ev)
-		error(NULL, "export_newev_malloc_error\n", NULL, 2);
-	j = overwrite_ev(ev_cnt, ev, new_ev, line);
+	res_ev = malloc(sizeof(char *) * (malloc_cnt(line, heap->new_ev) + 1));
+	if (!res_ev)
+		return (1);
+	j = overwrite_ev(ev_cnt, heap->new_ev, res_ev, line);
+	if(j == -1)
+		return (1);
 	i = CMD + 1;
 	while (line[i])
 	{
 		if (dup_check_for_export(line, i) == true)
-			join_error_check(new_ev, line, i, j++);
+		{
+			if(join_error_check(res_ev, line, i, j++))
+				return (all_free(res_ev),1);
+		}
 		i++;
 	}
-	new_ev[j] = NULL;
-	new_ev = sort(new_ev);
+	res_ev[j] = NULL;
+	res_ev = sort(res_ev);
 	if (!line[CMD + 1])
-		c_check(line[0], new_ev);
-	return (new_ev);
+		c_check(line[0], res_ev);
+	heap->new_ev = res_ev;
+	return (0);
 }
