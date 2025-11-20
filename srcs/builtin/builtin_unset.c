@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/17 04:40:54 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/20 15:03:02 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,55 +32,50 @@ static bool	unset_arg_skip(char **line, char **ev, int j)
 	return (false);
 }
 
-void  input_new_ev(char **line, char **ev, char **new_ev)
-{
-	int		i;
-	int		j;
-	char	*new_line;
-
-	i = 0;
-	j = 0;
-	new_line = NULL;
-	while (ev[j])
-	{
-		if (unset_arg_skip(line, ev, j) == true)
-		{
-			(void)(j++, i++);
-			if (!ev[j])
-				break ;
-		}
-		if (!ft_strncmp(ev[j], "_=", 2))
-			break ;
-		new_line = ft_strdup(ev[j]);
-		if (!new_line)
-		{
-//			all_free(new_ev); freeしていいのかわからない
-			return 1;
-		}
-		new_ev[j - i] = new_line;
-		j++;
-	}
-	new_ev[j - i] = NULL;
-	return 0;
-}
-
-char	**c_unset(char **line, t_alloc *heap)
+static int	input_new_ev(char **line, t_alloc *heap)
 {
 	char	**res_ev;
-	int		j;
 	int		i;
+	int		j;
 
-	res_ev = NULL;
 	i = 0;
 	j = 0;
-	while (heap->new_ev[j])
+	res_ev = ft_calloc(j - i + 1, sizeof(char *));
+	if (!res_ev)
+		(cleanup(heap), exit(1));
+	while (heap->ev_clone[j])
 	{
-		if (unset_arg_skip(line, heap->new_ev, j) == true)
+		if (unset_arg_skip(line, heap->ev_clone, j) == true)
+		{
+			(void)(j++, i++);
+			if (!heap->ev_clone[j])
+				break ;
+		}
+		if (!ft_strncmp(heap->ev_clone[j], "_=", 2))
+			break ;
+		res_ev[j - i] = ft_strdup(heap->ev_clone[j]);
+		if (!res_ev[j - i])
+			(free_2d_array(&res_ev), cleanup(heap), exit(1));
+		j++;
+	}
+	res_ev[j - i] = NULL;
+	free_2d_array(&(heap->ev_clone));
+	heap->ev_clone = res_ev;
+	return (0);
+}
+
+int	c_unset(char **line, t_alloc *heap)
+{
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	while (heap->ev_clone[j])
+	{
+		if (unset_arg_skip(line, heap->ev_clone, j) == true)
 			i++;
 		j++;
 	}
-	res_ev = malloc(sizeof(char *) * (j - i + 1));
-	if (!res_ev)
-		return(1);
-	return (input_new_ev(line, heap->new_ev, res_ev));
+	return (input_new_ev(line, heap));
 }

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils_error.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:54:33 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/16 20:47:25 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/20 15:29:51 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-void	error(char *bash, char *mess, char **line)
+void	error(char *bash, char *mess, char **line, int exit_num)
 {
 	if (line)
 		free_all(line);

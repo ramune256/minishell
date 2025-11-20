@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 20:48:31 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/17 05:04:44 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/20 15:02:35 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ char	**c_cd(char **line, t_alloc *heap)
 	pwd.f_new_pwd = 1;
 	pwd.f_old_pwd = 1;
 	ft_memcpy(&pwd, &(t_pwd){0}, sizeof(t_pwd));
-	pwd.ev = heap->new_ev;
+	pwd.ev = heap->ev_clone;
 	while (ev[ev_len])
 		ev_len++;
 	if (line[CMD + 2] && line[CMD + 1])
@@ -114,7 +114,7 @@ char	**c_cd(char **line, t_alloc *heap)
 		return(t_pwd_free(&pwd),1);
 	if(change_pwd(&pwd))
 		return 1;
-	heap->new_ev = pwd.new_ev;
+	heap->ev_clone = pwd.new_ev;
 	t_pwd_free(pwd);
 	return (0);
 }

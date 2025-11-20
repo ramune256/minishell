@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/15 16:58:02 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:39:05 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	free_ast(t_cmd *cmd)
 	if (!cmd)
 		return;
 	if (cmd->type == NODE_EXEC)
-		free_2d_array(cmd->argv);
+		free_2d_array(&(cmd->argv));
 	else if (cmd->type == NODE_PIPE)
 	{
 		free_ast(cmd->left);

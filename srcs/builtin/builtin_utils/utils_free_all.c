@@ -6,21 +6,21 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 21:11:48 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/14 19:09:29 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:18:35 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
+// #include "builtin.h"
 
-void	free_all(char **res)
-{
-	int	i;
+// void	free_all(char **res)
+// {
+// 	int	i;
 
-	i = 0;
-	while (res[i])
-	{
-		free(res[i]);
-		i++;
-	}
-	free(res);
-}
+// 	i = 0;
+// 	while (res[i])
+// 	{
+// 		free(res[i]);
+// 		i++;
+// 	}
+// 	free(res);
+// }

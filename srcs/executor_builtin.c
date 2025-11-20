@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_builtin.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:00:39 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/16 06:05:58 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/11/20 14:14:10 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,15 @@ bool	is_parent_builtin(t_cmd *ast)
 	cmd = ast->argv[0];
 	if (cmd == NULL)
 		return (false);
-	if (ft_strncmp(cmd, "cd", 2) == 0)
-		heap->exit_status = c_cd(exec_node->argv, heap);
-	else if (ft_strncmp(cmd, "exit", 4) == 0)
-		heap->exit_status = c_exit(exec_node->argv, heap);
-	else if (ft_strncmp(cmd, "export", 6) == 0 && ast->argv[1] != NULL)
-		heap->exit_status = c_export(exec_node->argv, heap); // 引数ありのexport
-	else if (ft_strncmp(cmd, "unset", 5) == 0)
-		heap->exit_status = c_unset(exec_node->argv, heap);
-	else
-		return (false);
-	return (true);
+	if (ft_strcmp(cmd, "cd") == 0)
+		return (true);
+	if (ft_strcmp(cmd, "exit") == 0)
+		return (true);
+	if (ft_strcmp(cmd, "export") == 0 && ast->argv[1] != NULL)
+		return (true); // 引数ありのexport
+	if (ft_strcmp(cmd, "unset") == 0)
+		return (true);
+	return (false);
 }
 
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
@@ -45,10 +43,20 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 	if (!cmd)
 		return (0);
 
-	if (ft_strcmp(cmd, "pwd") == 0) //←ft_strncmpじゃなくてft_strcmpにした
-		heap->exit_status = c_pwd(exec_node->argv, heap);
+	if (ft_strcmp(cmd, "cd") == 0) //←ft_strncmpじゃなくてft_strcmpにした
+		heap->exit_status = c_cd(exec_node->argv, heap);
 	else if (ft_strcmp(cmd, "echo") == 0)
 		heap->exit_status = c_echo(exec_node->argv, heap);
+	else if (ft_strcmp(cmd, "env") == 0)
+		heap->exit_status = c_env(exec_node->argv, heap);
+	else if (ft_strcmp(cmd, "exit") == 0)
+		heap->exit_status = c_exit(exec_node->argv, heap);
+	else if (ft_strcmp(cmd, "export") == 0)
+		heap->exit_status = c_export(exec_node->argv, heap);
+	else if (ft_strcmp(cmd, "pwd") == 0)
+		heap->exit_status = c_pwd(exec_node->argv, heap);
+	else if (ft_strcmp(cmd, "unset") == 0)
+		heap->exit_status = c_unset(exec_node->argv, heap);
 	else
 		return (false); // ビルトインではなかった
 
