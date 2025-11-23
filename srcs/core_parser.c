@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 18:49:01 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 16:31:32 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,13 @@ static t_cmd	*parse_exec_node(t_token **tokens, t_alloc *heap)
 {
 	t_cmd	*cmd;
 	int		argc;
-	t_token *start;
 	int		i;
 
 	argc = 0;
-	start = *tokens;
-	while (start && start->type == TOKEN_WORD)
+	while (*tokens && (*tokens)->type == TOKEN_WORD)
 	{
 		argc++;
-		start = start->next;
+		*tokens = (*tokens)->next;
 	}
 	if (argc == 0) // WORDがなければ EXECノード は作らない
 		return (NULL);

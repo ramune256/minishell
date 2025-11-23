@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/20 16:06:29 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/24 00:12:35 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@
 # include <unistd.h>
 # include "minishell.h"
 
-typedef struct s_pwd
-{
-	char	**ev;
-	char	**new_ev;
-	char	*new_pwd;
-	char	*old_pwd;
-	int		f_new_pwd;
-	int		f_old_pwd;
-}			t_pwd;
+// typedef struct s_pwd
+// {
+// 	char	**ev;
+// 	char	**new_ev;
+// 	char	*new_pwd;
+// 	char	*old_pwd;
+// 	int		f_new_pwd;
+// 	int		f_old_pwd;
+// }			t_pwd;
 
 //-----main---------
 // char		**built_in_check(char **line, char **ev);
@@ -66,7 +66,8 @@ size_t		get_key_len(char *str);
 size_t		get_arr_size(char **arr);
 void		sort_str_array(char **arr, size_t size);
 int			print_formatted_env(char *env_str);
+void		update_env(char *arg, t_alloc *heap);
 
-char		*serch_get_env(char **ev, char *serch);
+char		*search_get_env(char **ev, char *serch);
 
 #endif

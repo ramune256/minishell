@@ -6,12 +6,11 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/20 16:02:03 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/24 00:07:39 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
-#include "minishell.h"
 
 static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 {
@@ -63,7 +62,7 @@ static void	append_ev(char *arg, int count, t_alloc *heap)
 	heap->ev_clone = new_ev;
 }
 
-static void	update_env(char *arg, t_alloc *heap)
+void	update_env(char *arg, t_alloc *heap)
 {
 	char	*new_str;
 	size_t	key_len;
@@ -104,9 +103,7 @@ int	c_export(char **argv, t_alloc *heap)
 	{
 		if (!is_valid_identifier(argv[i]))
 		{
-			ft_putstr_fd("minishell: export: `", 2);
-			ft_putstr_fd(argv[i], 2);
-			ft_putstr_fd("': not a valid identifier\n", 2);
+			fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", argv[i]);
 			status = 1;
 		}
 		else
