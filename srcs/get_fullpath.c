@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 18:59:11 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:59:11 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 	{
 		fullpath = join_path(bin_dir[i], cmd_name);
 		if (!fullpath)
-			(free_2d_array(bin_dir), cleanup(heap), exit(1));
+			(free_2d_array(&bin_dir), cleanup(heap), exit(1));
 		if (access(fullpath, F_OK) == 0)
 		{
 			if (access(fullpath, X_OK) == 0)
@@ -89,12 +89,12 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 		fullpath = check_absolute_path(cmd_name, heap);
 		return (fullpath);
 	}
-	envp_path = find_envp_path(heap->new_ev);
+	envp_path = find_envp_path(heap->ev_clone);
 	if (!envp_path)
 		return (NULL);
 	bin_dir = ft_split(envp_path, ':');
 	if (!bin_dir)
 		(cleanup(heap), exit(1));
 	fullpath = check_path_and_perm(bin_dir, cmd_name, heap);
-	return (free_2d_array(bin_dir), fullpath);
+	return (free_2d_array(&bin_dir), fullpath);
 }

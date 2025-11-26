@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/15 17:30:18 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:59:52 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	cleanup(t_alloc *alloc)
 	free_tokens(alloc->head);
 	free_ast(alloc->ast);
 	cleanup_temp_files(&alloc->temp_files);
-	free_2d_array(alloc->new_ev);
+	free_2d_array(&(alloc->ev_clone));
 	ft_bzero(alloc, sizeof(t_alloc));
 }
 
@@ -68,17 +68,19 @@ void	print_exit(void)
 		printf("exit\n");
 }
 
-void	free_2d_array(char **array)
+void	free_2d_array(char ***array)
 {
 	size_t	i;
 
-	if (!array)
+	if (!array || !*array)
 		return ;
 	i = 0;
-	while (array[i])
+	while ((*array)[i])
 	{
-		free(array[i]);
+		free((*array)[i]);
+		(*array)[i] = NULL;
 		i++;
 	}
-	free(array);
+	free(*array);
+	*array = NULL;
 }

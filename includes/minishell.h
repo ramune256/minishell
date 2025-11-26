@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/15 17:31:42 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:13:58 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ typedef struct s_alloc
 	t_token	*head;
 	t_cmd	*ast;
 	t_list	*temp_files;
-	char	**new_ev; //←cleanupの必要あり
+	char	**ev_clone;
 	int		exit_status;
 }	t_alloc;
 
@@ -119,7 +119,7 @@ int		ft_strcmp(const char *s1, const char *s2);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
 void	print_exit(void);
-void	free_2d_array(char **array);
+void	free_2d_array(char ***array);
 
 //initialize
 void	clone_ev(char **ev, t_alloc *heap);
