@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 20:48:31 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/24 00:43:08 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/26 22:13:46 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,42 +119,60 @@
 
 #include "builtin.h"
 
-void	update_pwd(const char *var, char *pwd, t_alloc *heap)
+static void	update_pwd(const char *var, char *pwd, t_alloc *heap)
 {
 	char	*tmp;
 
-	if (pwd)
+	if (!pwd)
+		return ;
+	tmp = ft_strjoin(var, pwd);
+	free(pwd);
+	if (!tmp)
+		(cleanup(heap), exit(1));
+	update_env(tmp, heap);
+	free(tmp);
+}
+
+static char	*get_dest_path(char *first_arg, char **ev)
+{
+	char	*result;
+
+	if (!first_arg) // cdのみ: HOMEへ, cd path: pathへ
 	{
-		tmp = ft_strjoin(var, pwd);
-		free(pwd);
-		if (!tmp)
-			(cleanup(heap), exit(1));
-		update_env(tmp, heap);
-		free(tmp);
+		result = search_get_env(ev, "HOME");
+		if (!result)
+			return (ft_fprintf(stderr, "minishell: cd: HOME not set\n"), NULL);
 	}
-	else if (ft_strncmp(var, "PWD=", 4))
-		ft_putstr_fd("minishell: cd: error retrieving current directory\n", 2);
-	// getcwdが失敗した場合(移動先のディレクトリが削除された場合など) エラーメッセージを出しつつも、chdir自体は成功しているので0を返すことも多い
+	else if (ft_strcmp(first_arg, "-") == 0) // ★ cd - の対応
+	{
+		result = search_get_env(ev, "OLDPWD");
+		if (!result)
+			return (ft_fprintf(stderr, "minishell: cd: OLDPWD not set\n"), NULL);
+		printf("%s\n", result); // bashは移動先を表示する
+	}
+	else
+		result = first_arg;
+	return (result);
 }
 
 int	c_cd(char **argv, t_alloc *heap)
 {
 	char	*dest_path;
 	char	*oldpwd;
+	char	*newpwd;
 
-	if (!argv[1]) // cdのみ: HOMEへ, cd path: pathへ
-	{
-		dest_path = search_get_env(heap->ev_clone, "HOME");
-		if (!dest_path)
-			return (ft_putstr_fd("minishell: cd: HOME not set\n", 2), 1);
-	}
-	else
-		dest_path = argv[1];
+	if (argv[1] && argv[2])
+		return (ft_fprintf(stderr, "minishell: cd: too many arguments\n"), 1);
+	dest_path = get_dest_path(argv[1], heap->ev_clone);
+	if (!dest_path)
+		return (1);
 	oldpwd = getcwd(NULL, 0);
-	// (getcwd失敗時のハンドリング追加、NULLなら空文字にする等)
 	if (chdir(dest_path) == -1)
 		return (perror("minishell: cd"), free(oldpwd), 1);
+	newpwd = getcwd(NULL, 0);
+	if (!newpwd)
+		ft_fprintf(stderr, "minishell: cd: error retrieving current directory\n");
 	update_pwd("OLDPWD=", oldpwd, heap);
-	update_pwd("PWD=", getcwd(NULL, 0), heap);
+	update_pwd("PWD=", newpwd, heap);
 	return (0);
 }
