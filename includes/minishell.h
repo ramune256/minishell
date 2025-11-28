@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 15:13:58 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/29 00:34:04 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,9 @@ typedef struct s_alloc
 // }	t_error;
 
 //tokenizer
-void	tokenize(t_alloc *alloc, char *line);
+void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
+bool	is_metachar(char c);
 
 //parser
 void	parse(t_alloc *heap);
