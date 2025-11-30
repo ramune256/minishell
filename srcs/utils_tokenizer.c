@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_serch.c                                      :+:      :+:    :+:   */
+/*   utils_tokenizer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 18:15:32 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/24 00:12:22 by shunwata         ###   ########.fr       */
+/*   Created: 2025/11/29 00:32:53 by shunwata          #+#    #+#             */
+/*   Updated: 2025/11/29 00:34:08 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
+#include "minishell.h"
 
-char	*search_get_env(char **ev, char *serch)
+void	free_tokens(t_token *token)
 {
-	int		i;
-	size_t	len;
-
-	i = 0;
-	len = ft_strlen(serch);
-	while (ev[i])
+	t_token	*tmp;
+	while (token)
 	{
-		if (!ft_strncmp(ev[i], serch, len))
-		{
-			if (ev[i][len] == '=')
-				return (ev[i] + len + 1);
-		}
-		i++;
+		tmp = token->next;
+		free(token->value);
+		free(token);
+		token = tmp;
 	}
-	return (NULL);
+}
+
+bool	is_metachar(char c)
+{
+	return (c == '|' || c == '<' || c == '>');
 }

@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 18:36:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 14:59:44 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 17:29:37 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	clone_ev(char **ev, t_alloc *heap)
 	while (ev[i])
 		i++;
 	heap->ev_clone = ft_calloc(i + 1, sizeof(char *));
-	if (heap->ev_clone)
+	if (!heap->ev_clone)
 		(cleanup(heap), exit(1));
 	i = 0;
 	while (ev[i])

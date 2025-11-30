@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 15:13:58 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:36:49 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_alloc
 	t_list	*temp_files;
 	char	**ev_clone;
 	int		exit_status;
+	bool	success;
 }	t_alloc;
 
 // typedef enum e_split_err
@@ -89,8 +90,9 @@ typedef struct s_alloc
 // }	t_error;
 
 //tokenizer
-void	tokenize(t_alloc *alloc, char *line);
+void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
+bool	is_metachar(char c);
 
 //parser
 void	parse(t_alloc *heap);

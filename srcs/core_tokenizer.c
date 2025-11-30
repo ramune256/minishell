@@ -6,29 +6,11 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2025/10/29 17:25:47 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:16:39 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_tokens(t_token *token)
-{
-	t_token	*tmp;
-	while (token)
-	{
-		tmp = token->next;
-		free(token->value);
-		free(token);
-		token = tmp;
-	}
-}
-
-// メタ文字かどうかを判定
-static bool is_metachar(char c)
-{
-	return (c == '|' || c == '<' || c == '>');
-}
 
 //新しいトークンを作って連結リストの後ろに追加
 static void	append_token(t_alloc *heap, t_token_type token_type, char *value)
@@ -53,12 +35,70 @@ static void	append_token(t_alloc *heap, t_token_type token_type, char *value)
 	tmp->next = new_token;
 }
 
-void	tokenize(t_alloc *heap, char *line)
+static void	join_lines(t_alloc *heap, char *new_line)
+{
+	char	*tmp;
+	char	*joined;
+
+	if (isatty(STDIN_FILENO))
+	{
+		tmp = ft_strjoin(heap->line, "\n");
+		if (!tmp)
+			(free(new_line), cleanup(heap), exit(1));
+		joined = ft_strjoin(tmp, new_line);
+		free(tmp);
+	}
+	else
+		joined = ft_strjoin(heap->line, new_line);
+	if (!joined)
+		(free(new_line), cleanup(heap), exit(1));
+	free(heap->line);
+	heap->line = joined;
+}
+
+static bool	append_input(t_alloc *heap)
+{
+	char	*new_line;
+
+	get_input(&new_line, "> ");
+	if (new_line == NULL)
+	{
+		heap->exit_status = 2;
+		return (false);
+	}
+	join_lines(heap, new_line);
+	free(new_line);
+	return (true);
+}
+
+static bool	process_quotes(char *line, int *i)
+{
+	char	quote;
+
+	quote = 0;
+	while (line[*i])
+	{
+		if (quote == 0 && (line[*i] == '\'' || line[*i] == '\"'))
+			quote = line[*i];
+		else if (quote != 0 && line[*i] == quote)
+			quote = 0;
+		if (quote == 0 && (ft_strchr(" \t\n", line[*i]) || is_metachar(line[*i])))
+			break ;
+		(*i)++;
+	}
+	if (quote != 0)
+		return (false);
+	return (true);
+}
+
+void	tokenize(t_alloc *heap)
 {
 	int		i;
 	int		start;
+	char	*line;
 
 	i = 0;
+	line = heap->line;
 	while (line[i])
 	{
 		while (line[i] && ft_strchr(" \t\n", line[i])) //空白・タブ・改行を読み飛ばす
@@ -78,8 +118,19 @@ void	tokenize(t_alloc *heap, char *line)
 		else
 		{
 			start = i;
-			while (line[i] && !ft_strchr(" \t\n", line[i]) && !is_metachar(line[i]))
-				i++;
+			if (!process_quotes(line, &i))
+			{
+				if (!append_input(heap))
+				{
+					free_tokens(heap->head);
+					heap->head = NULL;
+					return ;
+				}
+				free_tokens(heap->head);
+				heap->head = NULL;
+				tokenize(heap);
+				return ;
+			}
 			append_token(heap, TOKEN_WORD, ft_strndup(line + start, i - start));
 		}
 	}

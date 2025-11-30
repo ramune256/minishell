@@ -6,50 +6,69 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:39:12 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/14 19:09:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:54:37 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-static bool	ft_overflow(long long res, char *st, int neg)
+static void	skip_spaces(const char **s)
 {
-	if (neg == 1)
-	{
-		if ((LLONG_MAX / 10 < res) || (LLONG_MAX / 10 == res && 7 < *st - 0x30))
-			return (false);
-	}
-	else
-	{
-		if ((LLONG_MAX / 10 < res) || (LLONG_MAX / 10 == res && 8 < *st - 0x30))
-			return (false);
-	}
-	return (true);
+	while (**s == ' ' || (**s >= 9 && **s <= 13))
+		(*s)++;
 }
 
-long long	ft_atol(char *st, int *error)
+static bool	check_overflow(unsigned long long res, int next_digit, int sign)
 {
-	int					neg;
-	unsigned long long	res;
+	unsigned long long	cutoff;
+	int					cutlim;
 
-	neg = 1;
+	// LLONG_MAX = 9223372036854775807
+	cutoff = LLONG_MAX / 10; // 922337203685477580
+	cutlim = LLONG_MAX % 10; // 7
+	// 負の数の場合、絶対値は LLONG_MIN (9223372036854775808) までOKなので
+	// 最後の桁の許容値は 8 になる
+	if (sign == -1)
+		cutlim += 1;
+	// 1. 既にcutoffを超えているなら、次の一桁を足すと確実に溢れる
+	if (res > cutoff)
+		return (true);
+	// 2. cutoffと同じ値なら、最後の桁が許容値を超えていないかチェック
+	if (res == cutoff && next_digit > cutlim)
+		return (true);
+	return (false);
+}
+
+long long	set_error_flag(bool *error)
+{
+	*error = true;
+	return (1);
+}
+
+long long	ft_atol(const char *str, bool *error)
+{
+	unsigned long long	res;
+	int					sign;
+
 	res = 0;
-	while (*st == '0')
-		st++;
-	if (*st == '+' || *st == '-')
+	sign = 1;
+	skip_spaces(&str);
+	if (*str == '+' || *str == '-')
 	{
-		if (*st == '-')
-			neg = -1;
-		st++;
+		if (*str == '-')
+			sign = -1;
+		str++;
 	}
-	while ('0' <= *st && *st <= '9')
+	if (!(*str >= '0' && *str <= '9'))
+		return (set_error_flag(error));
+	while (*str >= '0' && *str <= '9')
 	{
-		if (ft_overflow(res, st, neg) == false)
-			return (*error = 1);
-		res = res * 10 + (*st - '0');
-		st++;
+		if (check_overflow(res, *str - '0', sign))
+			return (set_error_flag(error));
+		res = res * 10 + (*str - '0');
+		str++;
 	}
-	if (!(('0' <= *st && *st <= '9') || *st == '\0'))
-		return (*error = 1);
-	return (neg * res);
+	if (*str != '\0')
+		return (set_error_flag(error));
+	return ((long long)(res * sign));
 }

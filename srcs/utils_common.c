@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 14:59:52 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:54:06 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,20 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 void	cleanup(t_alloc *alloc)
 {
+	char	**ev;
+	bool	success;
+
+	ev = alloc->ev_clone;
+	success = alloc->success;
 	free(alloc->line);
 	free_tokens(alloc->head);
 	free_ast(alloc->ast);
 	cleanup_temp_files(&alloc->temp_files);
-	free_2d_array(&(alloc->ev_clone));
+	if (success == false)
+		free_2d_array(&(alloc->ev_clone));
 	ft_bzero(alloc, sizeof(t_alloc));
+	if (success == true)
+		alloc->ev_clone = ev;
 }
 
 void	get_input(char **line, const char *message)
@@ -65,7 +73,7 @@ void	get_input(char **line, const char *message)
 void	print_exit(void)
 {
 	if (isatty(STDIN_FILENO))
-		printf("exit\n");
+		fprintf(stderr, "exit\n");
 }
 
 void	free_2d_array(char ***array)

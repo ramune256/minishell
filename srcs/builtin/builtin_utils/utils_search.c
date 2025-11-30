@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_pwd.c                                      :+:      :+:    :+:   */
+/*   utils_search.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/13 17:02:45 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/30 17:22:51 by shunwata         ###   ########.fr       */
+/*   Created: 2025/11/10 18:15:32 by nmasuda           #+#    #+#             */
+/*   Updated: 2025/11/30 15:49:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin.h"
 
-int	c_pwd(char **line, t_alloc *heap)
+char	*search_get_env(char **ev, char *serch)
 {
-	char	*tmp;
+	int		i;
+	size_t	len;
 
-	(void)line;
-	tmp = search_get_env(heap->ev_clone, "PWD");
-	if (!tmp)
-		return (1);
-	if (printf("%s\n", tmp) == ERROR)
-		return (1);
-	return (0);
+	i = 0;
+	len = ft_strlen(serch);
+	while (ev[i])
+	{
+		if (!ft_strncmp(ev[i], serch, len))
+		{
+			if (ev[i][len] == '=')
+				return (ev[i] + len + 1);
+		}
+		i++;
+	}
+	return (NULL);
 }

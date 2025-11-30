@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:37 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/20 16:05:02 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:13:50 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	c_env(char **line, t_alloc *heap)
 
 	(void)line;
 	if (!heap->ev_clone)
-		return ;
+		return (1);
 	i = 0;
 	while (heap->ev_clone[i])
 	{
