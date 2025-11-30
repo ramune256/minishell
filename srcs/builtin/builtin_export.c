@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/26 21:23:21 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:02:38 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	c_export(char **argv, t_alloc *heap)
 	{
 		if (!is_valid_identifier(argv[i]))
 		{
-			ft_fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", argv[i]);
+			fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", argv[i]); //ft_fprintf
 			status = 1;
 		}
 		else

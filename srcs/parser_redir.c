@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:07:35 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/26 21:23:17 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:01:48 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
 
 	// 2. 次がファイル名でなければ構文エラー
 	if ((*tokens)->type != TOKEN_WORD)
-		return (ft_fprintf(stderr, "minishell: syntax error near unexpected token\n"), free_ast(cmd), NULL); // 渡されたノードを解放する責任を持つ
+		return (fprintf(stderr, "minishell: syntax error near unexpected token\n"), free_ast(cmd), NULL); // 渡されたノードを解放する責任を持つ //ft_fprintf
 
 	// 3. ファイル名（または区切り文字）を複製・消費
 	filename = ft_strdup((*tokens)->value);

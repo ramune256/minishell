@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/26 21:23:07 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:01:27 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 	{
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
-			return (free_ast(cmd), ft_fprintf(stderr, "minishell: syntax error\n"), NULL);
+			return (free_ast(cmd), fprintf(stderr, "minishell: syntax error\n"), NULL); //ft_fprintf
 		right = parse_pipeline(tokens, heap);
 		if (!right)
 			return (free_ast(cmd), NULL);
@@ -111,7 +111,7 @@ void	parse(t_alloc *heap)
 	heap->ast = parse_pipeline(&tokens, heap);
 	if (tokens->type != TOKEN_EOF)
 	{
-		ft_fprintf(stderr, "minishell: syntax error\n");
+		fprintf(stderr, "minishell: syntax error\n"); //ft_fprintf
 		free_ast(heap->ast);
 		heap->ast = NULL;
 	}
