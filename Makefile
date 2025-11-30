@@ -6,15 +6,14 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/11/30 15:50:23 by shunwata         ###   ########.fr        #
+#    Updated: 2025/11/30 15:59:34 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= minishell
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra -Werror -I $(INC_DIR) -I $(L_INC_DIR) -I $(PRINTF_DIR) -I $(GNL_DIR)
 LIBS		= -lreadline -lhistory
-INCLUDES	= -I $(INC_DIR) -I $(L_INC_DIR) -I $(PRINTF_DIR) -I $(GNL_DIR)
 
 INC_DIR		= includes
 SRC_DIR		= srcs
@@ -48,7 +47,7 @@ OBJS		= $(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(INCLUDES) $(OBJS) $(LIBFT) $(LIBS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LIBS) -o $(NAME)
 
 $(LIBFT):
 	$(MAKE) -C $(LIBFT_DIR) bonus
