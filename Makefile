@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/11/30 15:59:34 by shunwata         ###   ########.fr        #
+#    Updated: 2025/11/30 16:08:02 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,20 +27,18 @@ L_SRC_DIR	= $(LIBFT_DIR)/srcs
 PRINTF_DIR	= $(L_SRC_DIR)/ft_printf
 GNL_DIR		= $(L_SRC_DIR)/get_next_line
 
-MAIN_SRC	= core_executor.c core_parser.c core_tokenizer.c debug.c \
-				executor_builtin.c executor_heredoc.c get_fullpath.c \
-				init.c main.c parser_redir.c put_err.c split_improved.c \
-				utils_common.c utils_executor.c utils_parser.c utils_tokenizer.c
+MAIN_SRC	= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
+				core_tokenizer.c debug.c executor_builtin.c executor_heredoc.c \
+				get_fullpath.c init.c main.c parser_redir.c put_err.c split_improved.c \
+				utils_common.c utils_executor.c utils_parser.c utils_tokenizer.c)
 
-BUILTIN_SRC	= builtin_cd.c builtin_echo.c builtin_env.c builtin_exit.c \
-				builtin_export.c builtin_main.c builtin_pwd.c builtin_unset.c
+BUILTIN_SRC	= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c builtin_exit.c \
+				builtin_export.c builtin_main.c builtin_pwd.c builtin_unset.c)
 
-B_UTILS_SRC	= utils_check.c utils_error.c utils_export.c utils_free_all.c \
-				utils_ft_atol.c utils_ft_export_strjoin.c utils_search.c
+B_UTILS_SRC	= $(addprefix $(B_UTILS_DIR)/, utils_check.c utils_error.c utils_export.c utils_free_all.c \
+				utils_ft_atol.c utils_ft_export_strjoin.c utils_search.c)
 
-SRCS		= $(addprefix $(SRC_DIR)/, $(MAIN_SRC)) \
-				$(addprefix $(BUILTIN_DIR)/, $(BUILTIN_SRC)) \
-				$(addprefix $(B_UTILS_DIR)/, $(B_UTILS_SRC))
+SRCS		= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
 
 OBJS		= $(SRCS:.c=.o)
 
