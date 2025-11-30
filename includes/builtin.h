@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/24 00:12:35 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:36:51 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ int		c_export(char **line, t_alloc *heap);
 int		c_cd(char **line, t_alloc *heap);
 
 //-----仮置系--------
-void		error(char *bash, char *mess, char **line, int exit_num);
+// void		error(char *bash, char *mess, char **line, int exit_num);
 // void		c_check(char *bash, char **check);
 // void		free_all(char **res);
 
 //-----utils---------
-long long	ft_atol(char *st, int *error);
+long long	ft_atol(char *st, bool *error);
 // char		*ft_export_strjoin(char const *s1, char const *s2);
 // size_t		ev_strlen(char *line);
 // char		**change(char **new_ev, int i, int j);

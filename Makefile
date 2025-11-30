@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/11/30 16:08:02 by shunwata         ###   ########.fr        #
+#    Updated: 2025/11/30 16:12:40 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ LIBS		= -lreadline -lhistory
 
 INC_DIR		= includes
 SRC_DIR		= srcs
-BUILTIN_DIR	= $(SRCS_DIR)/builtin
+BUILTIN_DIR	= $(SRC_DIR)/builtin
 B_UTILS_DIR	= $(BUILTIN_DIR)/builtin_utils
 
 LIBFT		= $(LIBFT_DIR)/libft.a

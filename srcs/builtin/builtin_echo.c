@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/14 20:00:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 16:13:09 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static bool	echo_print(char **line)
 
 int	c_echo(char **line, t_alloc *heap)
 {
+	(void)heap;
 	if (!line)
 		return (1);
 	if (!line[OPT])

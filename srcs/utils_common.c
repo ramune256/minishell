@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 14:59:52 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 17:00:48 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	get_input(char **line, const char *message)
 void	print_exit(void)
 {
 	if (isatty(STDIN_FILENO))
-		printf("exit\n");
+		fprintf(stderr, "exit\n");
 }
 
 void	free_2d_array(char ***array)
