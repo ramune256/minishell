@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/30 16:02:38 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 17:21:05 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,17 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 	size_t	i;
 
 	if (!ev_clone)
-		return (0);
+		return (1);
 	size = get_arr_size(ev_clone); // 配列のサイズを取得
 	sorted_ev = ft_calloc(size + 1, sizeof(char *)); //中身の文字列は複製せず、ポインタだけコピーする
 	if (!sorted_ev)
 		(cleanup(heap), exit(1));
 	i = 0;
 	while (i < size)
-		sorted_ev[i] = ev_clone[i++];
+	{
+		sorted_ev[i] = ev_clone[i];
+		i++;
+	}
 	sorted_ev[i] = NULL;
 	sort_str_array(sorted_ev, size);
 	i = 0;
