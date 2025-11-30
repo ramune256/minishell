@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/29 00:34:04 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:36:49 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct s_alloc
 	t_list	*temp_files;
 	char	**ev_clone;
 	int		exit_status;
+	bool	success;
 }	t_alloc;
 
 // typedef enum e_split_err

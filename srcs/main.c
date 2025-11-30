@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:16:27 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:38:00 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	main(int ac, char **av, char **ev)
 		}
 		else
 			print_exit();
+		heap.success = true;
 		cleanup(&heap);
 	}
 	return (0);
