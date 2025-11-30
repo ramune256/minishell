@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 17:43:40 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:16:27 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,7 @@ int	main(int ac, char **av, char **ev)
 			if (isatty(STDIN_FILENO))
 				add_history(heap.line);
 			tokenize(&heap);
-			printf("tokenized\n"); //FOR DEBUG
 			parse(&heap);
-			printf("parsed\n"); //FOR DEBUG
 			execute(heap.ast, &heap);
 		}
 		else

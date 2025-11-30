@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:06:06 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:16:39 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,6 @@ void	tokenize(t_alloc *heap)
 				return ;
 			}
 			append_token(heap, TOKEN_WORD, ft_strndup(line + start, i - start));
-			printf("%s\n", ft_strndup(line + start, i - start)); //FOR DEBUG
 		}
 	}
 	append_token(heap, TOKEN_EOF, NULL);
