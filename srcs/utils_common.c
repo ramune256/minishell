@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:48:55 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/30 23:54:06 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 void	cleanup(t_alloc *alloc)
 {
-	char	*ev;
+	char	**ev;
 	bool	success;
 
 	ev = alloc->ev_clone;
