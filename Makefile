@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
+#    By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/11/30 16:12:40 by shunwata         ###   ########.fr        #
+#    Updated: 2025/12/04 13:43:56 by nmasuda          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ GNL_DIR		= $(L_SRC_DIR)/get_next_line
 
 MAIN_SRC	= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 				core_tokenizer.c debug.c executor_builtin.c executor_heredoc.c \
-				get_fullpath.c init.c main.c parser_redir.c put_err.c split_improved.c \
+				get_fullpath.c init.c main.c parser_redir.c put_err.c signal.c split_improved.c \
 				utils_common.c utils_executor.c utils_parser.c utils_tokenizer.c)
 
 BUILTIN_SRC	= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c builtin_exit.c \

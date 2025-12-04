@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:38:00 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/04 17:02:13 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "minishell_signal.h"
 
 int	main(int ac, char **av, char **ev)
 {
@@ -19,6 +20,7 @@ int	main(int ac, char **av, char **ev)
 	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));
 	clone_ev(ev, &heap);
+	init_signal();
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
@@ -31,7 +33,15 @@ int	main(int ac, char **av, char **ev)
 			execute(heap.ast, &heap);
 		}
 		else
-			print_exit();
+		{
+			if(g_signal_flag == 0)
+				print_exit();
+			else
+			{
+				heap.exit_status = 130; 
+				g_signal_flag = 0;
+			}
+		}
 		heap.success = true;
 		cleanup(&heap);
 	}
