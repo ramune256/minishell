@@ -17,6 +17,11 @@ static void	handler(int signal)//引数返り値固定 int main(void) みたい�
 void init_signal(void)
 {
 	struct sigaction	sa;
+	struct termios      term;
+
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~ECHOCTL;
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
 
 	sigemptyset(&sa.sa_mask);//デフォルトである構造体の中身を空に
 	sa.sa_handler = handler;//signalが来た場合どこの関数にsignalが来たよーってするかの設定
@@ -31,13 +36,13 @@ void init_signal(void)
 
 
 //修正
-void ko_signal(void)
+void kid_signal(void)
 {
 	signal(SIGINT,SIG_DFL);//cntrl-Cを標準動作に
     signal(SIGQUIT,SIG_IGN);
 }
 
-void oya_signal(void)
+void par_signal(void)
 {
 	signal(SIGINT,SIG_IGN);//cntrl-Cを無視設定に
     signal(SIGQUIT,SIG_IGN);

@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/04 17:02:13 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/04 19:33:50 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ int	main(int ac, char **av, char **ev)
 		else
 		{
 			if(g_signal_flag == 0)
+			{
 				print_exit();
+				break;
+			}
 			else
 			{
 				heap.exit_status = 130; 
