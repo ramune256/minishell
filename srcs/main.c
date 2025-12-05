@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/04 20:02:13 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/04 20:40:55 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	main(int ac, char **av, char **ev)
 				add_history(heap.line);
 			tokenize(&heap);
 			parse(&heap);
+			expander(heap.ast,&heap);
 			execute(heap.ast, &heap);
 		}
 		else
