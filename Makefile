@@ -6,7 +6,7 @@
 #    By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/04 13:43:56 by nmasuda          ###   ########.fr        #
+#    Updated: 2025/12/05 16:41:40 by nmasuda          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ L_SRC_DIR	= $(LIBFT_DIR)/srcs
 PRINTF_DIR	= $(L_SRC_DIR)/ft_printf
 GNL_DIR		= $(L_SRC_DIR)/get_next_line
 
-MAIN_SRC	= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
+MAIN_SRC	= $(addprefix $(SRC_DIR)/, core_executor.c core_expander.c core_parser.c \
 				core_tokenizer.c debug.c executor_builtin.c executor_heredoc.c \
 				get_fullpath.c init.c main.c parser_redir.c put_err.c signal.c split_improved.c \
 				utils_common.c utils_executor.c utils_parser.c utils_tokenizer.c)
