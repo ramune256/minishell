@@ -92,7 +92,8 @@ void expander(t_cmd *ast, t_alloc *heap)
 int	main(int ac, char **av, char **ev)
 {
 	(void)ac;
-	for (int i = 1; av[i]; i++)
+    int i = 1;
+	while(av[i])
 	{
 		char *cur = strdup(av[i]);
 		if (!cur)
@@ -163,6 +164,7 @@ int	main(int ac, char **av, char **ev)
 				j = saisyo + 1;
 		}
 		av[i] = cur;
+        i++;
 	}
 	return (0);
 }
