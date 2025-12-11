@@ -1,26 +1,37 @@
 
 #include "minishell.h"
 
-char *tenkai(char *line,char **ev,char * exit_status,int j,int *ev_len)
+char	*tenkai(char *line, char **ev, char *exit_status, int j, int *ev_len)
 {
-    int i = 1;
-    int cnt = 0;
-    int line_len = strlen(line);
-    if(line[j] == '?')
-        return (exit_status);
-    int ev_num = 0;
-	line = ft_substr(line,j,line_len);
-    while(ev[ev_num])
-    {
+	int		cnt;
+	int		ev_num;
+	char	*tail;
+	if (!line)
+		return (NULL);
+	if (line[j] == '?')
+		return (strdup(exit_status));
+	tail = ft_substr(line, (unsigned int)j, strlen(line) - (size_t)j);
+	if (!tail)
+		return (NULL);
+	ev_num = 0;
+	while (ev[ev_num])
+	{
 		cnt = 0;
-        while(ev[ev_num][cnt] != '=')
-            cnt++;
-        *ev_len = cnt;
-        if(!strncmp(line,ev[ev_num],*ev_len))
-            return(ft_substr(ev[ev_num],cnt + 1,strlen(ev[ev_num])));
-        ev_num++;
-    }
-    return strdup(" ");
+		while (ev[ev_num][cnt] && ev[ev_num][cnt] != '=')
+			cnt++;
+		if (ev[ev_num][cnt] == '=')
+		{
+		    *ev_len = cnt;
+		    if (!strncmp(tail, ev[ev_num], cnt))
+		    {
+			    char *val = ft_substr(ev[ev_num], (unsigned int)(cnt + 1),strlen(ev[ev_num]) - (size_t)(cnt + 1));
+			    free(tail);
+			    return (val);
+		    }
+        }
+		ev_num++;
+	}
+	return (free(tail),NULL);
 }
 
 int test_check(char **av,char **ev)//引数合わせる
