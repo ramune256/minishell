@@ -28,13 +28,11 @@ void init_signal(void)
 	}
 }
 
-
-
 //修正
 void kid_signal(void)
 {
 	signal(SIGINT,SIG_DFL);//cntrl-Cを標準動作に
-    signal(SIGQUIT,SIG_IGN);
+    signal(SIGQUIT,SIG_DFL);
 }
 
 void par_signal(void)
