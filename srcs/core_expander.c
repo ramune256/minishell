@@ -166,8 +166,7 @@ bool check(t_cmd *ast,t_alloc *heap)
 				if (!res)
 					return (free_expander(cur,tenkai_no_nakami,NULL));
 				free(cur);
-				cur = ft_strdup(res);
-				free(res);
+				cur = res;
 				free(tenkai_no_nakami);
 				if (!cur)
 					return (false);
@@ -178,11 +177,13 @@ bool check(t_cmd *ast,t_alloc *heap)
 			else
 				j = saisyo + 1;
 		}
-		char *tmp = quote_skip(cur);
+		char *tmp = NULL;
+		tmp = quote_skip(cur);
 		free(cur);
+		if(!tmp)
+			false;
+		free(ast->argv[i]);
 		ast->argv[i] = tmp;
-		cur = tmp;
-		free(tmp);
         i++;
 	}
 	return (true);
