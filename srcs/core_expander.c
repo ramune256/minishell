@@ -62,6 +62,7 @@ bool free_expander(char *cur,char *tenkai_no_nakami,char *tmp)
 bool check(t_cmd *ast,t_alloc *heap)
 {
 	int i = 1;
+	int s_flag = 0;
 	while(ast->argv[i])
 	{
 		char *cur = ft_strdup(ast->argv[i]);
@@ -70,6 +71,14 @@ bool check(t_cmd *ast,t_alloc *heap)
 		size_t j = 0;
 		while (1)
 		{
+			if(cur[j] && cur[j] == '\'')
+				(void)(j++,s_flag = 1);
+			while(cur[j] && s_flag)
+			{
+				if(cur[j] == '\'')
+					s_flag = 0;
+				j++;
+			}
 			while (cur[j] && cur[j] != '$')
 				j++;
 			if (!cur[j])
