@@ -1,7 +1,18 @@
 
 #include "minishell.h"
 
-char	*tenkai(char *line, char **ev, char *exit_status, int j, int *ev_len)
+
+/*
+memo
+t_alloc
+exit_status(int);
+char **ev_clone
+
+t_cmd ast 
+argv
+*/
+
+char	*tenkai(char *line, t_alloc *heap, int j, int *ev_len)
 {
 	int		cnt;
 	int		ev_num;
@@ -9,22 +20,25 @@ char	*tenkai(char *line, char **ev, char *exit_status, int j, int *ev_len)
 	if (!line)
 		return (NULL);
 	if (line[j] == '?')
-		return (strdup(exit_status));
-	tail = ft_substr(line, (unsigned int)j, strlen(line) - (size_t)j);
+	{
+		*ev_len = 1;
+		return (ft_itoa(heap->exit_status));
+	}
+	tail = ft_substr(line, j, ft_strlen(line) - j);
 	if (!tail)
 		return (NULL);
 	ev_num = 0;
-	while (ev[ev_num])
+	while (heap->ev_clone[ev_num])
 	{
 		cnt = 0;
-		while (ev[ev_num][cnt] && ev[ev_num][cnt] != '=')
+		while (heap->ev_clone[ev_num][cnt] && heap->ev_clone[ev_num][cnt] != '=')
 			cnt++;
-		if (ev[ev_num][cnt] == '=')
+		if (heap->ev_clone[ev_num][cnt] == '=')
 		{
 		    *ev_len = cnt;
-		    if (!strncmp(tail, ev[ev_num], cnt))
+		    if (!ft_strncmp(tail, heap->ev_clone[ev_num], cnt))
 		    {
-			    char *val = ft_substr(ev[ev_num], (unsigned int)(cnt + 1),strlen(ev[ev_num]) - (size_t)(cnt + 1));
+			    char *val = ft_substr(heap->ev_clone[ev_num],(cnt + 1),ft_strlen(heap->ev_clone[ev_num]) - (cnt + 1));
 			    free(tail);
 			    return (val);
 		    }
@@ -34,72 +48,26 @@ char	*tenkai(char *line, char **ev, char *exit_status, int j, int *ev_len)
 	return (free(tail),NULL);
 }
 
-int test_check(char **av,char **ev)//引数合わせる
+bool free_expander(char *cur,char *tenkai_no_nakami,char *tmp)
 {
-    int i = 1;
-	int j = 0;
-	char *tenkai_no_nakami = NULL;
-	int before = 0;
-    int saisyo;
-    while(av[i])
-    {
-        while(av[i][j] != '$' && av[i][j])
-            j++;
-		saisyo = j;
-		if(av[i][j] == '$' && av[i][j])
-		{
-        	j++;//$の分
-			tenkai_no_nakami = tenkai(av[i],ev,"exit_status",j,&before);
-			j += strlen(tenkai_no_nakami);
-		}
-		else
-		{
-			j = 0;
-			if(!av[++i])
-                break;
-		}
-		char *res = NULL;
-		res = ft_substr(av[i],0,saisyo);//saisyo
-		res = ft_strjoin(res,tenkai_no_nakami);//nakami
-		res = ft_strjoin(res,ft_substr(av[i],saisyo + before +1,strlen(av[i]) - before+1));//saigo
-		av[i] = strdup(res);
-        //上三つの中でmalloc使ってるから失敗時freeするように関数分ける
-	}
-    return 0;
+    if(cur)
+        free(cur);
+    if(tenkai_no_nakami)
+        free(tenkai_no_nakami);
+    if(tmp)
+        free(tmp);
+    return false;
 }
 
-void check(t_cmd *ast,t_alloc *heap)
+bool check(t_cmd *ast,t_alloc *heap)
 {
-	test_check(ast->argv,heap);
-}
-
-void expander(t_cmd *ast, t_alloc *heap)
-{
-    if(ast == NULL)
-        return;
-
-    if(ast->type == NODE_EXEC)
-        check(ast,heap);
-
-    if(ast->left)
-        expander(ast->left,heap);
-    if(ast->right)
-       expander(ast->right,heap);
-}
-
-
-/*
-int	main(int ac, char **av, char **ev)
-{
-	(void)ac;
-    int i = 1;
-	while(av[i])
+	int i = 1;
+	while(ast->argv[i])
 	{
-		char *cur = strdup(av[i]);
+		char *cur = ft_strdup(ast->argv[i]);
 		if (!cur)
-			return (1);
-		printf("saisyomoziretu:%s\n", cur);
-		int j = 0;
+			return (false);
+		size_t j = 0;
 		while (1)
 		{
 			while (cur[j] && cur[j] != '$')
@@ -109,27 +77,26 @@ int	main(int ac, char **av, char **ev)
 				printf("owari\n");
 				break;
 			}
-			int saisyo = j;
+			size_t saisyo = j;
 			j++;
 			int ev_len = 0;
-			char *tenkai_no_nakami = tenkai(cur, ev, "exit_status", j, &ev_len);
+			char *tenkai_no_nakami = tenkai(cur, heap, j, &ev_len);
 			if(tenkai_no_nakami)
 			{
-				int before = ev_len;//変数の展開前の長さ
-				int after = (int)strlen(tenkai_no_nakami);//変数の展開後の長さ	
+				size_t before = ev_len;//変数の展開前の長さ
+				size_t after = ft_strlen(tenkai_no_nakami);//変数の展開後の長さ	
 
 				//prefix →　変数前の文字列
-				char *prefix = ft_substr(cur, 0, (size_t)saisyo);
+				char *prefix = ft_substr(cur, 0, saisyo);
 				if (!prefix)
-				{ free(tenkai_no_nakami); free(cur); return (1); }
-
+                	return (free_expander(cur,tenkai_no_nakami,NULL));
 				//prefix＋展開後の変数
 				char *tmp = ft_strjoin(prefix, tenkai_no_nakami);
 				free(prefix);
-				if (!tmp) { free(tenkai_no_nakami); free(cur); return (1); }
-
+				if (!tmp)
+					return (free_expander(cur,tenkai_no_nakami,NULL));
 				int tail_start = saisyo + 1 + before;
-				int cur_len = strlen(cur);
+				int cur_len = ft_strlen(cur);
 				int tail_len = 0;
 				if (tail_start <= cur_len)
 					tail_len = cur_len - tail_start;
@@ -138,35 +105,51 @@ int	main(int ac, char **av, char **ev)
 
 				char *tail = ft_substr(cur, (unsigned int)tail_start, tail_len);
 				if (!tail)
-				{ free(tmp); free(tenkai_no_nakami); free(cur); return (1); }
+				    return (free_expander(cur,tenkai_no_nakami,tmp));
 
 				//res = tmp(prefix + 展開後)+tail
 				char *res = ft_strjoin(tmp, tail);
 				free(tmp);
 				free(tail);
-				if (!res) { free(tenkai_no_nakami); free(cur); return (1); }
+				if (!res)
+					return (free_expander(cur,tenkai_no_nakami,NULL));
 
-				printf("saigo:%s\n", res);
+				ft_printf("saigo:%s\n", res);
 				free(cur);
-				cur = strdup(res);
+				cur = ft_strdup(res);
 				free(res);
 				free(tenkai_no_nakami);
 				if (!cur)
-					return (1);
+					return (false);
 				j = saisyo + after;
-				if (j < 0)
-					j = 0;
-				if (j > strlen(cur))
-					j = strlen(cur);
-				printf("saisyomoziretu:%s\n", cur);
+				if (j > ft_strlen(cur))
+					j = ft_strlen(cur);
 			}
 			else
 				j = saisyo + 1;
 		}
-		av[i] = cur;
+		ast->argv[i] = cur;
+		ft_printf("%s\n",ast->argv[i]);
         i++;
 	}
-	return (0);
+	return (true);
 }
 
-*/
+void expander(t_cmd *ast, t_alloc *heap)
+{
+    if(ast == NULL)
+        return;
+
+    if(ast->type == NODE_EXEC)
+	{
+        if(check(ast,heap) == false)
+		{
+			cleanup(heap);
+			free(ast);
+		}
+	}
+    if(ast->left)
+        expander(ast->left,heap);
+    if(ast->right)
+       expander(ast->right,heap);
+}

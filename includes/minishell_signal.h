@@ -8,13 +8,12 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <stdio.h>
+# include <unistd.h>
 
 extern volatile sig_atomic_t g_signal_flag;
 
 void par_signal(void);
 void kid_signal(void);
-void defalt_signal(void);
-void signal_readline_reset(void);
 void init_signal(void);
 
 #endif

@@ -2,15 +2,15 @@
 
 volatile sig_atomic_t g_signal_flag = 0;
 
-static void	handler(int signal)//引数返り値固定 int main(void) みたいな感じ
+static void	handler(int signal)
 {
 	g_signal_flag = signal;
 	if (signal == SIGINT)
 	{
         write(STDOUT_FILENO,"\n",1);
-		rl_on_new_line();//新しい行に移動したことを伝える
-		rl_replace_line("",0);//バッファを空に
-		rl_redisplay();//minishell>の再描画
+		rl_on_new_line();
+		rl_replace_line("",0);
+		rl_redisplay();
 	}
 }
 
@@ -18,27 +18,24 @@ void init_signal(void)
 {
 	struct sigaction	sa;
 
-	sigemptyset(&sa.sa_mask);//デフォルトである構造体の中身を空に
-	sa.sa_handler = handler;//signalが来た場合どこの関数にsignalが来たよーってするかの設定
-	sa.sa_flags = SA_RESTART;//flag readlineのシステムコールがcntrl-Cで止まらないようにする
-    signal(SIGQUIT,SIG_IGN);//問題文からcntrl-\は何もしないためSIG_IGNで無効設定に
+	sigemptyset(&sa.sa_mask);
+	sa.sa_handler = handler;
+	sa.sa_flags = SA_RESTART;
+    signal(SIGQUIT,SIG_IGN);
 	if (sigaction(SIGINT, &sa, NULL) == -1)
 	{
 		printf("error\n");
 	}
 }
 
-
-
-//修正
 void kid_signal(void)
 {
-	signal(SIGINT,SIG_DFL);//cntrl-Cを標準動作に
-    signal(SIGQUIT,SIG_IGN);
+	signal(SIGINT,SIG_DFL);
+    signal(SIGQUIT,SIG_DFL);
 }
 
 void par_signal(void)
 {
-	signal(SIGINT,SIG_IGN);//cntrl-Cを無視設定に
+	signal(SIGINT,SIG_IGN);
     signal(SIGQUIT,SIG_IGN);
 }
