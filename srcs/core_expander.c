@@ -59,6 +59,49 @@ bool free_expander(char *cur,char *tenkai_no_nakami,char *tmp)
     return false;
 }
 
+char * quote_skip(char *cur)
+{
+	int cnt = 0;
+	int q_cnt = 0;
+	while(cur[cnt])
+	{
+		if(cur[cnt] == '\'' || cur[cnt] == '\"')
+			q_cnt++;
+		cnt++;
+	}
+	cnt++;
+	if(!q_cnt)
+		return(ft_strdup(cur));
+	char *new_cur = NULL;
+	new_cur = malloc(sizeof(char)*(cnt - q_cnt + 1));
+	if(!new_cur)
+		return NULL;
+	int i = 0;
+	int cur_i = 0;
+	int quote = 0;
+	while(cur[cur_i])
+	{
+		if (quote != 0 && cur[cur_i] == quote)
+        {
+            quote = 0;
+            cur_i++;
+        }
+        else if (quote == 0 && (cur[cur_i] == '\'' || cur[cur_i] == '\"'))
+        {
+            quote = cur[cur_i];
+            cur_i++;
+        }
+        else
+        {
+            new_cur[i] = cur[cur_i];
+            (void)(i++,cur_i++);
+        }
+	}
+	new_cur[i] = '\0';
+	return new_cur;
+}
+
+
 bool check(t_cmd *ast,t_alloc *heap)
 {
 	int i = 1;
@@ -135,7 +178,11 @@ bool check(t_cmd *ast,t_alloc *heap)
 			else
 				j = saisyo + 1;
 		}
-		ast->argv[i] = cur;
+		char *tmp = quote_skip(cur);
+		free(cur);
+		ast->argv[i] = tmp;
+		cur = tmp;
+		free(tmp);
         i++;
 	}
 	return (true);
