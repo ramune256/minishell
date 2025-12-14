@@ -63,6 +63,7 @@ bool check(t_cmd *ast,t_alloc *heap)
 {
 	int i = 1;
 	int s_flag = 0;
+	int d_flag = 0;
 	while(ast->argv[i])
 	{
 		char *cur = ft_strdup(ast->argv[i]);
@@ -71,9 +72,11 @@ bool check(t_cmd *ast,t_alloc *heap)
 		size_t j = 0;
 		while (1)
 		{
-			if(cur[j] && cur[j] == '\'')
+			if(cur[j] == '\"')
+				(void)(j++,d_flag = 1);
+			if(cur[j] && cur[j] == '\'' && !d_flag)
 				(void)(j++,s_flag = 1);
-			while(cur[j] && s_flag)
+			while(cur[j] && s_flag && !d_flag)
 			{
 				if(cur[j] == '\'')
 					s_flag = 0;
@@ -82,10 +85,7 @@ bool check(t_cmd *ast,t_alloc *heap)
 			while (cur[j] && cur[j] != '$')
 				j++;
 			if (!cur[j])
-			{
-				printf("owari\n");
 				break;
-			}
 			size_t saisyo = j;
 			j++;
 			int ev_len = 0;
@@ -122,8 +122,6 @@ bool check(t_cmd *ast,t_alloc *heap)
 				free(tail);
 				if (!res)
 					return (free_expander(cur,tenkai_no_nakami,NULL));
-
-				ft_printf("saigo:%s\n", res);
 				free(cur);
 				cur = ft_strdup(res);
 				free(res);
@@ -138,7 +136,6 @@ bool check(t_cmd *ast,t_alloc *heap)
 				j = saisyo + 1;
 		}
 		ast->argv[i] = cur;
-		ft_printf("%s\n",ast->argv[i]);
         i++;
 	}
 	return (true);
