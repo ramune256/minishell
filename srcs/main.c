@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:38:00 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:31:48 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	main(int ac, char **av, char **ev)
 	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));
 	clone_ev(ev, &heap);
+	set_signal_shell();
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
@@ -31,7 +32,7 @@ int	main(int ac, char **av, char **ev)
 			execute(heap.ast, &heap);
 		}
 		else
-			print_exit();
+			print_exit(&heap);
 		heap.success = true;
 		cleanup(&heap);
 	}

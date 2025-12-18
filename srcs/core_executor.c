@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 14:59:02 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:31:37 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
 	return (ast->subcmd);
 }
 
-static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
+static void	execute_single_command(t_cmd *ast, t_alloc *heap)
 {
 	pid_t	pid;
 	t_cmd	*exec_node;
@@ -43,6 +43,7 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 		(perror("fork"), cleanup(heap), exit(1));
 	if (pid == 0)
 	{
+		set_signal_child();
 		exec_node = handle_redirections(ast, heap);
 		if (execute_builtin(exec_node, heap))
 			(cleanup(heap), exit(heap->exit_status));
@@ -52,11 +53,14 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 		if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 			(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 	}
+	set_signal_parent();
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status)) //ステータスを解析
-		heap->exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		heap->exit_status = 128 + WTERMSIG(status);
+	set_signal_shell();
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		ft_putstr_fd("\n", STDOUT_FILENO);
+	else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
+		ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
+	get_exit_status(heap, status);
 	cleanup_temp_files(&heap->temp_files);
 }
 
@@ -74,7 +78,9 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 		(perror("fork"), cleanup(heap), exit(1));
 	if (pid_left == 0)
 	{
-		change_fd(pipefd, STDOUT_FILENO, pipefd[1]);
+		set_signal_child();
+		dup2(pipefd[1], STDOUT_FILENO);
+		(close(pipefd[0]), close(pipefd[1]));
 		execute(ast->left, heap); // 左側のASTを再帰的に実行
 		(cleanup(heap), exit(heap->exit_status)); // 子プロセスをクリーンアップ
 	}
@@ -83,16 +89,17 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 		(perror("fork"), cleanup(heap), exit(1));
 	if (pid_right == 0)
 	{
-		change_fd(pipefd, STDIN_FILENO, pipefd[0]);
+		set_signal_child();
+		dup2(pipefd[0], STDIN_FILENO);
+		(close(pipefd[0]), close(pipefd[1]));
 		execute(ast->right, heap); // 右側のASTを再帰的に実行
 		(cleanup(heap), exit(heap->exit_status)); // 子プロセスをクリーンアップ
 	}
 	(close(pipefd[0]), close(pipefd[1]));
+	set_signal_parent();
 	(waitpid(pid_left, NULL, 0), waitpid(pid_right, &status, 0));
-	if (WIFEXITED(status))
-		heap->exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		heap->exit_status = 128 + WTERMSIG(status);
+	set_signal_shell();
+	get_exit_status(heap, status);
 }
 
 // ASTを再帰的にたどって実行するエントリーポイント
@@ -103,12 +110,12 @@ void	execute(t_cmd *ast, t_alloc *heap)
 	if (ast->type == NODE_PIPE)
 		execute_pipe(ast, heap);
 	else if (ast->type == NODE_REDIR)
-		execute_simple_command(ast, heap);
+		execute_single_command(ast, heap);
 	else if (ast->type == NODE_EXEC)
 	{
 		if (is_parent_builtin(ast))
 			execute_builtin(ast, heap); // forkせずに、親プロセスでそのまま実行
 		else
-			execute_simple_command(ast, heap); // forkする
+			execute_single_command(ast, heap); // forkする
 	}
 }

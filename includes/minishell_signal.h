@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_executor.c                                   :+:      :+:    :+:   */
+/*   minishell_signal.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 18:30:58 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:15:33 by shunwata         ###   ########.fr       */
+/*   Created: 2025/12/17 20:01:10 by shunwata          #+#    #+#             */
+/*   Updated: 2025/12/18 16:31:09 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#ifndef MINISHELL_SIGNAL_H
+# define MINISHELL_SIGNAL_H
 
-void	get_exit_status(t_alloc *heap, int status)
-{
-	if (WIFEXITED(status))
-		heap->exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		heap->exit_status = 128 + WTERMSIG(status);
-}
+# define _GNU_SOURCE
 
-// void	change_fd(int target_fd, int fd_num)
-// {
-// 	dup2(fd_num, target_fd);
-// }
+# include <signal.h>
+# include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+// # include <stdio.h>
+// # include <limits.h>
+
+extern volatile sig_atomic_t	g_sig_status;
+
+void	set_signal_shell(void);
+void	set_signal_child(void);
+void	set_signal_parent(void);
+
+#endif
