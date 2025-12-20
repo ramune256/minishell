@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 19:50:49 by shunwata          #+#    #+#             */
-/*   Updated: 2025/06/04 20:50:07 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:18:46 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,7 @@
 
 void	ft_putchar_fd(char c, int fd)
 {
-	write(fd, &c, 1);
+	int	dum;
+
+	dum = write(fd, &c, 1);
 }

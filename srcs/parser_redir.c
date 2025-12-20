@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:07:35 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/02 16:53:43 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:02:49 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
 	int		fd;
 	t_cmd	*new_redir_node;
 
+	mode = 0;
+	fd = 0;
 	redir_token = *tokens; // 1. リダイレクトトークン(>, <, <<, >>)を保存・消費
 	*tokens = (*tokens)->next;
 	if ((*tokens)->type != TOKEN_WORD) // 2. 次がファイル名でなければ構文エラー
