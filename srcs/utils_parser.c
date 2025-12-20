@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/02 16:50:51 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/11/20 14:39:05 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,18 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 	return (cmd);
 }
 
+// void	free_argv(char **argv)
+// {
+// 	int	i;
+
+// 	if (!argv)
+// 		return;
+// 	i = 0;
+// 	while (argv[i])
+// 		free(argv[i++]);
+// 	free(argv);
+// }
+
 void	free_ast(t_cmd *cmd)
 {
 	if (!cmd)
@@ -68,10 +80,4 @@ void	free_ast(t_cmd *cmd)
 		free(cmd->file);
 	}
 	free(cmd);
-}
-
-bool	is_redirection(t_token_type type)
-{
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT ||
-			type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }
