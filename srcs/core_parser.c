@@ -6,77 +6,130 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:15:28 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/02 16:56:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// `WORD` トークンを解析して EXEC ノードを作成
-static t_cmd	*parse_exec_node(t_token **tokens, t_alloc *heap)
+// // `WORD` トークンを解析して EXEC ノードを作成
+// static t_cmd	*parse_exec_node(t_token **tokens, t_alloc *heap)
+// {
+// 	t_cmd	*cmd;
+// 	t_token	*tmp;
+// 	int		argc;
+// 	int		i;
+
+// 	argc = 0;
+// 	tmp = *tokens;
+// 	while (tmp && tmp->type == TOKEN_WORD)
+// 	{
+// 		argc++;
+// 		tmp = tmp->next;
+// 	}
+// 	if (argc == 0) // WORDがなければ EXECノード は作らない
+// 		return (NULL);
+// 	cmd = exec_cmd_constructor();
+// 	if (!cmd)
+// 		(cleanup(heap), exit(1));
+// 	cmd->argv = ft_calloc(argc + 1, sizeof(char *));
+// 	if (!cmd->argv)
+// 		(free_ast(cmd), cleanup(heap), exit(1));
+// 	i = 0;
+// 	while (i < argc)
+// 	{
+// 		cmd->argv[i] = ft_strdup((*tokens)->value);
+// 		if (!cmd->argv[i])
+// 			(free_ast(cmd), cleanup(heap), exit(1));
+// 		*tokens = (*tokens)->next;
+// 		i++;
+// 	}
+// 	cmd->argv[argc] = NULL;
+// 	return (cmd);
+// }
+
+// static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
+// {
+// 	t_cmd	*cmd;
+
+// 	// 1. まずはコマンド本体 (NODE_EXEC) を解析
+// 	// (この時点ではリダイレクトは考慮しない)
+// 	cmd = parse_exec_node(tokens, heap);
+
+// 	// 2. リダイレクションが続く限り、ループで処理
+// 	while (is_redirection((*tokens)->type))
+// 	{
+// 		// 3. コマンドが空だった場合 (例: `> out`)、
+// 		//    空のEXECノードを作成して `cmd` に設定する
+// 		if (cmd == NULL)
+// 		{
+// 			cmd = exec_cmd_constructor();
+// 			if (!cmd)
+// 				(cleanup(heap), exit(1));
+// 		}
+// 		// 4. `parse_redirection` が `cmd` をラップし、新しい `cmd` を返す
+// 		cmd = parse_redirection(cmd, tokens, heap);
+// 		if (cmd == NULL)
+// 			return (NULL); // エラー（freeはparse_redirection内で行われる）
+// 	}
+// 	// 5. 完成したノード (EXEC または REDIR) を返す
+// 	return (cmd);
+// }
+
+static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 {
-	t_cmd	*cmd;
-	t_token	*tmp;
-	int		argc;
+	char	**new_argv;
+	int		size;
 	int		i;
 
-	argc = 0;
-	tmp = *tokens;
-	while (tmp && tmp->type == TOKEN_WORD)
+	size = 0;
+	if (cmd->argv)
 	{
-		argc++;
-		tmp = tmp->next;
+		while (cmd->argv[size])
+			size++;
 	}
-	if (argc == 0) // WORDがなければ EXECノード は作らない
-		return (NULL);
-	cmd = exec_cmd_constructor();
-	if (!cmd)
+	new_argv = ft_calloc(size + 1 + 1, sizeof(char *));
+	if (!new_argv)
 		(cleanup(heap), exit(1));
-	cmd->argv = ft_calloc(argc + 1, sizeof(char *));
-	if (!cmd->argv)
-		(free_ast(cmd), cleanup(heap), exit(1));
 	i = 0;
-	while (i < argc)
+	while (i < size)
 	{
-		cmd->argv[i] = ft_strdup((*tokens)->value);
-		if (!cmd->argv[i])
-			(free_ast(cmd), cleanup(heap), exit(1));
-		*tokens = (*tokens)->next;
+		new_argv[i] = cmd->argv[i];
 		i++;
 	}
-	cmd->argv[argc] = NULL;
-	return (cmd);
+	new_argv[i] = ft_strdup(arg);
+	if (!new_argv[i])
+		(free(new_argv), cleanup(heap), exit(1));
+	free(cmd->argv);
+	cmd->argv = new_argv;
 }
 
 static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
 {
-	t_cmd	*cmd;
+	t_cmd	*node_exec;
+	t_cmd	*result_ptr;
 
-	// 1. まずはコマンド本体 (NODE_EXEC) を解析
-	// (この時点ではリダイレクトは考慮しない)
-	cmd = parse_exec_node(tokens, heap);
-
-	// 2. リダイレクションが続く限り、ループで処理
-	while (is_redirection((*tokens)->type))
+	node_exec = exec_cmd_constructor();
+	if (!node_exec)
+		(cleanup(heap), exit(1));
+	result_ptr = node_exec;
+	while (*tokens && (*tokens)->type != TOKEN_PIPE && (*tokens)->type != TOKEN_EOF)
 	{
-		// 3. コマンドが空だった場合 (例: `> out`)、
-		//    空のEXECノードを作成して `cmd` に設定する
-		if (cmd == NULL)
+		if (is_redirection((*tokens)->type))
 		{
-			cmd = exec_cmd_constructor();
-			if (!cmd)
-				(cleanup(heap), exit(1));
+			result_ptr = parse_redirection(result_ptr, tokens, heap);
+			if (!result_ptr)
+				return (NULL); // 内部でfree_ast済み
 		}
-		// 4. `parse_redirection` が `cmd` をラップし、新しい `cmd` を返す
-		cmd = parse_redirection(cmd, tokens, heap);
-		if (cmd == NULL)
-			return (NULL); // エラー（freeはparse_redirection内で行われる）
+		else
+		{
+			append_an_arg(node_exec, (*tokens)->value, heap);
+			*tokens = (*tokens)->next;
+		}
 	}
-	// 5. 完成したノード (EXEC または REDIR) を返す
-	return (cmd);
+	return (result_ptr);
 }
 
-// パイプライン全体を解析
 static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 {
 	t_cmd	*cmd;
