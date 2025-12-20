@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 20:06:30 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/20 23:19:47 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:26:28 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,4 +19,5 @@ void	ft_putstr_fd(char *s, int fd)
 	if (!s)
 		return ;
 	dum = write(fd, s, ft_strlen(s));
+	(void)dum;
 }

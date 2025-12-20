@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 00:08:14 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/20 23:19:26 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:26:14 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	ft_putnbr_fd(int n, int fd)
 	if (n == -2147483648)
 	{
 		dum = write(fd, "-2147483648", 11);
+		(void)dum;
 		return ;
 	}
 	if (n < 0)
