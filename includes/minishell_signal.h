@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
+/*   minishell_signal.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 00:08:14 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/21 15:22:15 by shunwata         ###   ########.fr       */
+/*   Created: 2025/12/17 20:01:10 by shunwata          #+#    #+#             */
+/*   Updated: 2025/12/18 16:31:09 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef MINISHELL_SIGNAL_H
+# define MINISHELL_SIGNAL_H
 
-void	ft_putnbr_fd(int n, int fd)
-{
-	int	dummy;
+# define _GNU_SOURCE
 
-	if (n == -2147483648)
-	{
-		dummy = write(fd, "-2147483648", 11);
-		(void)dummy;
-		return ;
-	}
-	if (n < 0)
-	{
-		ft_putchar_fd('-', fd);
-		n = -n;
-	}
-	if (n > 9)
-	{
-		ft_putnbr_fd(n / 10, fd);
-	}
-	ft_putchar_fd(n % 10 + '0', fd);
-}
+# include <signal.h>
+# include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+// # include <stdio.h>
+// # include <limits.h>
+
+extern volatile sig_atomic_t	g_sig_status;
+
+void	set_signal_shell(void);
+void	set_signal_child(void);
+void	set_signal_parent(void);
+
+#endif

@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/02 16:51:18 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/20 23:56:38 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <sys/wait.h>
 
 # include "libft.h"
+# include "minishell_signal.h"
 
 /* --- トークンのデータ構造 --- */
 typedef enum e_token_type
@@ -107,7 +108,7 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 //executor
 void	execute(t_cmd *ast, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
-void	change_fd(int pipefd[2], int target_fd, int fd_num);
+void	get_exit_status(t_alloc *heap, int status);
 
 bool	is_parent_builtin(t_cmd *ast);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
@@ -120,7 +121,7 @@ char	*ft_strndup(const char *s1, size_t n);
 int		ft_strcmp(const char *s1, const char *s2);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
-void	print_exit(void);
+void	print_exit(t_alloc *heap);
 void	free_2d_array(char ***array);
 
 //initialize

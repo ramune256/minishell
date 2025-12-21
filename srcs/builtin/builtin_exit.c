@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/30 17:01:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/21 15:24:55 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int	c_exit(char **line, t_alloc *heap)
 	int			status;
 	bool		error;
 
-	print_exit();
+	if (isatty(STDIN_FILENO))
+		fprintf(stderr, "exit\n");
 	if (!line || !line[1])
 	{
 		status = heap->exit_status;
