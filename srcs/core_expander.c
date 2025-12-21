@@ -1,22 +1,5 @@
 #include "minishell.h"
 
-char	*update_cur(size_t j, char *tmp, char *tail, char *cur)
-{
-	char	*res;
-
-	res = NULL;
-	res = ft_strjoin(tmp, tail);
-	(free(tmp), free(tail), free(cur));
-	if (!res)
-		return (NULL);
-	cur = res;
-	if (!cur)
-		return (NULL);
-	if (j > ft_strlen(cur))
-		j = ft_strlen(cur);
-	return (cur);
-}
-
 bool	prefix_add_after(int fir_before, int fir_after, char *tmp, char **cur)
 {
 	int		tail_start;
@@ -41,27 +24,12 @@ bool	prefix_add_after(int fir_before, int fir_after, char *tmp, char **cur)
 	return (true);
 }
 
-bool	input_argv(int *i, char *cur, t_cmd *ast)
-{
-	char	*tmp;
-
-	tmp = NULL;
-	tmp = count_quote(cur);
-	free(cur);
-	if (!tmp)
-		return (false);
-	free(ast->argv[*i]);
-	ast->argv[*i] = tmp;
-	(*i)++;
-	return (true);
-}
-
 bool	main_create_cur(size_t *ev_len, size_t fir, char *ev_var, char **cur)
 {
 	size_t	before;
 	size_t	after;
 	char	*prefix;
-	char	*tmp;	
+	char	*tmp;
 
 	before = *ev_len;
 	after = ft_strlen(ev_var);
@@ -100,15 +68,13 @@ char	*create_cur(size_t *j, char *cur, t_alloc *heap)
 	return (cur);
 }
 
-bool	check(t_cmd *ast, t_alloc *heap)
+bool	check(t_cmd *ast, t_alloc *heap, int i)
 {
-	int		i;
 	int		s_flag;
 	int		d_flag;
 	char	*cur;
 	size_t	j;
 
-	i = 1;
 	cur = NULL;
 	while (ast->argv[i])
 	{
@@ -137,7 +103,7 @@ void	expander(t_cmd *ast, t_alloc *heap)
 		return ;
 	if (ast->type == NODE_EXEC)
 	{
-		if (check(ast, heap) == false)
+		if (check(ast, heap, 1) == false)
 		{
 			cleanup(heap);
 			free(ast);

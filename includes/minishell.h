@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/21 20:15:56 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/21 20:47:15 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,13 @@ bool	is_redirection(t_token_type type);
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
 //expander
-void expander(t_cmd *ast, t_alloc *heap);
+void	expander(t_cmd *ast, t_alloc *heap);
 char	*chenge_ev(char *line, t_alloc *heap, size_t *j, size_t *ev_len);
-void be_zero(int *s_flag,int *d_flag,size_t *j);
-void flag_quote(size_t *j,int *s_flag,int *d_flag,char *cur);
+void	flag_quote(size_t *j, int *s_flag, int *d_flag, char *cur);
 char	*count_quote(char *cur);
+void	be_zero(int *s_flag, int *d_flag, size_t *j);
+bool	input_argv(int *i, char *cur, t_cmd *ast);
+char	*update_cur(size_t j, char *tmp, char *tail, char *cur);
 
 //executor
 void	execute(t_cmd *ast, t_alloc *heap);
