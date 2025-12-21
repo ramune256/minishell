@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/21 23:09:04 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/22 00:19:02 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,12 @@ static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 		{
 			if (access(fullpath, X_OK) == 0)
 				return (fullpath);
-			return (perror(cmd_name), NULL);
+			return (ft_perror(cmd_name, ": Permission denied"), NULL);
 		}
 		free(fullpath);
 		i++;
 	}
-	return (NULL);
+	return (ft_perror(cmd_name, ": command not found"), NULL);
 }
 
 static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
@@ -91,7 +91,7 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 	}
 	envp_path = find_envp_path(heap->ev_clone);
 	if (!envp_path)
-		return (NULL);
+		return (ft_perror(cmd_name, ": No such file or directory"), NULL);
 	bin_dir = ft_split(envp_path, ':');
 	if (!bin_dir)
 		(cleanup(heap), exit(1));
