@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 19:59:04 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:30:46 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/21 15:21:44 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,12 @@ volatile sig_atomic_t g_sig_status = 0;
 */
 void	handle_sigint(int sig)
 {
+	int	dummy;
+
 	(void)sig;
 	g_sig_status = 1;      // フラグを立てる（終了ステータスの更新などに使う）
-	write(STDOUT_FILENO, "\n", 1);     // 改行
+	dummy = write(STDOUT_FILENO, "\n", 1);     // 改行
+	(void)dummy;
 	rl_on_new_line();      // readlineに「新しい行にいるよ」と伝える
 	rl_replace_line("", 0); // 入力中のバッファをクリア
 	rl_redisplay();        // プロンプトを再描画
