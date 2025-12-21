@@ -1,15 +1,21 @@
 
 #include "minishell.h"
 
-void flag_quote(size_t *j,int *s_flag,int *d_flag,char *cur)
+void	flag_quote(size_t *j, int *s_flag, int *d_flag, char *cur)
 {
-	if(cur[*j] == '\"')
-		(void)((*j)++,*d_flag = 1);
-	if(cur[*j] && cur[*j] == '\'' && !*d_flag)
-		(void)((*j)++,*s_flag = 1);
-	while(cur[*j] && *s_flag && !*d_flag)
+	if (cur[*j] == '\"')
 	{
-		if(cur[*j] == '\'')
+		*d_flag = 1;
+		(*j)++;
+	}
+	if (cur[*j] && cur[*j] == '\'' && !*d_flag)
+	{
+		*s_flag = 1;
+		(*j)++;
+	}
+	while (cur[*j] && *s_flag && !*d_flag)
+	{
+		if (cur[*j] == '\'')
 			*s_flag = 0;
 		(*j)++;
 	}

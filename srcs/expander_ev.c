@@ -2,7 +2,7 @@
 
 char	*main_chenge_ev(char **ev, int ev_num, size_t *ev_len, char *tail)
 {
-	size_t		cnt;
+	size_t	cnt;
 	char	*val;
 	int		str_end;
 
