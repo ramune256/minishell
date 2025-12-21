@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/04 19:08:27 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:17:28 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ static void	execute_simple_command(t_cmd *ast, t_alloc *heap)
 			(cleanup(heap), exit(heap->exit_status));
 		fullpath = get_fullpath(exec_node->argv[0], heap);
 		if (fullpath == NULL)
+		{
+			ft_perror(exec_node->argv[0],": command not found");
 			(cleanup(heap), exit(127));
+		}
 		if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 			(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 	}

@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/21 20:47:15 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:18:16 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ char	*update_cur(size_t j, char *tmp, char *tail, char *cur);
 void	execute(t_cmd *ast, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
 void	change_fd(int pipefd[2], int target_fd, int fd_num);
+void	ft_perror(char *cmd, char *mess);
 
 bool	is_parent_builtin(t_cmd *ast);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);

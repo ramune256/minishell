@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_executor.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:30:58 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 18:44:15 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/21 23:18:47 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,4 +17,10 @@ void	change_fd(int pipefd[2], int target_fd, int fd_num)
 	dup2(fd_num, target_fd);
 	close(pipefd[0]);
 	close(pipefd[1]);
+}
+
+void	ft_perror(char *cmd, char *mess)
+{
+	ft_putstr_fd(cmd, 2);
+	ft_putendl_fd(mess, 2);
 }
