@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:31:37 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/21 16:23:35 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,19 @@
 
 static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
 {
-	int	file_fd;
+	t_cmd	*exec_node;
+	int		file_fd;
 
 	if (ast->type == NODE_EXEC) // ベースケース：EXECノードに到達したら、それを返す
 		return (ast);
-	if (ast->subcmd->type == NODE_REDIR) // ASTが REDIR(REDIR(EXEC)) の場合、再帰的に処理
-		handle_redirections(ast->subcmd, heap);
+	exec_node = handle_redirections(ast->subcmd, heap); //複数リダイレクトを想定
 	file_fd = open(ast->file, ast->mode, 0644); // 0644 = rw-r--r--
 	if (file_fd == -1)
 		(perror(ast->file), cleanup(heap), exit(1)); // 子プロセスを終了
 	if (dup2(file_fd, ast->fd) == -1)
 		(perror("dup2"), cleanup(heap), exit(1));
 	close(file_fd); // dup2したので、元のFDは不要
-	return (ast->subcmd);
+	return (exec_node);
 }
 
 static void	execute_single_command(t_cmd *ast, t_alloc *heap)
