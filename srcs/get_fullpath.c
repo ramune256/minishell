@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/22 00:19:02 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/22 00:33:27 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,16 @@ static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
 {
 	char	*result;
+	struct	stat path_stat;
 
+	if (access(tentative_path, F_OK) != 0)
+		return (ft_perror(tentative_path, ": No such file or directory"), NULL);
+	stat(tentative_path, &path_stat);
+	if (S_ISDIR(path_stat.st_mode))
+		return (ft_perror(tentative_path, ": Is a directory"), NULL);
 	if (access(tentative_path, X_OK) != 0)
-		return (perror(tentative_path), NULL);
+		return (ft_perror(tentative_path, ": Permission denied"), NULL);
+
 	result = ft_strdup(tentative_path);
 	if (!result)
 		(cleanup(heap), exit(1));
