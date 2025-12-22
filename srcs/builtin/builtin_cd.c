@@ -6,11 +6,11 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 20:48:31 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 19:34:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/22 22:25:31 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
+#include "minishell.h"
 
 static void	update_pwd(const char *var, char *pwd, t_alloc *heap)
 {

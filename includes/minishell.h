@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/20 23:56:38 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/22 22:26:11 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@
 # include <sys/wait.h>
 
 # include "libft.h"
+# include "builtin.h"
 # include "minishell_signal.h"
 
-/* --- トークンのデータ構造 --- */
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -45,7 +45,6 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
-/* --- 抽象構文木(AST)のデータ構造 --- */
 typedef enum e_node_type
 {
 	NODE_EXEC,
@@ -76,20 +75,6 @@ typedef struct s_alloc
 	bool	success;
 }	t_alloc;
 
-// typedef enum e_split_err
-// {
-// 	NO_ERR,
-// 	SYNTAX_ERR
-// }	t_split_err;
-
-// typedef enum e_error
-// {
-// 	NO_ERR,
-// 	MALLOC_FAILED,
-// 	NO_SUCH_FORD,
-// 	PERM_DENIED
-// }	t_error;
-
 //tokenizer
 void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
@@ -117,8 +102,6 @@ void	cleanup_temp_files(t_list **list);
 void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
 
 //utils
-char	*ft_strndup(const char *s1, size_t n);
-int		ft_strcmp(const char *s1, const char *s2);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
 void	print_exit(t_alloc *heap);
@@ -126,17 +109,5 @@ void	free_2d_array(char ***array);
 
 //initialize
 void	clone_ev(char **ev, t_alloc *heap);
-
-// for debug.c
-// void	print_ast(t_cmd *cmd, int level);
-
-// for builtin_test.c
-// int		c_echo(char **argv);
-// int		c_cd(char **argv);
-// int		c_pwd(char **argv);
-// int		c_export(char **argv);
-// int		c_unset(char **argv);
-// int		c_env(char **argv);
-// int		c_exit(char **argv);
 
 #endif

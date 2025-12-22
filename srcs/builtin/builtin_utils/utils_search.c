@@ -6,13 +6,13 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:15:32 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/03 16:35:27 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/22 22:25:28 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
+#include "minishell.h"
 
-char	*search_get_env(char **ev, char *search)
+char	*search_get_env(char **ev, const char *search)
 {
 	int		i;
 	size_t	len;

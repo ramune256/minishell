@@ -6,25 +6,25 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 14:59:11 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/22 22:28:28 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*find_envp_path(char **envp)
-{
-	size_t	i;
+// static char	*find_envp_path(char **envp)
+// {
+// 	size_t	i;
 
-	if (!envp)
-		return (NULL);
-	i = 0;
-	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
-		i++;
-	if (!envp[i])
-		return (NULL);
-	return (envp[i] + 5);
-}
+// 	if (!envp)
+// 		return (NULL);
+// 	i = 0;
+// 	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
+// 		i++;
+// 	if (!envp[i])
+// 		return (NULL);
+// 	return (envp[i] + 5);
+// }
 
 static char	*join_path(char *bin_dir, char *cmd_name)
 {
@@ -89,7 +89,7 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 		fullpath = check_absolute_path(cmd_name, heap);
 		return (fullpath);
 	}
-	envp_path = find_envp_path(heap->ev_clone);
+	envp_path = search_get_env(heap->ev_clone, "PATH=");
 	if (!envp_path)
 		return (NULL);
 	bin_dir = ft_split(envp_path, ':');
