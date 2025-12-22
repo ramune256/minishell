@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/20 16:02:31 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/22 19:33:52 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,68 +102,3 @@ int	print_formatted_env(char *env_str)
 	}
 	return (0);
 }
-
-// char	**sort(char **new_ev)
-// {
-// 	int	i;
-// 	int	j;
-
-// 	i = 0;
-// 	j = i + 1;
-// 	while (new_ev[j] != NULL)
-// 	{
-// 		if (export_memcmp(new_ev[i], new_ev[j]) > 0)
-// 		{
-// 			new_ev = change(new_ev, i, j);
-// 			i = 0;
-// 			j = i + 1;
-// 		}
-// 		else
-// 			(void)(i++, j++);
-// 	}
-// 	return (new_ev);
-// }
-
-// size_t	ev_strlen(char *line)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (line[i] != '=')
-// 		i++;
-// 	return (i);
-// }
-
-// char	**change(char **new_ev, int i, int j)
-// {
-// 	char	*tmp;
-
-// 	tmp = new_ev[j];
-// 	new_ev[j] = new_ev[i];
-// 	new_ev[i] = tmp;
-// 	return (new_ev);
-// }
-
-// static int	export_memcmp(char *s1, char *s2)
-// {
-// 	int i;
-// 	i = 0;
-
-// 	while (s1[i] && s2[i])
-// 	{
-// 		if (s1[i] != s2[i])
-// 			return (s1[i] - s2[i]);
-// 		if(s1[i + 1] == '=' || s2[i + 1] == '=')
-// 			return (s1[i] - s2[i]);
-// 		i++;
-// 	}
-// 	return (s1[i] - s2[i]);
-// }
-
-// bool	join_error_check(char **new_ev, char **line, int i, int j)
-// {
-// 	new_ev[j] = ft_export_strjoin("declare -x ", line[i]);
-// 	if (!new_ev[j])
-// 		return (false);
-// 	return (true);
-// }
