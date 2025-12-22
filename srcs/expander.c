@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/22 22:38:14 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 01:07:46 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ static char	*expand_envs(char *str, t_alloc *heap)
 			quote = 0;
 		if (str[i] == '$' && quote != '\'' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_' || str[i + 1] == '?'))
 		{
+			start = i;
 			val = get_env_val(str, &i, heap, heap->exit_status);
 			i += ft_replace(&str, val, start, i - start); //存在しない環境変数はどうなる？
 			free(val);
