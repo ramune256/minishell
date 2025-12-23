@@ -6,13 +6,13 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/30 16:13:12 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/22 22:10:27 by shunwata         ###   ########.fr        #
+#    Updated: 2025/12/23 19:57:37 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR) -I $(FT_PRINTF_DIR) -I $(GET_NEXT_LINE_DIR) -I $(ADDITIONAL_DIR)
+CFLAGS = -Wall -Wextra -Werror -I $(INC_DIR) -I $(FT_PRINTF_DIR) -I $(GNL_DIR) -I $(ADDITIONAL_DIR)
 
 SRC_DIR = srcs
 INC_DIR = includes
