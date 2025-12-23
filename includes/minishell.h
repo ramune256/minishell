@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/22 22:26:11 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 19:53:40 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,6 @@
 # include <stdbool.h>
 # include <fcntl.h>
 # include <sys/wait.h>
-
-# include "libft.h"
-# include "builtin.h"
-# include "minishell_signal.h"
 
 typedef enum e_token_type
 {
@@ -74,6 +70,10 @@ typedef struct s_alloc
 	int		exit_status;
 	bool	success;
 }	t_alloc;
+
+# include "libft.h"
+# include "builtin.h"
+# include "minishell_signal.h"
 
 //tokenizer
 void	tokenize(t_alloc *alloc);

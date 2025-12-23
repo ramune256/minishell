@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:23:25 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 19:51:44 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@
 # include <unistd.h>
 # include "minishell.h"
 
-int		c_echo(char **line, t_alloc *heap);
-int		c_pwd(char **line, t_alloc *heap);
-int		c_env(char **line,t_alloc *heap);
-int		c_unset(char **line,t_alloc *heap);
-int		c_exit(char **line, t_alloc *heap);
-int		c_export(char **line, t_alloc *heap);
-int		c_cd(char **line, t_alloc *heap);
+int			c_echo(char **line, t_alloc *heap);
+int			c_pwd(char **line, t_alloc *heap);
+int			c_env(char **line,t_alloc *heap);
+int			c_unset(char **line,t_alloc *heap);
+int			c_exit(char **line, t_alloc *heap);
+int			c_export(char **line, t_alloc *heap);
+int			c_cd(char **line, t_alloc *heap);
 
 long long	ft_atol(const char *st, bool *error);
 bool		is_valid_identifier(char *str);
