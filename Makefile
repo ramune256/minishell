@@ -6,40 +6,41 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/22 20:03:17 by shunwata         ###   ########.fr        #
+#    Updated: 2025/12/23 19:49:23 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= minishell
-CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -I $(INC_DIR) -I $(L_INC_DIR) -I $(PRINTF_DIR) -I $(GNL_DIR)
-LIBS		= -lreadline -lhistory
+NAME			= minishell
+CC				= cc
+CFLAGS			= -Wall -Wextra -Werror -I $(INC_DIR) -I $(L_INC_DIR) -I $(PRINTF_DIR) -I $(GNL_DIR) -I $(ADDITIONAL_DIR)
+LIBS			= -lreadline -lhistory
 
-INC_DIR		= includes
-SRC_DIR		= srcs
-BUILTIN_DIR	= $(SRC_DIR)/builtin
-B_UTILS_DIR	= $(BUILTIN_DIR)/builtin_utils
+INC_DIR			= includes
+SRC_DIR			= srcs
+BUILTIN_DIR		= $(SRC_DIR)/builtin
+B_UTILS_DIR		= $(BUILTIN_DIR)/builtin_utils
 
-LIBFT		= $(LIBFT_DIR)/libft.a
-LIBFT_DIR	= Libft
-L_INC_DIR	= $(LIBFT_DIR)/includes
-L_SRC_DIR	= $(LIBFT_DIR)/srcs
-PRINTF_DIR	= $(L_SRC_DIR)/ft_printf
-GNL_DIR		= $(L_SRC_DIR)/get_next_line
+LIBFT			= $(LIBFT_DIR)/libft.a
+LIBFT_DIR		= Libft
+L_INC_DIR		= $(LIBFT_DIR)/includes
+L_SRC_DIR		= $(LIBFT_DIR)/srcs
+PRINTF_DIR		= $(L_SRC_DIR)/ft_printf
+GNL_DIR			= $(L_SRC_DIR)/get_next_line
+ADDITIONAL_DIR	= $(L_SRC_DIR)/additional
 
-MAIN_SRC	= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
-				core_tokenizer.c executor_builtin.c executor_heredoc.c \
-				get_fullpath.c init.c main.c parser_redir.c put_err.c signal.c \
-				utils_common.c utils_executor.c utils_parser.c utils_tokenizer.c)
+MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
+					core_tokenizer.c executor_builtin.c executor_heredoc.c \
+					get_fullpath.c init.c main.c parser_redir.c put_err.c signal.c \
+					utils_common.c utils_executor.c utils_parser.c utils_tokenizer.c)
 
-BUILTIN_SRC	= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
-				builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)
+BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
+					builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)
 
-B_UTILS_SRC	= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_ft_atol.c utils_search.c)
+B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_ft_atol.c utils_search.c)
 
-SRCS		= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
+SRCS			= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
 
-OBJS		= $(SRCS:.c=.o)
+OBJS			= $(SRCS:.c=.o)
 
 all: $(NAME)
 
