@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/22 00:40:07 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/23 19:38:12 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,10 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 	}
 	envp_path = find_envp_path(heap->ev_clone);
 	if (!envp_path)
+	{
+		heap->exit_status = 127;
 		return (ft_perror(cmd_name, ": No such file or directory"), NULL);
+	}
 	bin_dir = ft_split(envp_path, ':');
 	if (!bin_dir)
 		(cleanup(heap), exit(1));
