@@ -3,76 +3,77 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 10:04:24 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/23 17:15:10 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*get_env_val(char *str, int *i, t_alloc *heap, int status)
+char	*get_env_val(const char *str, int *i, t_alloc *heap)
 {
 	int		start;
 	char	*key;
-	char	*val;
+	char	*env_val;
+	char	*result;
 
 	(*i)++; // '$'
 	start = *i;
 	if (str[*i] == '?')
 	{
 		(*i)++;
-		return (ft_itoa(status));
+		return (ft_itoa(heap->exit_status));
 	}
 	while (ft_isalnum(str[*i]) || str[*i] == '_')
 		(*i)++;
-	// 変数名の長さが0 (例: "$" だけ) の場合などは呼び出し元で弾く想定
-	key = ft_substr(str, start, *i - start);
+	key = ft_substr(str, start, *i - start); // 変数名の長さが0 (例: "$" だけ) の場合などは呼び出し元で弾く必要あり
 	if (!key)
 		return (NULL);
-	val = ft_strdup(search_get_env(heap->ev_clone, key));
-	if (!val)
-		val = ft_strdup("");
+	env_val = search_get_env(heap->ev_clone, key);
 	free(key);
-	return (val);
+	if (env_val)
+		result = ft_strdup(env_val);
+	else
+		result = ft_strdup("");
+	return (result);
 }
 
-static char	*expand_envs(char *str, t_alloc *heap)
+static void	expand_envs(char **str, t_alloc *heap)
 {
 	char	*val;
 	int		i;
 	int		start;
 	char	quote;
 
-	if (!str)
-		return (NULL);
+	if (!str || !*str)
+		return ;
 	i = 0;
 	quote = 0;
-	while (str[i])
+	while ((*str)[i])
 	{
-		if (!quote && (str[i] == '\'' || str[i] == '\"'))
-			quote = str[i];
-		else if (quote && str[i] == quote)
+		if (!quote && ((*str)[i] == '\'' || (*str)[i] == '\"'))
+			quote = (*str)[i];
+		else if (quote && (*str)[i] == quote)
 			quote = 0;
-		if (str[i] == '$' && quote != '\'' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_' || str[i + 1] == '?'))
+		if ((*str)[i] == '$' && quote != '\'' && (ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_' || (*str)[i + 1] == '?'))
 		{
 			start = i;
-			val = get_env_val(str, &i, heap, heap->exit_status);
-			i = start + ft_replace(ft_strdup(&str), val, start, i - start); //存在しない環境変数はどうなる？
+			val = get_env_val(*str, &i, heap);
+			if (!val)
+				(cleanup(heap), exit(1));
+			if(!ft_replace(str, val, start, i - start))
+				(free(val), cleanup(heap), exit(1));
+			i = start + ft_strlen(val);
 			free(val);
 		}
 		else
 			i++;
 	}
-	return (str);
 }
 
-
-//ここから上確認！！！
-
-
-static char	*remove_quotes(char *str)
+static char	*remove_quotes(const char *str)
 {
 	char	*new_str;
 	int		i;
@@ -97,22 +98,19 @@ static char	*remove_quotes(char *str)
 			new_str[j++] = str[i]; // 中身はコピー
 		i++;
 	}
-	new_str[j] = '\0';
 	return (new_str);
 }
 
-static bool	process_an_arg(t_cmd *ast, int i, t_alloc *heap)
+static void	process_an_arg(char **arg, t_alloc *heap)
 {
-	char	*expanded;
 	char	*result;
 
-	expanded = expand_envs(ast->argv[i], heap);
-	result = remove_quotes(expanded);
-	free(expanded);
+	expand_envs(arg, heap);
+	result = remove_quotes(*arg);
 	if (!result)
 		(cleanup(heap), exit(1));
-	free(ast->argv[i]);
-	ast->argv[i] = result;
+	free(*arg);
+	*arg = result;
 }
 
 static void	check_args(t_cmd *ast, t_alloc *heap)
@@ -122,7 +120,7 @@ static void	check_args(t_cmd *ast, t_alloc *heap)
 	i = 0;
 	while (ast->argv[i])
 	{
-		process_arg(ast, i, heap);
+		process_an_arg(&(ast->argv[i]), heap);
 		i++;
 	}
 }
