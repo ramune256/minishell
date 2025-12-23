@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 19:56:12 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 20:18:54 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,9 @@ void	free_ast(t_cmd *cmd);
 bool	is_redirection(t_token_type type);
 
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
+
+// exoander
+void	expand(t_cmd *ast, t_alloc *heap);
 
 //executor
 void	execute(t_cmd *ast, t_alloc *heap);

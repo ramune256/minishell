@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:31:48 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 20:19:25 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int	main(int ac, char **av, char **ev)
 				add_history(heap.line);
 			tokenize(&heap);
 			parse(&heap);
+			expand(heap.ast, &heap);
 			execute(heap.ast, &heap);
 		}
 		else
