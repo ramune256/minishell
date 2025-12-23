@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/22 22:28:28 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 20:40:16 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 		fullpath = check_absolute_path(cmd_name, heap);
 		return (fullpath);
 	}
-	envp_path = search_get_env(heap->ev_clone, "PATH=");
+	envp_path = search_get_env(heap->ev_clone, "PATH");
 	if (!envp_path)
 		return (NULL);
 	bin_dir = ft_split(envp_path, ':');
