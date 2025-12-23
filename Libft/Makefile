@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/30 16:13:12 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/23 20:00:14 by shunwata         ###   ########.fr        #
+#    Updated: 2025/12/23 20:06:01 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,14 +44,14 @@ ADDITIONAL_OBJS = $(ADDITIONAL_SRCS:.c=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(FT_PRINTF_OBJS) $(GET_NEXT_LINE_OBJS) $(BONUS_OBJS) $(ADDITIONAL_OBJS)
-	ar rcs $(NAME) $(OBJS) $(FT_PRINTF_OBJS) $(GET_NEXT_LINE_OBJS) $(BONUS_OBJS) $(ADDITIONAL_OBJS)
+$(NAME): $(OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS) $(BONUS_OBJS) $(ADDITIONAL_OBJS)
+	ar rcs $(NAME) $(OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS) $(BONUS_OBJS) $(ADDITIONAL_OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(FT_PRINTF_OBJS) $(GET_NEXT_LINE_OBJS) $(BONUS_OBJS) $(ADDITIONAL_OBJS)
+	rm -f $(OBJS) $(FT_PRINTF_OBJS) $(GNL_OBJS) $(BONUS_OBJS) $(ADDITIONAL_OBJS)
 
 fclean: clean
 	rm -f $(NAME)
