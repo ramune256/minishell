@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 01:07:46 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 10:04:24 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static char	*expand_envs(char *str, t_alloc *heap)
 		{
 			start = i;
 			val = get_env_val(str, &i, heap, heap->exit_status);
-			i += ft_replace(&str, val, start, i - start); //存在しない環境変数はどうなる？
+			i = start + ft_replace(ft_strdup(&str), val, start, i - start); //存在しない環境変数はどうなる？
 			free(val);
 		}
 		else
