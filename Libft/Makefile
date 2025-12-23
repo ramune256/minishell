@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/30 16:13:12 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/23 19:57:37 by shunwata         ###   ########.fr        #
+#    Updated: 2025/12/23 20:00:14 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ FT_PRINTF_OBJS = $(FT_PRINTF_SRCS:.c=.o)
 GNL_SRCS = $(addprefix $(GNL_DIR)/, get_next_line.c)
 GNL_OBJS = $(GNL_SRCS:.c=.o)
 
-ADDITIONAL_SRCS = $(addprefix $(ADDITIONAL_DIR)/, ft_replace ft_strcmp.c ft_strndup.c ft_strnlen)
+ADDITIONAL_SRCS = $(addprefix $(ADDITIONAL_DIR)/, ft_replace.c ft_strcmp.c ft_strndup.c ft_strnlen.c)
 ADDITIONAL_OBJS = $(ADDITIONAL_SRCS:.c=.o)
 
 all: $(NAME)
