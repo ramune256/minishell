@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 20:01:10 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:31:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 00:39:34 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,9 @@
 
 extern volatile sig_atomic_t	g_sig_status;
 
-struct							s_alloc;
-
 void	set_signal_shell(void);
 void	set_signal_child(void);
 void	set_signal_parent(void);
-void	import_signal_status(struct s_alloc *heap);
+void	import_signal_status(t_alloc *heap);
 
 #endif
