@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/23 19:50:44 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:04:26 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,20 @@ static bool	echo_print(char **line)
 	return (true);
 }
 
+static bool	is_n(char *str)
+{
+	int	i;
+
+	if (!str || ft_strncmp(str, "-n", 2))
+		return (false);
+	i = 2;
+	while (str[i] == 'n')
+		i++;
+	if (!str[i])
+		return (true);
+	return (false);
+}
+
 int	c_echo(char **line, t_alloc *heap)
 {
 	(void)heap;
@@ -40,9 +54,9 @@ int	c_echo(char **line, t_alloc *heap)
 		if (printf("\n") == ERROR)
 			return (1);
 	}
-	else if (!ft_strncmp(line[OPT], "-n", 3))
+	else if (is_n(line[OPT]))
 	{
-		while (!ft_strncmp(line[OPT], "-n", 3))
+		while (line[OPT] && is_n(line[OPT]))
 			line++;
 		if (echo_print(line) == false)
 			return (1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_export.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:25:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:01:55 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	print_formatted_env(char *env_str)
 	equal_pos = ft_strchr(env_str, '=');
 	if (equal_pos)
 	{
-		if (printf("declare -x ") == ERROR)
+		if (write(1, "declare -x ", 12) == ERROR)
 			return (1);
 		key_len = equal_pos - env_str;
 		if (write(1, env_str, key_len) == ERROR)
