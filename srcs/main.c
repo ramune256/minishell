@@ -38,7 +38,7 @@ void	print_ast(t_cmd *cmd, int level)
 	}
 }
 
-static void	parse_and_execute(t_alloc *heap)
+static void	interpret(t_alloc *heap)
 {
 	if (isatty(STDIN_FILENO))
 		add_history(heap->line);
@@ -60,13 +60,9 @@ int	main(int ac, char **av, char **ev)
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
-		if (g_sig_status)
-		{
-			heap.exit_status = 128 + SIGINT;
-			g_sig_status = 0;
-		}
+		import_signal_status(&heap);
 		if (heap.line)
-			parse_and_execute(&heap);
+			interpret(&heap);
 		else
 			print_exit(&heap);
 		heap.success = true;
