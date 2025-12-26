@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:26:26 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:41:21 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 	i = 0;
 	while (i < size)
 	{
-		if (print_formatted_env(sorted_ev[i]) == ERROR)
+		if (print_formatted_env(sorted_ev[i]) < 0)
 			return (free(sorted_ev), 1);
 		i++;
 	}

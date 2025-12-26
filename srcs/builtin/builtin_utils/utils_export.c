@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:25:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:40:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,21 +83,21 @@ int	print_formatted_env(char *env_str)
 	equal_pos = ft_strchr(env_str, '=');
 	if (equal_pos)
 	{
-		if (printf("declare -x ") == ERROR)
+		if (write(1, "declare -x ", 12) < 0)
 			return (1);
 		key_len = equal_pos - env_str;
-		if (write(1, env_str, key_len) == ERROR)
+		if (write(1, env_str, key_len) < 0)
 			return (1);
-		if (printf("=\"") == ERROR)
+		if (printf("=\"") < 0)
 			return (1);
-		if (printf("%s", equal_pos + 1) == ERROR)
+		if (printf("%s", equal_pos + 1) < 0)
 			return (1);
-		if (printf("\"\n") == ERROR)
+		if (printf("\"\n") < 0)
 			return (1);
 	}
 	else
 	{
-		if (printf("declare -x %s\n", env_str) == ERROR)
+		if (printf("declare -x %s\n", env_str) < 0)
 			return (1);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 17:02:45 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:26:36 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:41:30 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,12 @@ int	c_pwd(char **line, t_alloc *heap)
 	(void)line;
 	tmp = search_get_env(heap->ev_clone, "PWD");
 	if (!tmp)
-		return (1);
-	if (printf("%s\n", tmp) == ERROR)
+	{
+		tmp = getcwd(NULL, 0);
+		if (!tmp)
+			return (1);
+	}
+	if (printf("%s\n", tmp) < 0)
 		return (1);
 	return (0);
 }
