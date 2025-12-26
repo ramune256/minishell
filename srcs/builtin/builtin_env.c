@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:37 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:41:47 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:15:15 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	c_env(char **line, t_alloc *heap)
 		{
 			if (printf("_=/usr/bin/env\n") < 0)
 				return (1);
+			i++;
 		}
 		else
 		{

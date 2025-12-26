@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:26:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:14:35 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static bool	unset_arg_skip(char **line, char **ev, int j)
 		{
 			if (ev[j][len] == '=' || ev[j][len] == '\0')
 				return (true);
+			i++;
 		}
 		else
 			i++;
@@ -32,17 +33,15 @@ static bool	unset_arg_skip(char **line, char **ev, int j)
 	return (false);
 }
 
-static int	input_new_ev(char **line, t_alloc *heap)
+static int	input_new_ev(char **line, t_alloc *heap, int j, int i)
 {
 	char	**res_ev;
-	int		i;
-	int		j;
 
-	i = 0;
-	j = 0;
 	res_ev = ft_calloc(j - i + 1, sizeof(char *));
 	if (!res_ev)
 		(cleanup(heap), exit(1));
+	i = 0;
+	j = 0;
 	while (heap->ev_clone[j])
 	{
 		if (unset_arg_skip(line, heap->ev_clone, j) == true)
@@ -71,11 +70,13 @@ int	c_unset(char **line, t_alloc *heap)
 
 	i = 0;
 	j = 0;
+	if (!line[CMD + 1])
+		return (0);
 	while (heap->ev_clone[j])
 	{
 		if (unset_arg_skip(line, heap->ev_clone, j) == true)
 			i++;
 		j++;
 	}
-	return (input_new_ev(line, heap));
+	return (input_new_ev(line, heap, j, i));
 }
