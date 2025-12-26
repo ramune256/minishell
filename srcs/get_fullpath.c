@@ -6,25 +6,25 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/26 21:08:21 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/26 23:14:08 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// static char	*find_envp_path(char **envp)
-// {
-// 	size_t	i;
+static char	*find_envp_path(char **envp)
+{
+	size_t	i;
 
-// 	if (!envp)
-// 		return (NULL);
-// 	i = 0;
-// 	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
-// 		i++;
-// 	if (!envp[i])
-// 		return (NULL);
-// 	return (envp[i] + 5);
-// }
+	if (!envp)
+		return (NULL);
+	i = 0;
+	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5) != 0)
+		i++;
+	if (!envp[i])
+		return (NULL);
+	return (envp[i] + 5);
+}
 
 static char	*join_path(char *bin_dir, char *cmd_name)
 {
