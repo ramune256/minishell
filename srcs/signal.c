@@ -77,3 +77,12 @@ void	set_signal_parent(void)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 }
+
+void	import_signal_status(t_alloc *heap)
+{
+	if (g_sig_status)
+	{
+		heap->exit_status = 128 + SIGINT;
+		g_sig_status = 0;
+	}
+}

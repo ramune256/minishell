@@ -24,8 +24,11 @@
 
 extern volatile sig_atomic_t	g_sig_status;
 
+struct							s_alloc;
+
 void	set_signal_shell(void);
 void	set_signal_child(void);
 void	set_signal_parent(void);
+void	import_signal_status(struct s_alloc *heap);
 
 #endif
