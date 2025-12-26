@@ -97,6 +97,7 @@ void	expand(t_cmd *ast, t_alloc *heap);
 void	execute(t_cmd *ast, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
 void	get_exit_status(t_alloc *heap, int status);
+void	clean_exit(t_alloc *heap, int code);
 
 bool	is_parent_builtin(t_cmd *ast);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);

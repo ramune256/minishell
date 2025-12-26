@@ -46,7 +46,7 @@ static void	execute_single_command(t_cmd *ast, t_alloc *heap)
 		set_signal_child();
 		exec_node = handle_redirections(ast, heap);
 		if (execute_builtin(exec_node, heap))
-			(cleanup(heap), exit(heap->exit_status));
+			clean_exit(heap, heap->exit_status);
 		fullpath = get_fullpath(exec_node->argv[0], heap);
 		if (fullpath == NULL)
 			(cleanup(heap), exit(127));
@@ -64,42 +64,39 @@ static void	execute_single_command(t_cmd *ast, t_alloc *heap)
 	cleanup_temp_files(&heap->temp_files);
 }
 
+static void	exec_pipe_child(t_cmd *cmd, int fd, int std, int *pfd, t_alloc *heap)
+{
+	set_signal_child();
+	dup2(fd, std);
+	(close(pfd[0]), close(pfd[1]));
+	execute(cmd, heap);
+	clean_exit(heap, heap->exit_status);
+}
+
 static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 {
-	int		pipefd[2]; // [0]は読み込み口, [1]は書き込み口
-	pid_t	pid_left;
-	pid_t	pid_right;
-	int		status;
+	int		pfd[2];
+	pid_t	l;
+	pid_t	r;
+	int		s;
 
-	if (pipe(pipefd) == -1)
-		(perror("pipe"), cleanup(heap), exit(1)); // パイプ作成失敗は致命的
-	pid_left = fork(); // 1. 左側の子プロセス (パイプに書き込む側)
-	if (pid_left == -1)
-		(perror("fork"), cleanup(heap), exit(1));
-	if (pid_left == 0)
-	{
-		set_signal_child();
-		dup2(pipefd[1], STDOUT_FILENO);
-		(close(pipefd[0]), close(pipefd[1]));
-		execute(ast->left, heap); // 左側のASTを再帰的に実行
-		(cleanup(heap), exit(heap->exit_status)); // 子プロセスをクリーンアップ
-	}
-	pid_right = fork(); // 2. 右側の子プロセス (パイプから読み込む側)
-	if (pid_right == -1)
-		(perror("fork"), cleanup(heap), exit(1));
-	if (pid_right == 0)
-	{
-		set_signal_child();
-		dup2(pipefd[0], STDIN_FILENO);
-		(close(pipefd[0]), close(pipefd[1]));
-		execute(ast->right, heap); // 右側のASTを再帰的に実行
-		(cleanup(heap), exit(heap->exit_status)); // 子プロセスをクリーンアップ
-	}
-	(close(pipefd[0]), close(pipefd[1]));
+	if (pipe(pfd) == -1)
+		(perror("pipe"), clean_exit(heap, 1));
+	l = fork();
+	if (l == -1)
+		(perror("fork"), clean_exit(heap, 1));
+	if (l == 0)
+		exec_pipe_child(ast->left, pfd[1], STDOUT_FILENO, pfd, heap);
+	r = fork();
+	if (r == -1)
+		(perror("fork"), clean_exit(heap, 1));
+	if (r == 0)
+		exec_pipe_child(ast->right, pfd[0], STDIN_FILENO, pfd, heap);
+	(close(pfd[0]), close(pfd[1]));
 	set_signal_parent();
-	(waitpid(pid_left, NULL, 0), waitpid(pid_right, &status, 0));
+	(waitpid(l, NULL, 0), waitpid(r, &s, 0));
 	set_signal_shell();
-	get_exit_status(heap, status);
+	get_exit_status(heap, s);
 }
 
 // ASTを再帰的にたどって実行するエントリーポイント

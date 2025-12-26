@@ -20,6 +20,12 @@ void	get_exit_status(t_alloc *heap, int status)
 		heap->exit_status = 128 + WTERMSIG(status);
 }
 
+void	clean_exit(t_alloc *heap, int code)
+{
+	cleanup(heap);
+	exit(code);
+}
+
 // void	change_fd(int target_fd, int fd_num)
 // {
 // 	dup2(fd_num, target_fd);
