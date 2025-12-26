@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core_executor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/21 16:23:35 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/26 21:07:03 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	execute_single_command(t_cmd *ast, t_alloc *heap)
 			(cleanup(heap), exit(heap->exit_status));
 		fullpath = get_fullpath(exec_node->argv[0], heap);
 		if (fullpath == NULL)
-			(cleanup(heap), exit(127));
+			(cleanup(heap), exit(heap->exit_status));
 		if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 			(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 	}

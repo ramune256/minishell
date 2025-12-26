@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   utils_executor.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:30:58 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:15:33 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/26 21:06:09 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	ft_perror(char *cmd, char *mess)
+{
+	ft_putstr_fd("bash: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putendl_fd(mess, 2);
+}
 
 void	get_exit_status(t_alloc *heap, int status)
 {
