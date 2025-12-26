@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:41:21 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:18:37 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,24 +93,26 @@ void	update_env(char *arg, t_alloc *heap)
 	append_ev(arg, i, heap);
 }
 
-int	c_export(char **argv, t_alloc *heap)
+int	c_export(char **line, t_alloc *heap)
 {
 	int	i;
 	int	status;
 
 	status = 0;
-	if (!argv[1])
+	if (!line)
+		return (1);
+	if (!line[OPT])
 		return (print_sorted_env(heap->ev_clone, heap));
 	i = 1;
-	while (argv[i])
+	while (line[i])
 	{
-		if (!is_valid_identifier(argv[i]))
+		if (!is_valid_identifier(line[i]))
 		{
-			fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", argv[i]); //ft_fprintf
+			fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", line[i]); //ft_fprintf
 			status = 1;
 		}
 		else
-			update_env(argv[i], heap);
+			update_env(line[i], heap);
 		i++;
 	}
 	return (status);

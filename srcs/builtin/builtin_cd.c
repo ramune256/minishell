@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 20:48:31 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:25:31 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:21:55 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,17 @@ static char	*get_dest_path(char *first_arg, char **ev)
 	return (result);
 }
 
-int	c_cd(char **argv, t_alloc *heap)
+int	c_cd(char **line, t_alloc *heap)
 {
 	char	*dest_path;
 	char	*oldpwd;
 	char	*newpwd;
 
-	if (argv[1] && argv[2])
+	if (!line)
+		return (1);
+	if (line[1] && line[2])
 		return (fprintf(stderr, "minishell: cd: too many arguments\n"), 1); //ft_fprintf
-	dest_path = get_dest_path(argv[1], heap->ev_clone);
+	dest_path = get_dest_path(line[1], heap->ev_clone);
 	if (!dest_path)
 		return (1);
 	oldpwd = getcwd(NULL, 0);

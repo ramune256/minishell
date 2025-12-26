@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:26:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:25:06 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ int	c_unset(char **line, t_alloc *heap)
 
 	i = 0;
 	j = 0;
+	if (!line)
+		return (1);
 	while (heap->ev_clone[j])
 	{
 		if (unset_arg_skip(line, heap->ev_clone, j) == true)

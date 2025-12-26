@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:25:47 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:23:40 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,15 @@ int	c_exit(char **line, t_alloc *heap)
 
 	if (isatty(STDIN_FILENO))
 		fprintf(stderr, "exit\n");
-	if (!line || !line[1])
+	if (!line)
+		return (1);
+	if (!line[OPT])
 	{
 		status = heap->exit_status;
 		(cleanup(heap), exit(status));
 	}
 	error = false;
-	arg = ft_atol(line[1], &error);
+	arg = ft_atol(line[OPT], &error);
 	if (error)
 		(fprintf(stderr, "minishell: exit: %s: numeric argument required\n", line[1]), cleanup(heap), exit(255));
 	if (line[2])
