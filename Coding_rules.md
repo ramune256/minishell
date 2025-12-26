@@ -1,20 +1,19 @@
-# コードの書き方
+# Coding Guidelines
 
-・関数の名前は、
-「動詞」
-「動詞+目的語」
-のいずれかであるべきである。
-良い例: `clone_ev()、cleanup()、execute()、execute_pipe()、set_signal_parent()、get_next_line()、isalnum()`
-悪い例: `prefix_add_after()、execute_core()`
+* **Function Names:**
+    * Must be either a "Verb" or a "Verb + Object".
+    * **Good Examples:** `clone_ev()`, `cleanup()`, `execute()`, `execute_pipe()`, `set_signal_parent()`, `get_next_line()`, `isalnum()`
+    * **Bad Examples:** `prefix_add_after()`, `execute_core()`
 
-・checkやprocess、changeのような具体性の無い単語を関数の名前に使うべきではない。
+* **Avoid Vague Words:**
+    * Do not use non-specific words like `check`, `process`, or `change` in function names.
 
-・関数を分割する目的は「抽象化」であるべきである。
-・`int *`等を連れ回すのは「抽象化されていないコードの分割」で、本質的な意味が無い。
-・関数は出来るだけ再利用できるように作るべきである。
+* **Abstraction:**
+    * The purpose of splitting functions must be "abstraction."
+    * Passing around variables like `int *` repeatedly is simply "splitting code without abstraction" and holds no essential value.
+    * Functions should be designed to be as reusable as possible.
 
-
-悪いコードの例
+**Example of Bad Code**
 ```c
 bool	main_create_cur(size_t *ev_len, size_t fir, char *ev_var, char **cur)
 {
@@ -61,7 +60,7 @@ char	*create_cur(size_t *j, char *cur, t_alloc *heap)
 }
 ```
 
-良いコードの例
+**Example of Good Code**
 ```c
 	while (1)
 	{
@@ -79,48 +78,52 @@ char	*create_cur(size_t *j, char *cur, t_alloc *heap)
 	}
 
 ```
-ロジックが抽象化されている
+*The logic is properly abstracted.*
 
-・その関数で変更しないポインタ引数にはなるべく`static`を付け、変更しないものには付けない
-関数の意図が分かりやすくなる
-ただし読みやすさを損なうのなら付ける必要はない
+* **Const Correctness:**
+    * Pointer arguments that are not modified within the function should be marked as `const` (or `static` depending on context intent), and those that are modified should not.
+    * This clarifies the function's intent.
+    * However, it is not necessary if it impairs readability.
 
-・ぱっと見で元の単語が理解できない場合、省略しない
-例: ret、par、cur、cnt
+* **Abbreviations:**
+    * Do not abbreviate if the original word cannot be understood at a glance.
+    * Examples: `ret`, `par`, `cur`, `cnt`.
 
-・`malloc`などの関数の失敗は重大なエラーであり、上位関数に伝播するよりはその場で即時終了させることが望ましい。
-`cleanup()`のような関数と、動的に確保したメモリへのポインタをまとめた構造体を作成し、コードのどこにいても即座に全てのメモリを解放し`exit()`できるような仕組みが必要である。
-ただし、`ft_strdup()`のような再利用性の高い関数の場合は即時終了させる必要はない。
+* **Error Handling (Malloc):**
+    * Failures in functions like `malloc` are critical errors; it is preferable to terminate immediately rather than propagating the error up to the caller.
+    * You need a mechanism—such as a `cleanup()` function and a struct grouping dynamically allocated pointers—that allows you to free all memory and `exit()` immediately from anywhere in the code.
+    * However, highly reusable functions like `ft_strdup()` do not need to terminate immediately.
 
+---
 
-# NORMINETTE C言語コーディング規約
+# NORMINETTE C Coding Standard
 
-## フォーマット
-1. インデントは全て「水平タブ」を使用する（スペース禁止）。
-2. 各行は80文字以内。長すぎる行はバックスラッシュ `\` で改行し、適切にインデントする。
-3. 関数間は「1つの空行」で区切る。
-4. 空行に空白文字やタブを含めない。
-5. 関数定義時、戻り値の型と関数名の間は「水平タブ」1つとする。
+## Formatting
+1.  **Indentation:** Use "Horizontal Tabs" only (spaces are forbidden).
+2.  **Line Length:** Max 80 characters per line. overly long lines should be broken with a backslash `\` and properly indented.
+3.  **Spacing:** Separate functions with exactly one empty line.
+4.  **Empty Lines:** Do not include spaces or tabs on empty lines.
+5.  **Function Definition:** Use exactly one "Horizontal Tab" between the return type and the function name.
 
-## 変数
-6. 変数宣言は必ず関数の冒頭に行う。
-7. 1つの関数内で宣言できる変数は「最大5個」まで。
-8. 変数名はスコープ内で同じ列に揃えてインデントする。
-9. 変数宣言は1行につき1つ。
-10. 変数宣言と同時に初期化をしてはならない（例: `int a = 0;` は禁止）。
+## Variables
+6.  **Declaration Position:** Variables must be declared at the very beginning of the function.
+7.  **Limit:** Maximum of 5 variables per function.
+8.  **Alignment:** Variable names should be aligned within the scope using indentation.
+9.  **One per Line:** Only one variable declaration per line.
+10. **Initialization:** Do not initialize variables during declaration (e.g., `int a = 0;` is forbidden).
 
-## 制御構文・禁止事項
-11. `for`文は使用禁止（`while`を使用すること）。
-12. 三項演算子（`? :`）は使用禁止。
-13. `while` や `if` の条件式内で代入を行わない。
-14. `while` と `{` を同じ行に書かない。
+## Control Structures & Prohibitions
+11. **Loops:** `for` loops are forbidden (use `while`).
+12. **Ternary Operator:** `? :` is forbidden.
+13. **Conditions:** Do not perform assignments inside `while` or `if` conditions.
+14. **Braces:** Do not write `while` and `{` on the same line.
 
-## return
-15. `return` の値は `()` で囲む。`return` と `()` の間にスペースを1つ入れる（例: `return (0);`）。
-16. `void`関数の場合は `return ;` と書く。
+## Return
+15. **Parentheses:** Return values must be enclosed in `()`. Put one space between `return` and `()` (e.g., `return (0);`).
+16. **Void Functions:** Write `return ;` for void functions.
 
-## その他
-17. `if`文の中括弧で無駄に行数を使うのを防ぐために、`if`の中身は一行で書ける事が望ましい。
-18. 複数関数を一行で実行したい場合、`(cleanup(&something), exit(1));`のような書き方は許容される。
-19. `return ()`の括弧の中に関数を入れてコードの行数を省略できる場合、そのようにするべきである。（コンマ演算子を使う）
-20. 全ての関数は抽象化によって高い可読性を有しているべきであり、関数の中身の長さはそれぞれ25行以内であるべきである。
+## Other Guidelines
+17. **If Statements:** To prevent wasting lines on braces, the body of an `if` statement should ideally be written on a single line.
+18. **One-Line Execution:** Executing multiple functions in one line, such as `(cleanup(&something), exit(1));`, is permissible.
+19. **Comma Operator:** If you can reduce line count by putting a function inside the `return ()` parentheses (using the comma operator), you should do so.
+20. **Function Length:** All functions should possess high readability through abstraction, and the body of each function should be within 25 lines.
