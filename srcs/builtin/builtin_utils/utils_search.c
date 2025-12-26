@@ -6,17 +6,19 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:15:32 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/03 16:35:27 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/23 16:00:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
+#include "minishell.h"
 
-char	*search_get_env(char **ev, char *search)
+char	*search_get_env(char **ev, const char *search)
 {
 	int		i;
 	size_t	len;
 
+	if (!search)
+		return (NULL);
 	i = 0;
 	len = ft_strlen(search);
 	while (ev[i])

@@ -1,27 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_check.c                                      :+:      :+:    :+:   */
+/*   additional.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/12 18:08:09 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/20 16:06:53 by shunwata         ###   ########.fr       */
+/*   Created: 2025/12/22 20:06:46 by shunwata          #+#    #+#             */
+/*   Updated: 2025/12/23 17:11:46 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "builtin.h"
+#ifndef ADDITIONAL_H
+# define ADDITIONAL_H
 
-// void	c_check(char *bash, char **check)
-// {
-// 	int	i;
+# include <stdbool.h>
+# include "libft.h"
 
-// 	i = 0;
-// 	if (!check)
-// 		error(bash, NULL, NULL, 0);
-// 	while (check[i])
-// 	{
-// 		printf("%s\n", check[i]);
-// 		i++;
-// 	}
-// }
+bool	ft_replace(char **origin, const char *replace, size_t start, size_t len);
+int		ft_strcmp(const char *s1, const char *s2);
+char	*ft_strndup(const char *s1, size_t n);
+size_t	ft_strnlen(const char *s, size_t n);
+
+#endif

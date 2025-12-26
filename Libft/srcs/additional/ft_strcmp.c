@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_free_all.c                                   :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/16 21:11:48 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/11/20 14:18:35 by shunwata         ###   ########.fr       */
+/*   Created: 2025/12/22 19:47:10 by shunwata          #+#    #+#             */
+/*   Updated: 2025/12/22 20:31:10 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "builtin.h"
+#include "additional.h"
 
-// void	free_all(char **res)
-// {
-// 	int	i;
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
 
-// 	i = 0;
-// 	while (res[i])
-// 	{
-// 		free(res[i]);
-// 		i++;
-// 	}
-// 	free(res);
-// }
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] != '\0')
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}

@@ -6,60 +6,33 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:22:40 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/22 19:51:35 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-size_t	ft_strnlen(const char *s, size_t n)
-{
-	const char	*h = s;
-
-	while (n && *s)
-		(void)(n--, s++);
-	return (s - h);
-}
-
-char	*ft_strndup(const char *s1, size_t n)
-{
-	size_t	size;
-	char	*result;
-
-	size = ft_strnlen(s1, n) + 1;
-	result = (char *)malloc(size);
-	if (!result)
-		return (NULL);
-	ft_strlcpy(result, s1, size);
-	return (result);
-}
-
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	size_t	i;
-
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
-		i++;
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-}
-
 void	cleanup(t_alloc *alloc)
 {
-	char	**ev;
-	bool	success;
+	char	**tmp_ev;
+	int		tmp_exit_status;
+	bool	tmp_success;
 
-	ev = alloc->ev_clone;
-	success = alloc->success;
+	tmp_ev = alloc->ev_clone;
+	tmp_exit_status = alloc->exit_status;
+	tmp_success = alloc->success;
 	free(alloc->line);
 	free_tokens(alloc->head);
 	free_ast(alloc->ast);
 	cleanup_temp_files(&alloc->temp_files);
-	if (success == false)
+	if (tmp_success == false)
 		free_2d_array(&(alloc->ev_clone));
 	ft_bzero(alloc, sizeof(t_alloc));
-	if (success == true)
-		alloc->ev_clone = ev;
+	if (tmp_success == true)
+	{
+		alloc->ev_clone = tmp_ev;
+		alloc->exit_status = tmp_exit_status;
+	}
 }
 
 void	get_input(char **line, const char *message)
