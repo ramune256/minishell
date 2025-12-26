@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/23 19:51:44 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:40:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # define CMD 0
 # define OPT 1
-# define ERROR -1
 
 # include <limits.h>
 # include <stdbool.h>

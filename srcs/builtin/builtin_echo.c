@@ -6,24 +6,24 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:34:53 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 01:40:48 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static bool	echo_print(const char **line)
+static bool	echo_print(char **line)
 {
 	int	i;
 
 	i = 0;
 	while (line[i])
 	{
-		if (printf("%s", line[i++]) == ERROR)
+		if (printf("%s", line[i++]) < 0)
 			return (false);
 		if (line[i])
 		{
-			if (printf(" ") == ERROR)
+			if (printf(" ") < 0)
 				return (false);
 		}
 	}
@@ -54,7 +54,7 @@ int	c_echo(char **line, t_alloc *heap)
 		return (1);
 	if (!line[1])
 	{
-		if (printf("\n") == ERROR)
+		if (printf("\n") < 0)
 			return (1);
 	}
 	else if (is_n_opt(line[1]))
@@ -68,7 +68,7 @@ int	c_echo(char **line, t_alloc *heap)
 	{
 		if (echo_print(line + 1) == false)
 			return (1);
-		if (printf("\n") == ERROR)
+		if (printf("\n") < 0)
 			return (1);
 	}
 	return (0);

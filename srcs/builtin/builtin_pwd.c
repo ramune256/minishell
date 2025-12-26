@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_pwd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 17:02:45 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:05:39 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/27 01:41:30 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	c_pwd(char **line, t_alloc *heap)
 		if (!tmp)
 			return (1);
 	}
-	if (printf("%s\n", tmp) == ERROR)
+	if (printf("%s\n", tmp) < 0)
 		return (1);
 	return (0);
 }
