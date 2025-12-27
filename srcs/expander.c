@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 17:13:03 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 17:16:11 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ static void	check_args(t_cmd *ast, t_alloc *heap)
 
 void	expand(t_cmd *ast, t_alloc *heap)
 {
-	if (ast == NULL)
+	if (ast == NULL ||!ast->argv)
 		return ;
 	if (ast->type == NODE_EXEC)
 		check_args(ast, heap);

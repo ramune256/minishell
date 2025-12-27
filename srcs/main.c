@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 20:28:54 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 02:16:33 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	main(int ac, char **av, char **ev)
 			tokenize(&heap);
 			parse(&heap);
 			expand(heap.ast, &heap);
-			print_ast(heap.ast, 0);
+			//print_ast(heap.ast, 0);
 			execute(heap.ast, &heap);
 		}
 		else

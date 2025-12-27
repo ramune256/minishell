@@ -6,76 +6,73 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:26:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 17:08:41 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static bool	unset_arg_skip(char **line, char **ev, int j)
+static bool    is_unset_target(char *env_str, char **args)
 {
-	int		i;
-	size_t	len;
+    int        i;
+    size_t    key_len;
 
-	i = 1;
-	len = ft_strlen(line[CMD + i]);
-	while (line[CMD + i])
-	{
-		if (!ft_strncmp(ev[j], line[CMD + i], len))
-		{
-			if (ev[j][len] == '=' || ev[j][len] == '\0')
-				return (true);
-		}
-		else
-			i++;
-	}
-	return (false);
+    key_len = get_key_len(env_str);
+    i = 1;
+    while (args[i])
+    {
+        if (ft_strlen(args[i]) == key_len && \
+            !ft_strncmp(env_str, args[i], key_len))
+            return (true);
+        i++;
+    }
+    return (false);
 }
 
-static int	input_new_ev(char **line, t_alloc *heap)
+static int    recreate_env(char **args, t_alloc *heap, size_t new_size)
 {
-	char	**res_ev;
-	int		i;
-	int		j;
+    char    **new_ev;
+    int        i;
+    int        j;
 
-	i = 0;
-	j = 0;
-	res_ev = ft_calloc(j - i + 1, sizeof(char *));
-	if (!res_ev)
-		(cleanup(heap), exit(1));
-	while (heap->ev_clone[j])
-	{
-		if (unset_arg_skip(line, heap->ev_clone, j) == true)
-		{
-			(void)(j++, i++);
-			if (!heap->ev_clone[j])
-				break ;
-		}
-		if (!ft_strncmp(heap->ev_clone[j], "_=", 2))
-			break ;
-		res_ev[j - i] = ft_strdup(heap->ev_clone[j]);
-		if (!res_ev[j - i])
-			(free_2d_array(&res_ev), cleanup(heap), exit(1));
-		j++;
-	}
-	res_ev[j - i] = NULL;
-	free_2d_array(&(heap->ev_clone));
-	heap->ev_clone = res_ev;
-	return (0);
+    new_ev = ft_calloc(new_size + 1, sizeof(char *));
+    if (!new_ev)
+        (cleanup(heap), exit(1));
+    i = 0;
+    j = 0;
+    while (heap->ev_clone[i])
+    {
+        if (is_unset_target(heap->ev_clone[i], args) == false)
+        {
+            new_ev[j] = ft_strdup(heap->ev_clone[i]);
+            if (!new_ev[j])
+                (free_2d_array(&new_ev), cleanup(heap), exit(1));
+            j++;
+        }
+        i++;
+    }
+    new_ev[j] = NULL;
+    free_2d_array(&(heap->ev_clone));
+    heap->ev_clone = new_ev;
+    return (0);
 }
 
-int	c_unset(char **line, t_alloc *heap)
+int    c_unset(char **line, t_alloc *heap)
 {
-	int		i;
-	int		j;
+    int        i;
+    size_t    count;
 
-	i = 0;
-	j = 0;
-	while (heap->ev_clone[j])
-	{
-		if (unset_arg_skip(line, heap->ev_clone, j) == true)
-			i++;
-		j++;
-	}
-	return (input_new_ev(line, heap));
+    if (!line || !heap->ev_clone)
+        return (1);
+    if (!line[OPT])
+        return (0);
+    count = 0;
+    i = 0;
+    while (heap->ev_clone[i])
+    {
+        if (is_unset_target(heap->ev_clone[i], line) == false)
+            count++;
+        i++;
+    }
+    return (recreate_env(line, heap, count));
 }
