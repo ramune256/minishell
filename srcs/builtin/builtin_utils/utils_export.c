@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:40:17 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 22:53:56 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ bool	is_valid_identifier(char *str)
 	i++;
 	while (str[i] && str[i] != '=')
 	{
+		if (str[i] == '+' && str[i + 1] == '=')
+			return (true);
 		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (false);
 		i++;
@@ -29,13 +31,23 @@ bool	is_valid_identifier(char *str)
 	return (true);
 }
 
-size_t	get_key_len(char *str)
+size_t	get_key_len(char *str, bool *append_flag)
 {
 	size_t	len;
 
 	len = 0;
+	if (append_flag)
+		*append_flag = 0;
 	while (str[len] && str[len] != '=')
+	{
+		if (str[len] == '+' && str[len + 1] == '=')
+		{
+			if(append_flag)
+				*append_flag = 1;
+			return (len);
+		}
 		len++;
+	}
 	return (len);
 }
 
