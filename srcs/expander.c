@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 17:48:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 18:00:04 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,20 @@ static bool	is_expandable(const char *str, int i, char quote)
 	return (true);
 }
 
+static bool	should_strip_backslash(char quote, char next)
+{
+	if (quote == '\'')
+		return (false);
+	if (quote == 0)
+		return (true);
+	if (quote == '\"')
+	{
+		if (next == '$' || next == '\"' || next == '\\')
+			return (true);
+	}
+	return (false);
+}
+
 static void	expand_envs(char **str, t_alloc *heap)
 {
 	char	*val;
@@ -130,7 +144,7 @@ static char	*remove_quotes(const char *str)
 
 	if (!str)
 		return (NULL);
-	new_str = ft_calloc(ft_strlen(str) + 1, sizeof(char)); // 削除後は必ず短くなるので、元の長さで確保
+	new_str = ft_calloc(ft_strlen(str) + 1, sizeof(char));
 	if (!new_str)
 		return (NULL);
 	i = 0;
@@ -139,12 +153,20 @@ static char	*remove_quotes(const char *str)
 	while (str[i])
 	{
 		if (!quote && (str[i] == '\'' || str[i] == '\"'))
-			quote = str[i];
+			quote = str[i++];
 		else if (quote && str[i] == quote)
+		{
 			quote = 0;
+			i++;
+		}
+		else if (str[i] == '\\' && should_strip_backslash(quote, str[i + 1]))
+		{
+			i++;
+			if (str[i])
+				new_str[j++] = str[i++];
+		}
 		else
-			new_str[j++] = str[i]; // 中身はコピー
-		i++;
+			new_str[j++] = str[i++];
 	}
 	return (new_str);
 }
@@ -175,11 +197,11 @@ static void	check_args(t_cmd *ast, t_alloc *heap)
 
 void	expand(t_cmd *ast, t_alloc *heap)
 {
-	if (ast == NULL ||!ast->argv)
+	if (ast == NULL)
 		return ;
-	if (ast->type == NODE_EXEC)
+	if (ast->type == NODE_EXEC && ast->argv)
 		check_args(ast, heap);
-	if (ast->type == NODE_REDIR)
+	if (ast->type == NODE_REDIR && ast->file)
 		process_an_arg(&(ast->file), heap);
 	if (ast->left)
 		expand(ast->left, heap);
