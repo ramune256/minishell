@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 17:15:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 16:24:11 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,35 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 	return (result);
 }
 
+bool	skip_backslash(const char quote, const char *str, int i)
+{
+	size_t	cnt;
+	size_t	tmp_i;
+
+	cnt = 0;
+	if (i < 0 || str[i] != '\\')
+		return (false);
+	tmp_i = i;
+	while (i >= 0 && str[i] == '\\')
+		(void)(i--, cnt++);
+	i = tmp_i;
+	if (cnt % 2)
+	{
+		if (quote == '\'')
+			return (false);
+		else if (quote == '\"')
+		{
+			if (str[i + 1] == '$' || str[i + 1] == '\"' || str[i + 1] == '\\')
+				return (true);
+			return (false);
+		}
+		else
+			return (true);
+	}
+	else
+		return (false);
+}
+
 static void	expand_envs(char **str, t_alloc *heap)
 {
 	char	*val;
@@ -57,7 +86,7 @@ static void	expand_envs(char **str, t_alloc *heap)
 			quote = (*str)[i];
 		else if (quote && (*str)[i] == quote)
 			quote = 0;
-		if ((*str)[i] == '$' && quote != '\'' && (ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_' || (*str)[i + 1] == '?'))
+		if ((*str)[i] == '$' && quote != '\'' && !skip_backslash(quote, *str,i - 1) && (ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_' || (*str)[i + 1] == '?'))
 		{
 			start = i;
 			val = get_env_val(*str, &i, heap);
@@ -90,7 +119,15 @@ static char	*remove_quotes(const char *str)
 	quote = 0;
 	while (str[i])
 	{
-		if (!quote && (str[i] == '\'' || str[i] == '\"'))
+		if (skip_backslash(quote, str, i))
+		{
+			i++;
+			if (str[i])
+				new_str[j++] = str[i];
+			else
+				break ;
+		}
+		else if (!quote && (str[i] == '\'' || str[i] == '\"'))
 			quote = str[i];
 		else if (quote && str[i] == quote)
 			quote = 0;
