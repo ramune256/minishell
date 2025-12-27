@@ -20,14 +20,14 @@ bool	is_valid_identifier(char *str)
 	if (!str[i] || (!ft_isalpha(str[i]) && str[i] != '_'))
 		return (false);
 	i++;
-	while (str[i] && str[i] != '=' && str[i] != '_')
+	while (str[i] && str[i] != '=')
 	{
+		if (str[i] == '+' && str[i + 1] == '=')
+			return (true);
 		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (false);
 		i++;
 	}
-	if (str[i] == '+' && str[i + 1] != '=')
-		return (false);
 	return (true);
 }
 
