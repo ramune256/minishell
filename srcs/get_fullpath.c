@@ -6,13 +6,13 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:41:29 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 01:45:35 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*join_path(const char *bin_dir, const char *cmd_name)
+static char	*join_path(char *bin_dir, char *cmd_name)
 {
 	size_t	total_len;
 	char	*fullpath;
@@ -51,7 +51,7 @@ static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 	return (puterr(cmd_name, "command not found"), NULL);
 }
 
-static char	*check_absolute_path(const char *tentative_path, t_alloc *heap)
+static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
 {
 	char		*result;
 	struct stat	path_stat;
@@ -69,7 +69,7 @@ static char	*check_absolute_path(const char *tentative_path, t_alloc *heap)
 	return (result);
 }
 
-char	*get_fullpath(const char *cmd_name, t_alloc *heap)
+char	*get_fullpath(char *cmd_name, t_alloc *heap)
 {
 	char	**bin_dir;
 	char	*fullpath;
