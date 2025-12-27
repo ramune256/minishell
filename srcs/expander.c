@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 17:15:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 17:13:03 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ void	expand(t_cmd *ast, t_alloc *heap)
 		return ;
 	if (ast->type == NODE_EXEC)
 		check_args(ast, heap);
+	if (ast->type == NODE_REDIR)
+		process_an_arg(&(ast->file), heap);
 	if (ast->left)
 		expand(ast->left, heap);
 	if (ast->right)
