@@ -131,6 +131,8 @@ void	expand(t_cmd *ast, t_alloc *heap)
 		return ;
 	if (ast->type == NODE_EXEC)
 		check_args(ast, heap);
+	if (ast->type == NODE_REDIR)
+		process_an_arg(&(ast->file), heap);
 	if (ast->left)
 		expand(ast->left, heap);
 	if (ast->right)
