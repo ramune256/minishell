@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 02:16:33 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/28 01:49:19 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ int	main(int ac, char **av, char **ev)
 	while (1)
 	{
 		get_input(&heap.line, "minishell> ");
+		if (g_sig_status)
+		{
+			heap.exit_status = 130;
+			g_sig_status = 0;
+		}
 		if (heap.line)
 		{
 			if (isatty(STDIN_FILENO))
