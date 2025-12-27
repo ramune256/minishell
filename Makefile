@@ -6,7 +6,7 @@
 #    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/23 20:21:22 by shunwata         ###   ########.fr        #
+#    Updated: 2025/12/28 01:42:24 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ ADDITIONAL_DIR	= $(L_SRC_DIR)/additional
 MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 					core_tokenizer.c executor_builtin.c executor_heredoc.c \
 					expander.c get_fullpath.c init.c main.c parser_redir.c \
-					put_err.c signal.c utils_common.c utils_executor.c \
+					puterr.c signal.c utils_common.c utils_executor.c \
 					utils_parser.c utils_tokenizer.c)
 
 BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \

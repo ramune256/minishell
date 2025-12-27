@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 20:20:48 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 01:46:41 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdbool.h>
 # include <fcntl.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
 # include "libft.h"
 
 typedef enum e_token_type
@@ -103,6 +104,9 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
 void	cleanup_temp_files(t_list **list);
 void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
+
+//error
+void	puterr(char *cmd_name, char *msg);
 
 //utils
 void	cleanup(t_alloc *alloc);
