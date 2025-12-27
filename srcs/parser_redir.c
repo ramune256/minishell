@@ -48,9 +48,9 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
 	fd = 0;
 	redir_token = *tokens; // 1. リダイレクトトークン(>, <, <<, >>)を保存・消費
 	*tokens = (*tokens)->next;
-	if ((*tokens)->type != TOKEN_WORD) // 2. 次がファイル名でなければ構文エラー
-		return (fprintf(stderr, "minishell: syntax error near unexpected token\n"), free_ast(cmd), NULL); // 渡されたノードを解放する責任を持つ //ft_fprintf
-	filename = ft_strdup((*tokens)->value); // 3. ファイル名（または区切り文字）を複製・消費
+	if ((*tokens)->type != TOKEN_WORD)
+		return (ft_putendl_fd("minishell: syntax error near unexpected token", 2), free_ast(cmd), NULL);
+	filename = ft_strdup((*tokens)->value);
 	if (!filename)
 		(free_ast(cmd), cleanup(heap), exit(1));
 	*tokens = (*tokens)->next;

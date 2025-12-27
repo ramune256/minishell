@@ -34,14 +34,14 @@ static char	*get_dest_path(char *first_arg, char **ev)
 	{
 		result = search_get_env(ev, "HOME");
 		if (!result)
-			return (fprintf(stderr, "minishell: cd: HOME not set\n"), NULL); //ft_fprintf
+			return (puterr("cd", "HOME not set"), NULL);
 	}
-	else if (ft_strcmp(first_arg, "-") == 0) // ★ cd - の対応
+	else if (ft_strcmp(first_arg, "-") == 0)
 	{
 		result = search_get_env(ev, "OLDPWD");
 		if (!result)
-			return (fprintf(stderr, "minishell: cd: OLDPWD not set\n"), NULL); //ft_fprintf
-		printf("%s\n", result); // bashは移動先を表示する
+			return (puterr("cd", "OLDPWD not set"), NULL);
+		printf("%s\n", result);
 	}
 	else
 		result = first_arg;
@@ -55,7 +55,7 @@ int	c_cd(char **argv, t_alloc *heap)
 	char	*newpwd;
 
 	if (argv[1] && argv[2])
-		return (fprintf(stderr, "minishell: cd: too many arguments\n"), 1); //ft_fprintf
+		return (puterr("cd", "too many arguments"), 1);
 	dest_path = get_dest_path(argv[1], heap->ev_clone);
 	if (!dest_path)
 		return (1);
@@ -64,7 +64,7 @@ int	c_cd(char **argv, t_alloc *heap)
 		return (perror("minishell: cd"), free(oldpwd), 1);
 	newpwd = getcwd(NULL, 0);
 	if (!newpwd)
-		fprintf(stderr, "minishell: cd: error retrieving current directory\n"); //ft_fprintf
+		puterr("cd", "error retrieving current directory");
 	update_pwd("OLDPWD=", oldpwd, heap);
 	update_pwd("PWD=", newpwd, heap);
 	return (0);

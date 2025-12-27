@@ -15,22 +15,23 @@
 int	c_exit(char **line, t_alloc *heap)
 {
 	long long	arg;
-	int			status;
 	bool		error;
 
 	if (isatty(STDIN_FILENO))
-		fprintf(stderr, "exit\n");
+		ft_putendl_fd("exit", 2);
 	if (!line || !line[1])
-	{
-		status = heap->exit_status;
-		(cleanup(heap), exit(status));
-	}
+		(cleanup(heap), exit(heap->exit_status));
 	error = false;
 	arg = ft_atol(line[1], &error);
 	if (error)
-		(fprintf(stderr, "minishell: exit: %s: numeric argument required\n", line[1]), cleanup(heap), exit(255));
+	{
+		ft_putstr_fd("minishell: exit: ", 2);
+		ft_putstr_fd(line[1], 2);
+		ft_putendl_fd(": numeric argument required", 2);
+		(cleanup(heap), exit(255));
+	}
 	if (line[2])
-		return (fprintf(stderr, "minishell: exit: too many arguments\n"), 1); // 終了しない
+		return (puterr("exit", "too many arguments"), 1);
 	cleanup(heap);
 	exit((unsigned char)arg); //モジュロ演算
 	return (0); //到達しない
