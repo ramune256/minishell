@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 17:16:11 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 17:48:09 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,54 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 	return (result);
 }
 
+static bool	skip_backslash(const char *str, char quote,  int i)
+{
+	size_t	cnt;
+	size_t	tmp_i;
+
+	cnt = 0;
+	if (i < 0 || str[i] != '\\')
+		return (false);
+	tmp_i = i;
+	while (i >= 0 && str[i] == '\\') // 後ろ向きにカウント
+		(void)(i--, cnt++);
+	i = tmp_i;
+	if (cnt % 2) // 奇数ならエスケープ有効
+	{
+		if (quote == '\'')
+			return (false); // シングルクオート内はエスケープなし
+		else if (quote == '\"')
+		{
+			// ダブルクオート内は $, ", \ のみエスケープ可能
+			if (str[i + 1] == '$' || str[i + 1] == '\"' || str[i + 1] == '\\')
+				return (true);
+			return (false);
+		}
+		else
+			return (true); // クオート外なら常にエスケープ有効
+	}
+	else
+		return (false); // 偶数ならバックスラッシュ自体がエスケープされている
+}
+
+static bool	is_valid_var_head(char c)
+{
+	return (ft_isalnum(c) || c == '_' || c == '?');
+}
+
+static bool	is_expandable(const char *str, int i, char quote)
+{
+	if (str[i] != '$')
+		return (false);
+	if (quote == '\'')
+		return (false);
+	if (!is_valid_var_head(str[i + 1]))
+		return (false);
+	if (skip_backslash(str, quote, i - 1))
+		return (false);
+	return (true);
+}
+
 static void	expand_envs(char **str, t_alloc *heap)
 {
 	char	*val;
@@ -57,13 +105,13 @@ static void	expand_envs(char **str, t_alloc *heap)
 			quote = (*str)[i];
 		else if (quote && (*str)[i] == quote)
 			quote = 0;
-		if ((*str)[i] == '$' && quote != '\'' && (ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_' || (*str)[i + 1] == '?'))
+		if (is_expandable(*str, i, quote))
 		{
 			start = i;
 			val = get_env_val(*str, &i, heap);
 			if (!val)
 				(cleanup(heap), exit(1));
-			if(!ft_replace(str, val, start, i - start))
+			if (!ft_replace(str, val, start, i - start))
 				(free(val), cleanup(heap), exit(1));
 			i = start + ft_strlen(val);
 			free(val);
