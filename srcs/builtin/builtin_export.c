@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:41:21 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 19:21:18 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 	return (0);
 }
 
-static void	append_ev(char *arg, int count, t_alloc *heap)
+static void	append_ev(char *arg, int count, t_alloc *heap, int app_flag)
 {
 	char	**new_ev;
 	int		i;
@@ -57,6 +57,17 @@ static void	append_ev(char *arg, int count, t_alloc *heap)
 		new_ev[i] = heap->ev_clone[i];
 		i++;
 	}
+	if (app_flag)
+	{
+		int cnt = 0;
+		while(arg[cnt] != '+')
+			cnt++;
+		char *tmp = NULL;
+		tmp = ft_strjoin(tmp, ft_strchr(arg, '='));
+		free(tmp);
+	}
+	else
+		new_ev[i] = ft_strdup(arg);
 	new_ev[i] = ft_strdup(arg);
 	if (!new_ev[i])
 		(free(new_ev), cleanup(heap), exit(1));
@@ -70,8 +81,9 @@ void	update_env(char *arg, t_alloc *heap)
 	char	*new_str;
 	size_t	key_len;
 	int		i;
+	int		app_flag;
 
-	key_len = get_key_len(arg);
+	key_len = get_key_len(arg, &app_flag);
 	i = 0;
 	while (heap->ev_clone[i])
 	{
@@ -83,6 +95,22 @@ void	update_env(char *arg, t_alloc *heap)
 				new_str = ft_strdup(arg);
 				if (!new_str)
 					(cleanup(heap), exit(1));
+				if(app_flag)
+				{
+					char *tmp = NULL;
+					while(*new_str++ != '=')
+						new_str++;
+					tmp = ft_strjoin(heap->ev_clone[i],new_str);
+					if(!tmp)
+						(cleanup(heap), exit(1));
+					free(heap->ev_clone[i]);
+					heap->ev_clone[i] = tmp;
+				}
+				else
+				{
+					free(heap->ev_clone[i]);
+					heap->ev_clone[i] = new_str;
+				}
 				free(heap->ev_clone[i]);
 				heap->ev_clone[i] = new_str;
 			}
@@ -90,7 +118,7 @@ void	update_env(char *arg, t_alloc *heap)
 		}
 		i++;
 	}
-	append_ev(arg, i, heap);
+	append_ev(arg, i, heap, app_flag);
 }
 
 int	c_export(char **argv, t_alloc *heap)

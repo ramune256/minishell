@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core_parser.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/02 16:56:17 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 19:09:01 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 
 	cmd = parse_command_unit(tokens, heap);
 	if (!cmd)
-		return (NULL);
+		 return (fprintf(stderr, "minishell: syntax error\n"), NULL);
 	if ((*tokens)->type == TOKEN_PIPE)
 	{
 		*tokens = (*tokens)->next;
@@ -164,6 +164,8 @@ void	parse(t_alloc *heap)
 	if (!tokens || tokens->type == TOKEN_EOF)
 		return ;
 	heap->ast = parse_pipeline(&tokens, heap);
+	if (!heap->ast)
+		return ;
 	if (tokens->type != TOKEN_EOF)
 	{
 		fprintf(stderr, "minishell: syntax error\n"); //ft_fprintf

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_export.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:40:17 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 19:26:35 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,34 @@ bool	is_valid_identifier(char *str)
 	if (!str[i] || (!ft_isalpha(str[i]) && str[i] != '_'))
 		return (false);
 	i++;
-	while (str[i] && str[i] != '=')
+	while (str[i] && str[i] != '=' && str[i] != '_')
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (false);
 		i++;
 	}
+	if (str[i] == '+' && str[i + 1] != '=')
+		return (false);
 	return (true);
 }
 
-size_t	get_key_len(char *str)
+size_t	get_key_len(char *str, int *app_flag)
 {
 	size_t	len;
 
 	len = 0;
+	if (app_flag)
+		*app_flag = 0;
 	while (str[len] && str[len] != '=')
+	{
+		if (str[len] == '+' && str[len + 1] == '=')
+		{
+			if(app_flag)
+				*app_flag = 1;
+			return (len);
+		}
 		len++;
+	}
 	return (len);
 }
 
