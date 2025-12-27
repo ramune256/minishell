@@ -20,8 +20,8 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 
 	if (!ev_clone)
 		return (1);
-	size = get_arr_size(ev_clone); // 配列のサイズを取得
-	sorted_ev = ft_calloc(size + 1, sizeof(char *)); //中身の文字列は複製せず、ポインタだけコピーする
+	size = get_arr_size(ev_clone);
+	sorted_ev = ft_calloc(size + 1, sizeof(char *));
 	if (!sorted_ev)
 		(cleanup(heap), exit(1));
 	i = 0;
@@ -39,11 +39,38 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 			return (free(sorted_ev), 1);
 		i++;
 	}
-	free(sorted_ev); // 配列の枠だけ解放 (中身の文字列は ev_clone が持っているので free しない)
+	free(sorted_ev);
 	return (0);
 }
 
-static void	append_ev(char *arg, int count, t_alloc *heap, int app_flag)
+static void	append_new_env(char *arg, t_alloc *heap, char **new_ev, int i)
+{
+	char	*tmp_val;
+	char	*tmp_key;
+	char	*equal_pos;
+
+	equal_pos = ft_strchr(arg, '=');
+	if (equal_pos && arg[equal_pos - arg - 1] == '+')
+	{
+		tmp_key = ft_substr(arg, 0, equal_pos - arg - 1);
+		if (!tmp_key)
+			(free(new_ev), cleanup(heap), exit(1));
+		tmp_val = ft_strdup(equal_pos);
+		if (!tmp_val)
+			(free(tmp_key), free(new_ev), cleanup(heap), exit(1));
+		new_ev[i] = ft_strjoin(tmp_key, tmp_val);
+		(free(tmp_key), free(tmp_val));
+	}
+	else
+		new_ev[i] = ft_strdup(arg);
+	if (!new_ev[i])
+		(free(new_ev), cleanup(heap), exit(1));
+	new_ev[i + 1] = NULL;
+	free(heap->ev_clone);
+	heap->ev_clone = new_ev;
+}
+
+static void	append_ev(char *arg, int count, t_alloc *heap)
 {
 	char	**new_ev;
 	int		i;
@@ -57,28 +84,58 @@ static void	append_ev(char *arg, int count, t_alloc *heap, int app_flag)
 		new_ev[i] = heap->ev_clone[i];
 		i++;
 	}
-	if (app_flag)
-	{
-		int cnt = 0;
-		while(arg[cnt] != '+')
-			cnt++;
-		char *tmp = NULL;
-		tmp = ft_strjoin(tmp, ft_strchr(arg, '='));
-		free(tmp);
-	}
+	append_new_env(arg, heap, new_ev, i);
+}
+
+static void	replace_env(char *arg, t_alloc *heap, int i)
+{
+	char	*tmp;
+
+	tmp = ft_strdup(arg);
+	if (!tmp)
+		(cleanup(heap), exit(1));
+	free(heap->ev_clone[i]);
+	heap->ev_clone[i] = tmp;
+}
+
+static void	append_env_val(char *arg, t_alloc *heap, int i)
+{
+	char	*new_val;
+	char	*tmp;
+	char	*joined_key;
+
+	new_val = ft_strdup(ft_strchr(arg, '=') + 1);
+	if (!new_val)
+		(cleanup(heap), exit(1));
+	if (ft_strchr(heap->ev_clone[i], '='))
+		tmp = ft_strjoin(heap->ev_clone[i], new_val);
 	else
-		new_ev[i] = ft_strdup(arg);
-	new_ev[i] = ft_strdup(arg);
-	if (!new_ev[i])
-		(free(new_ev), cleanup(heap), exit(1));
-	new_ev[i + 1] = NULL;
-	free(heap->ev_clone);
-	heap->ev_clone = new_ev;
+	{
+		joined_key = ft_strjoin(heap->ev_clone[i], "=");
+		if (!joined_key)
+			(free(new_val), cleanup(heap), exit(1));
+		tmp = ft_strjoin(joined_key, new_val);
+		free(joined_key);
+	}
+	free(new_val);
+	if (!tmp)
+		(cleanup(heap), exit(1));
+	free(heap->ev_clone[i]);
+	heap->ev_clone[i] = tmp;
+}
+
+static void	update_existing_env(char *arg, t_alloc *heap, int i, int app_flag)
+{
+	if (!ft_strchr(arg, '='))
+		return ;
+	if (app_flag)
+		append_env_val(arg, heap, i);
+	else
+		replace_env(arg, heap, i);
 }
 
 void	update_env(char *arg, t_alloc *heap)
 {
-	char	*new_str;
 	size_t	key_len;
 	int		i;
 	int		app_flag;
@@ -88,37 +145,15 @@ void	update_env(char *arg, t_alloc *heap)
 	while (heap->ev_clone[i])
 	{
 		if (ft_strncmp(heap->ev_clone[i], arg, key_len) == 0 &&
-			(heap->ev_clone[i][key_len] == '=' || heap->ev_clone[i][key_len] == '\0'))
+			(heap->ev_clone[i][key_len] == '=' ||
+			heap->ev_clone[i][key_len] == '\0'))
 		{
-			if (ft_strchr(arg, '='))
-			{
-				new_str = ft_strdup(arg);
-				if (!new_str)
-					(cleanup(heap), exit(1));
-				if(app_flag)
-				{
-					char *tmp = NULL;
-					while(*new_str++ != '=')
-						new_str++;
-					tmp = ft_strjoin(heap->ev_clone[i],new_str);
-					if(!tmp)
-						(cleanup(heap), exit(1));
-					free(heap->ev_clone[i]);
-					heap->ev_clone[i] = tmp;
-				}
-				else
-				{
-					free(heap->ev_clone[i]);
-					heap->ev_clone[i] = new_str;
-				}
-				free(heap->ev_clone[i]);
-				heap->ev_clone[i] = new_str;
-			}
+			update_existing_env(arg, heap, i, app_flag);
 			return ;
 		}
 		i++;
 	}
-	append_ev(arg, i, heap, app_flag);
+	append_ev(arg, i, heap);
 }
 
 int	c_export(char **argv, t_alloc *heap)
@@ -134,7 +169,9 @@ int	c_export(char **argv, t_alloc *heap)
 	{
 		if (!is_valid_identifier(argv[i]))
 		{
-			fprintf(stderr, "minishell: export: '%s': not a valid identifier\n", argv[i]); //ft_fprintf
+			ft_putstr_fd("minishell: export: '", 2);
+			ft_putstr_fd(argv[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
 			status = 1;
 		}
 		else

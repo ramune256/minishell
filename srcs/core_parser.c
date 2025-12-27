@@ -1,80 +1,13 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   core_parser.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/11 21:21:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 19:09:01 by nmasuda          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
-// // `WORD` トークンを解析して EXEC ノードを作成
-// static t_cmd	*parse_exec_node(t_token **tokens, t_alloc *heap)
-// {
-// 	t_cmd	*cmd;
-// 	t_token	*tmp;
-// 	int		argc;
-// 	int		i;
-
-// 	argc = 0;
-// 	tmp = *tokens;
-// 	while (tmp && tmp->type == TOKEN_WORD)
-// 	{
-// 		argc++;
-// 		tmp = tmp->next;
-// 	}
-// 	if (argc == 0) // WORDがなければ EXECノード は作らない
-// 		return (NULL);
-// 	cmd = exec_cmd_constructor();
-// 	if (!cmd)
-// 		(cleanup(heap), exit(1));
-// 	cmd->argv = ft_calloc(argc + 1, sizeof(char *));
-// 	if (!cmd->argv)
-// 		(free_ast(cmd), cleanup(heap), exit(1));
-// 	i = 0;
-// 	while (i < argc)
-// 	{
-// 		cmd->argv[i] = ft_strdup((*tokens)->value);
-// 		if (!cmd->argv[i])
-// 			(free_ast(cmd), cleanup(heap), exit(1));
-// 		*tokens = (*tokens)->next;
-// 		i++;
-// 	}
-// 	cmd->argv[argc] = NULL;
-// 	return (cmd);
-// }
-
-// static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
-// {
-// 	t_cmd	*cmd;
-
-// 	// 1. まずはコマンド本体 (NODE_EXEC) を解析
-// 	// (この時点ではリダイレクトは考慮しない)
-// 	cmd = parse_exec_node(tokens, heap);
-
-// 	// 2. リダイレクションが続く限り、ループで処理
-// 	while (is_redirection((*tokens)->type))
-// 	{
-// 		// 3. コマンドが空だった場合 (例: `> out`)、
-// 		//    空のEXECノードを作成して `cmd` に設定する
-// 		if (cmd == NULL)
-// 		{
-// 			cmd = exec_cmd_constructor();
-// 			if (!cmd)
-// 				(cleanup(heap), exit(1));
-// 		}
-// 		// 4. `parse_redirection` が `cmd` をラップし、新しい `cmd` を返す
-// 		cmd = parse_redirection(cmd, tokens, heap);
-// 		if (cmd == NULL)
-// 			return (NULL); // エラー（freeはparse_redirection内で行われる）
-// 	}
-// 	// 5. 完成したノード (EXEC または REDIR) を返す
-// 	return (cmd);
-// }
+static bool is_empty_cmd(t_cmd *cmd)
+{
+	if (cmd->type == NODE_REDIR)
+		return (false);
+	if (cmd->type == NODE_EXEC && cmd->argv == NULL)
+		return (true);
+	return (false);
+}
 
 static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 {
@@ -119,7 +52,7 @@ static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
 		{
 			result_ptr = parse_redirection(result_ptr, tokens, heap);
 			if (!result_ptr)
-				return (NULL); // 内部でfree_ast済み
+				return (NULL);
 		}
 		else
 		{
@@ -138,12 +71,14 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 
 	cmd = parse_command_unit(tokens, heap);
 	if (!cmd)
-		 return (fprintf(stderr, "minishell: syntax error\n"), NULL);
+		 return (ft_putstr_fd("minishell: syntax error\n", 2), NULL);
 	if ((*tokens)->type == TOKEN_PIPE)
 	{
+		if (is_empty_cmd(cmd))
+			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error\n", 2), NULL);
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
-			return (free_ast(cmd), fprintf(stderr, "minishell: syntax error\n"), NULL); //ft_fprintf
+			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error\n", 2), NULL);
 		right = parse_pipeline(tokens, heap);
 		if (!right)
 			return (free_ast(cmd), NULL);
@@ -155,7 +90,6 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 	return (cmd);
 }
 
-// パーサーのエントリーポイント
 void	parse(t_alloc *heap)
 {
 	t_token *tokens;
@@ -168,7 +102,7 @@ void	parse(t_alloc *heap)
 		return ;
 	if (tokens->type != TOKEN_EOF)
 	{
-		fprintf(stderr, "minishell: syntax error\n"); //ft_fprintf
+		ft_putstr_fd("minishell: syntax error\n", 2);
 		free_ast(heap->ast);
 		heap->ast = NULL;
 	}
