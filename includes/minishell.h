@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:41:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 01:46:41 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	expand(t_cmd *ast, t_alloc *heap);
 
 //executor
 void	execute(t_cmd *ast, t_alloc *heap);
-char	*get_fullpath(const char *cmd_name, t_alloc *heap);
+char	*get_fullpath(char *cmd_name, t_alloc *heap);
 void	get_exit_status(t_alloc *heap, int status);
 
 bool	is_parent_builtin(t_cmd *ast);
