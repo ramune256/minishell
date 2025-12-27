@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 18:00:04 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/27 18:01:31 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,17 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 
 static bool	skip_backslash(const char *str, char quote,  int i)
 {
-	size_t	cnt;
+	size_t	count;
 	size_t	tmp_i;
 
-	cnt = 0;
+	count = 0;
 	if (i < 0 || str[i] != '\\')
 		return (false);
 	tmp_i = i;
 	while (i >= 0 && str[i] == '\\') // 後ろ向きにカウント
-		(void)(i--, cnt++);
+		(void)(i--, count++);
 	i = tmp_i;
-	if (cnt % 2) // 奇数ならエスケープ有効
+	if (count % 2) // 奇数ならエスケープ有効
 	{
 		if (quote == '\'')
 			return (false); // シングルクオート内はエスケープなし
