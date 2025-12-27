@@ -75,7 +75,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 	if ((*tokens)->type == TOKEN_PIPE)
 	{
 		if (is_empty_cmd(cmd))
-			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error\n", 2), NULL);
+			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error near unexpected token '|'\n", 2), NULL);
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
 			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error\n", 2), NULL);

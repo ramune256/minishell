@@ -91,11 +91,21 @@ static bool	process_quotes(char *line, int *i)
 	return (true);
 }
 
+static t_token	*get_last_token(t_token *head)
+{
+	if (!head)
+		return (NULL);
+	while (head->next)
+		head = head->next;
+	return (head);
+}
+
 void	tokenize(t_alloc *heap)
 {
 	int		i;
 	int		start;
 	char	*line;
+	t_token	*last;
 
 	i = 0;
 	line = heap->line;
@@ -134,29 +144,22 @@ void	tokenize(t_alloc *heap)
 			append_token(heap, TOKEN_WORD, ft_strndup(line + start, i - start));
 		}
 	}
+	last = get_last_token(heap->head);
+	if (last && last->type == TOKEN_PIPE)
+	{
+		if (!append_input(heap))
+		{
+			heap->exit_status = 2;
+			ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
+			// Fall through to add EOF
+		}
+		else
+		{
+			free_tokens(heap->head);
+			heap->head = NULL;
+			tokenize(heap);
+			return ;
+		}
+	}
 	append_token(heap, TOKEN_EOF, NULL);
 }
-
-// // トークンリストの末尾に新しいトークンを追加するヘルパー
-// static void	append_token(t_token **head, t_token *new_token)
-// {
-// 	if (!*head)
-// 	{
-// 		*head = new_token;
-// 		return ;
-// 	}
-// 	t_token *current = *head;
-// 	while (current->next)
-// 		current = current->next;
-// 	current->next = new_token;
-// }
-
-// // 新しいトークンを作成するヘルパー
-// static t_token *new_token(t_token_type type, char *value)
-// {
-// 	t_token *token = (t_token *)malloc(sizeof(t_token));
-// 	token->type = type;
-// 	token->value = value;
-// 	token->next = NULL;
-// 	return (token);
-// }
