@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 19:24:50 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/27 22:57:42 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static bool    is_unset_target(char *env_str, char **args)
     int        i;
     size_t    key_len;
 
-    key_len = get_key_len(env_str,0);
+    key_len = get_key_len(env_str, NULL);
     i = 1;
     while (args[i])
     {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_export.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 16:31:26 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 19:26:35 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/27 22:53:56 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,19 +31,19 @@ bool	is_valid_identifier(char *str)
 	return (true);
 }
 
-size_t	get_key_len(char *str, int *app_flag)
+size_t	get_key_len(char *str, bool *append_flag)
 {
 	size_t	len;
 
 	len = 0;
-	if (app_flag)
-		*app_flag = 0;
+	if (append_flag)
+		*append_flag = 0;
 	while (str[len] && str[len] != '=')
 	{
 		if (str[len] == '+' && str[len + 1] == '=')
 		{
-			if(app_flag)
-				*app_flag = 1;
+			if(append_flag)
+				*append_flag = 1;
 			return (len);
 		}
 		len++;
