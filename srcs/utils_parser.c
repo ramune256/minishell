@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_parser.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 20:05:44 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/02 16:50:51 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 void	free_ast(t_cmd *cmd)
 {
 	if (!cmd)
-		return ;
+		return;
 	if (cmd->type == NODE_EXEC)
 		free_2d_array(&(cmd->argv));
 	else if (cmd->type == NODE_PIPE)
@@ -72,6 +72,6 @@ void	free_ast(t_cmd *cmd)
 
 bool	is_redirection(t_token_type type)
 {
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
+	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT ||
+			type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }
