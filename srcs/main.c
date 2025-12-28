@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 20:17:23 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/28 20:05:14 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ static void	interpret(t_alloc *heap)
 	tokenize(heap);
 	parse(heap);
 	expand(heap->ast, heap);
+	print_ast(heap->ast, 0);
 	execute(heap->ast, heap);
 }
 
