@@ -95,7 +95,8 @@ int	print_formatted_env(char *env_str)
 	if (equal_pos)
 	{
 		ft_putstr_fd("declare -x ", STDOUT_FILENO);
-		write(STDOUT_FILENO, env_str, equal_pos - env_str);
+		if (write(STDOUT_FILENO, env_str, equal_pos - env_str) < 0)
+			return (1);
 		ft_putstr_fd("=\"", STDOUT_FILENO);
 		ft_putstr_fd(equal_pos + 1, STDOUT_FILENO);
 		ft_putstr_fd("\"\n", STDOUT_FILENO);
