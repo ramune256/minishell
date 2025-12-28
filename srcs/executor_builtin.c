@@ -27,7 +27,7 @@ bool	is_parent_builtin(t_cmd *ast)
 	if (ft_strcmp(cmd, "exit") == 0)
 		return (true);
 	if (ft_strcmp(cmd, "export") == 0 && ast->argv[1] != NULL)
-		return (true); // 引数ありのexport
+		return (true);
 	if (ft_strcmp(cmd, "unset") == 0)
 		return (true);
 	return (false);
@@ -42,8 +42,7 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 	cmd = exec_node->argv[0];
 	if (!cmd)
 		return (0);
-
-	if (ft_strcmp(cmd, "cd") == 0) //←ft_strncmpじゃなくてft_strcmpにした
+	if (ft_strcmp(cmd, "cd") == 0)
 		heap->exit_status = c_cd(exec_node->argv, heap);
 	else if (ft_strcmp(cmd, "echo") == 0)
 		heap->exit_status = c_echo(exec_node->argv, heap);
@@ -58,7 +57,6 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 	else if (ft_strcmp(cmd, "unset") == 0)
 		heap->exit_status = c_unset(exec_node->argv, heap);
 	else
-		return (false); // ビルトインではなかった
-
-	return (true); // ビルトインを実行した
+		return (false);
+	return (true);
 }

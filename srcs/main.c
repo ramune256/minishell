@@ -12,32 +12,6 @@
 
 #include "minishell.h"
 
-void	print_ast(t_cmd *cmd, int level)
-{
-	if (cmd == NULL)
-		return ;
-	for (int i = 0; i < level; i++)
-		printf("  ");
-	if (cmd->type == NODE_EXEC)
-	{
-		printf("EXEC: ");
-		for (int i = 0; cmd->argv[i]; i++)
-			printf("[%s] ", cmd->argv[i]);
-		printf("\n");
-	}
-	else if (cmd->type == NODE_PIPE)
-	{
-		printf("PIPE\n");
-		print_ast(cmd->left, level + 1);
-		print_ast(cmd->right, level + 1);
-	}
-	else if (cmd->type == NODE_REDIR)
-	{
-		printf("REDIR (mode: %d, fd: %d, file: %s)\n", cmd->mode, cmd->fd, cmd->file);
-		print_ast(cmd->subcmd, level + 1);
-	}
-}
-
 int	main(int ac, char **av, char **ev)
 {
 	t_alloc		heap;
@@ -61,7 +35,6 @@ int	main(int ac, char **av, char **ev)
 			tokenize(&heap);
 			parse(&heap);
 			expand(heap.ast, &heap);
-			//print_ast(heap.ast, 0);
 			execute(heap.ast, &heap);
 		}
 		else
