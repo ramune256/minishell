@@ -46,7 +46,7 @@ void	get_input(char **line, const char *message)
 void	print_exit(t_alloc *heap)
 {
 	if (isatty(STDIN_FILENO))
-		fprintf(stderr, "exit\n");
+		ft_putendl_fd("exit", 2);
 	cleanup(heap);
 	exit(0);
 }
