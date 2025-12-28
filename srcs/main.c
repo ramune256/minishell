@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 20:03:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:05:14 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static void	interpret(t_alloc *heap)
 
 int	main(int ac, char **av, char **ev)
 {
-	t_alloc		heap;
+	t_alloc	heap;
 
 	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));

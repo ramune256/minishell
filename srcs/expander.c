@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/27 18:01:31 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:05:01 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ static bool	check_escape(const char *str, char quote, int i, size_t count)
 			return (false);
 		else if (quote == '\"')
 		{
-			if (str[i + 1] == '$' || str[i + 1] == '\"'
-				|| str[i + 1] == '\\')
+			if (str[i + 1] == '$' || str[i + 1] == '\"' || str[i + 1] == '\\')
 				return (true);
 			return (false);
 		}

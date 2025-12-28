@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_replace.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:09:37 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/23 17:11:29 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:07:31 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ bool	ft_replace(char **origin, const char *replace, size_t start, size_t len)
 
 	if (!origin || !*origin || !replace)
 		return (false);
-	new_len =  ft_strlen(*origin) - len + ft_strlen(replace);
+	new_len = ft_strlen(*origin) - len + ft_strlen(replace);
 	new_str = ft_calloc(new_len + 1, sizeof(char));
 	if (!new_str)
 		return (false);

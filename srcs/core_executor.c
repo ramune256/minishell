@@ -6,13 +6,13 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:50:05 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/28 20:03:53 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	branch_pipe_or_child_task(t_cmd *node, t_alloc *heap);
+static void		branch_pipe_or_child_task(t_cmd *node, t_alloc *heap);
 
 static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
 {

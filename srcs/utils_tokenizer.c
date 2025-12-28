@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_tokenizer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:32:53 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/29 00:34:08 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:05:47 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	free_tokens(t_token *token)
 {
 	t_token	*tmp;
+
 	while (token)
 	{
 		tmp = token->next;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 22:54:27 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:06:23 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,8 @@ static void	append_env_val(char *arg, t_alloc *heap, int i)
 	heap->ev_clone[i] = tmp;
 }
 
-static void	update_existing_env(char *arg, t_alloc *heap, int i, bool append_flag)
+static void	update_existing_env(char *arg, t_alloc *heap, int i,
+		bool append_flag)
 {
 	if (!ft_strchr(arg, '='))
 		return ;
@@ -145,9 +146,9 @@ void	update_env(char *arg, t_alloc *heap)
 	i = 0;
 	while (heap->ev_clone[i])
 	{
-		if (ft_strncmp(heap->ev_clone[i], arg, key_len) == 0 &&
-			(heap->ev_clone[i][key_len] == '=' ||
-			heap->ev_clone[i][key_len] == '\0'))
+		if (ft_strncmp(heap->ev_clone[i], arg, key_len) == 0
+			&& (heap->ev_clone[i][key_len] == '='
+				|| heap->ev_clone[i][key_len] == '\0'))
 		{
 			update_existing_env(arg, heap, i, append_flag);
 			return ;

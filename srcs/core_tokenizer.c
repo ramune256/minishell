@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core_tokenizer.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:16:39 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:04:23 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ static bool	process_quotes(char *line, int *i)
 			quote = line[*i];
 		else if (quote != 0 && line[*i] == quote)
 			quote = 0;
-		if (quote == 0 && (ft_strchr(" \t\n", line[*i]) || is_metachar(line[*i])))
+		if (quote == 0 && (ft_strchr(" \t\n", line[*i])
+				|| is_metachar(line[*i])))
 			break ;
 		(*i)++;
 	}
@@ -97,8 +98,8 @@ static void	handle_pipe_or_redir(t_alloc *heap, char *line, int *i)
 	else if (line[*i] == '<' && line[*i + 1] == '<')
 		(append_token(heap, TOKEN_HEREDOC, ft_strndup(line + *i, 2)), *i += 2);
 	else if (line[*i] == '>' && line[*i + 1] == '>')
-		(append_token(heap, TOKEN_REDIR_APPEND,
-				ft_strndup(line + *i, 2)), *i += 2);
+		(append_token(heap, TOKEN_REDIR_APPEND, ft_strndup(line + *i, 2)), *i
+			+= 2);
 	else if (line[*i] == '<')
 		(append_token(heap, TOKEN_REDIR_IN, ft_strndup(line + *i, 1)), (*i)++);
 	else if (line[*i] == '>')
@@ -119,7 +120,8 @@ static void	handle_incomplete_pipe(t_alloc *heap)
 		if (!append_input(heap))
 		{
 			heap->exit_status = 2;
-			ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
+			ft_putstr_fd("minishell: syntax error: unexpected end of file\n",
+				2);
 		}
 		else
 		{
