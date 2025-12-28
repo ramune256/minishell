@@ -19,8 +19,3 @@ void	get_exit_status(t_alloc *heap, int status)
 	else if (WIFSIGNALED(status))
 		heap->exit_status = 128 + WTERMSIG(status);
 }
-
-// void	change_fd(int target_fd, int fd_num)
-// {
-// 	dup2(fd_num, target_fd);
-// }

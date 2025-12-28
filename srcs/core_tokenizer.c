@@ -12,7 +12,6 @@
 
 #include "minishell.h"
 
-//新しいトークンを作って連結リストの後ろに追加
 static void	append_token(t_alloc *heap, t_token_type token_type, char *value)
 {
 	t_token	*new_token;
@@ -91,13 +90,46 @@ static bool	process_quotes(char *line, int *i)
 	return (true);
 }
 
-static t_token	*get_last_token(t_token *head)
+static void	handle_pipe_or_redir(t_alloc *heap, char *line, int *i)
 {
-	if (!head)
-		return (NULL);
-	while (head->next)
-		head = head->next;
-	return (head);
+	if (line[*i] == '|')
+		(append_token(heap, TOKEN_PIPE, ft_strndup(line + *i, 1)), (*i)++);
+	else if (line[*i] == '<' && line[*i + 1] == '<')
+		(append_token(heap, TOKEN_HEREDOC, ft_strndup(line + *i, 2)), *i += 2);
+	else if (line[*i] == '>' && line[*i + 1] == '>')
+		(append_token(heap, TOKEN_REDIR_APPEND,
+				ft_strndup(line + *i, 2)), *i += 2);
+	else if (line[*i] == '<')
+		(append_token(heap, TOKEN_REDIR_IN, ft_strndup(line + *i, 1)), (*i)++);
+	else if (line[*i] == '>')
+		(append_token(heap, TOKEN_REDIR_OUT, ft_strndup(line + *i, 1)), (*i)++);
+}
+
+static void	handle_incomplete_pipe(t_alloc *heap)
+{
+	t_token	*last;
+
+	last = heap->head;
+	if (!last)
+		return ;
+	while (last->next)
+		last = last->next;
+	if (last->type == TOKEN_PIPE)
+	{
+		if (!append_input(heap))
+		{
+			heap->exit_status = 2;
+			ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
+		}
+		else
+		{
+			free_tokens(heap->head);
+			heap->head = NULL;
+			tokenize(heap);
+			return ;
+		}
+	}
+	append_token(heap, TOKEN_EOF, NULL);
 }
 
 void	tokenize(t_alloc *heap)
@@ -105,26 +137,17 @@ void	tokenize(t_alloc *heap)
 	int		i;
 	int		start;
 	char	*line;
-	t_token	*last;
 
 	i = 0;
 	line = heap->line;
 	while (line[i])
 	{
-		while (line[i] && ft_strchr(" \t\n", line[i])) //空白・タブ・改行を読み飛ばす
+		while (line[i] && ft_strchr(" \t\n", line[i]))
 			i++;
 		if (!line[i])
-			break;
-		if (line[i] == '|')
-			(append_token(heap, TOKEN_PIPE, ft_strndup(line + i, 1)), i++);
-		else if (line[i] == '<' && line[i + 1] == '<')
-			(append_token(heap, TOKEN_HEREDOC, ft_strndup(line + i, 2)), i += 2);
-		else if (line[i] == '>' && line[i + 1] == '>')
-			(append_token(heap, TOKEN_REDIR_APPEND, ft_strndup(line + i, 2)), i+=2);
-		else if (line[i] == '<')
-			(append_token(heap, TOKEN_REDIR_IN, ft_strndup(line + i, 1)), i++);
-		else if (line[i] == '>')
-			(append_token(heap, TOKEN_REDIR_OUT, ft_strndup(line + i, 1)), i++);
+			break ;
+		if (ft_strchr("|<>", line[i]))
+			handle_pipe_or_redir(heap, line, &i);
 		else
 		{
 			start = i;
@@ -144,22 +167,5 @@ void	tokenize(t_alloc *heap)
 			append_token(heap, TOKEN_WORD, ft_strndup(line + start, i - start));
 		}
 	}
-	last = get_last_token(heap->head);
-	if (last && last->type == TOKEN_PIPE)
-	{
-		if (!append_input(heap))
-		{
-			heap->exit_status = 2;
-			ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
-			// Fall through to add EOF
-		}
-		else
-		{
-			free_tokens(heap->head);
-			heap->head = NULL;
-			tokenize(heap);
-			return ;
-		}
-	}
-	append_token(heap, TOKEN_EOF, NULL);
+	handle_incomplete_pipe(heap);
 }

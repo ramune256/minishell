@@ -14,17 +14,17 @@
 
 static void	set_redir_mode_fd(t_token *redir_token, int *mode, int *fd)
 {
-	if (redir_token->type == TOKEN_REDIR_OUT) // >
+	if (redir_token->type == TOKEN_REDIR_OUT)
 	{
 		*mode = O_WRONLY | O_CREAT | O_TRUNC;
 		*fd = STDOUT_FILENO;
 	}
-	else if (redir_token->type == TOKEN_REDIR_APPEND) // >>
+	else if (redir_token->type == TOKEN_REDIR_APPEND)
 	{
 		*mode = O_WRONLY | O_CREAT | O_APPEND;
 		*fd = STDOUT_FILENO;
 	}
-	else if (redir_token->type == TOKEN_REDIR_IN) // <
+	else if (redir_token->type == TOKEN_REDIR_IN)
 	{
 		*mode = O_RDONLY;
 		*fd = STDIN_FILENO;
@@ -46,16 +46,19 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
 
 	mode = 0;
 	fd = 0;
-	redir_token = *tokens; // 1. リダイレクトトークン(>, <, <<, >>)を保存・消費
+	redir_token = *tokens;
 	*tokens = (*tokens)->next;
 	if ((*tokens)->type != TOKEN_WORD)
-		return (ft_putendl_fd("minishell: syntax error near unexpected token", 2), free_ast(cmd), NULL);
+	{
+		ft_putendl_fd("minishell: syntax error near unexpected token", 2);
+		return (free_ast(cmd), NULL);
+	}
 	filename = ft_strdup((*tokens)->value);
 	if (!filename)
 		(free_ast(cmd), cleanup(heap), exit(1));
 	*tokens = (*tokens)->next;
-	set_redir_mode_fd(redir_token, &mode, &fd); // 4. mode と fd を設定
-	new_redir_node = redir_cmd_constructor(cmd, filename, mode, fd); // 5. 新しいリダイレクトノードを作成して、古いcmdをラップする
+	set_redir_mode_fd(redir_token, &mode, &fd);
+	new_redir_node = redir_cmd_constructor(cmd, filename, mode, fd);
 	if (!new_redir_node)
 		(free_ast(cmd), free(filename), cleanup(heap), exit(1));
 	return (new_redir_node);

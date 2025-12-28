@@ -30,7 +30,7 @@ static char	*get_dest_path(char *first_arg, char **ev)
 {
 	char	*result;
 
-	if (!first_arg) // cdのみ: HOMEへ, cd path: pathへ
+	if (!first_arg)
 	{
 		result = search_get_env(ev, "HOME");
 		if (!result)
@@ -41,7 +41,8 @@ static char	*get_dest_path(char *first_arg, char **ev)
 		result = search_get_env(ev, "OLDPWD");
 		if (!result)
 			return (puterr("cd", "OLDPWD not set"), NULL);
-		printf("%s\n", result);
+		ft_putstr_fd(result, STDOUT_FILENO);
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	}
 	else
 		result = first_arg;

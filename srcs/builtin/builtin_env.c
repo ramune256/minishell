@@ -24,14 +24,13 @@ int	c_env(char **line, t_alloc *heap)
 	{
 		if (!ft_strncmp(heap->ev_clone[i], "_=", 2))
 		{
-			if (printf("_=/usr/bin/env\n") < 0)
-				return (1);
+			ft_putstr_fd("_=/usr/bin/env\n", STDOUT_FILENO);
 			i++;
 		}
 		else
 		{
-			if (printf("%s\n", heap->ev_clone[i++]) < 0)
-				return (1);
+			ft_putstr_fd(heap->ev_clone[i++], STDOUT_FILENO);
+			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
 	}
 	return (0);
