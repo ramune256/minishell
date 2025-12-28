@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 20:03:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2025/12/28 20:29:55 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ static void	interpret(t_alloc *heap)
 	tokenize(heap);
 	parse(heap);
 	expand(heap->ast, heap);
-	print_ast(heap->ast, 0);
 	execute(heap->ast, heap);
 }
 
