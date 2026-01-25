@@ -24,7 +24,7 @@ int	c_pwd(char **line, t_alloc *heap)
 		if (!tmp)
 			return (1);
 	}
-	if (printf("%s\n", tmp) < 0)
-		return (1);
+	ft_putstr_fd(tmp, STDOUT_FILENO);
+	ft_putstr_fd("\n", STDOUT_FILENO);
 	return (0);
 }

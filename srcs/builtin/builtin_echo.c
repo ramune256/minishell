@@ -19,13 +19,9 @@ static bool	echo_print(char **line)
 	i = 0;
 	while (line[i])
 	{
-		if (printf("%s", line[i++]) < 0)
-			return (false);
+		ft_putstr_fd(line[i++], STDOUT_FILENO);
 		if (line[i])
-		{
-			if (printf(" ") < 0)
-				return (false);
-		}
+			ft_putstr_fd(" ", STDOUT_FILENO);
 	}
 	return (true);
 }
@@ -53,10 +49,7 @@ int	c_echo(char **line, t_alloc *heap)
 	if (!line)
 		return (1);
 	if (!line[1])
-	{
-		if (printf("\n") < 0)
-			return (1);
-	}
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	else if (is_n_opt(line[1]))
 	{
 		while (line[i] && is_n_opt(line[i]))
@@ -68,8 +61,7 @@ int	c_echo(char **line, t_alloc *heap)
 	{
 		if (echo_print(line + 1) == false)
 			return (1);
-		if (printf("\n") < 0)
-			return (1);
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	}
 	return (0);
 }

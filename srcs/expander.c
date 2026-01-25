@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+static bool	is_valid_var_head(char c)
+{
+	return (ft_isalnum(c) || c == '_' || c == '?');
+}
+
 char	*get_env_val(const char *str, int *i, t_alloc *heap)
 {
 	int		start;
@@ -19,7 +24,7 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 	char	*env_val;
 	char	*result;
 
-	(*i)++; // '$'
+	(*i)++;
 	start = *i;
 	if (str[*i] == '?')
 	{
@@ -28,7 +33,7 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 	}
 	while (ft_isalnum(str[*i]) || str[*i] == '_')
 		(*i)++;
-	key = ft_substr(str, start, *i - start); // 変数名の長さが0 (例: "$" だけ) の場合などは呼び出し元で弾く必要あり
+	key = ft_substr(str, start, *i - start);
 	if (!key)
 		return (NULL);
 	env_val = search_get_env(heap->ev_clone, key);
@@ -40,7 +45,27 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 	return (result);
 }
 
-static bool	skip_backslash(const char *str, char quote,  int i)
+static bool	check_escape(const char *str, char quote, int i, size_t count)
+{
+	if (count % 2)
+	{
+		if (quote == '\'')
+			return (false);
+		else if (quote == '\"')
+		{
+			if (str[i + 1] == '$' || str[i + 1] == '\"'
+				|| str[i + 1] == '\\')
+				return (true);
+			return (false);
+		}
+		else
+			return (true);
+	}
+	else
+		return (false);
+}
+
+static bool	skip_backslash(const char *str, char quote, int i)
 {
 	size_t	count;
 	size_t	tmp_i;
@@ -49,30 +74,10 @@ static bool	skip_backslash(const char *str, char quote,  int i)
 	if (i < 0 || str[i] != '\\')
 		return (false);
 	tmp_i = i;
-	while (i >= 0 && str[i] == '\\') // 後ろ向きにカウント
-		(void)(i--, count++);
+	while (i >= 0 && str[i] == '\\')
+		(void)((i--, count++));
 	i = tmp_i;
-	if (count % 2) // 奇数ならエスケープ有効
-	{
-		if (quote == '\'')
-			return (false); // シングルクオート内はエスケープなし
-		else if (quote == '\"')
-		{
-			// ダブルクオート内は $, ", \ のみエスケープ可能
-			if (str[i + 1] == '$' || str[i + 1] == '\"' || str[i + 1] == '\\')
-				return (true);
-			return (false);
-		}
-		else
-			return (true); // クオート外なら常にエスケープ有効
-	}
-	else
-		return (false); // 偶数ならバックスラッシュ自体がエスケープされている
-}
-
-static bool	is_valid_var_head(char c)
-{
-	return (ft_isalnum(c) || c == '_' || c == '?');
+	return (check_escape(str, quote, i, count));
 }
 
 static bool	is_expandable(const char *str, int i, char quote)

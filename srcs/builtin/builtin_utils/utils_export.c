@@ -42,7 +42,7 @@ size_t	get_key_len(char *str, bool *append_flag)
 	{
 		if (str[len] == '+' && str[len + 1] == '=')
 		{
-			if(append_flag)
+			if (append_flag)
 				*append_flag = 1;
 			return (len);
 		}
@@ -90,27 +90,22 @@ void	sort_str_array(char **arr, size_t size)
 int	print_formatted_env(char *env_str)
 {
 	char	*equal_pos;
-	size_t	key_len;
 
 	equal_pos = ft_strchr(env_str, '=');
 	if (equal_pos)
 	{
-		if (write(1, "declare -x ", 12) < 0)
+		ft_putstr_fd("declare -x ", STDOUT_FILENO);
+		if (write(STDOUT_FILENO, env_str, equal_pos - env_str) < 0)
 			return (1);
-		key_len = equal_pos - env_str;
-		if (write(1, env_str, key_len) < 0)
-			return (1);
-		if (printf("=\"") < 0)
-			return (1);
-		if (printf("%s", equal_pos + 1) < 0)
-			return (1);
-		if (printf("\"\n") < 0)
-			return (1);
+		ft_putstr_fd("=\"", STDOUT_FILENO);
+		ft_putstr_fd(equal_pos + 1, STDOUT_FILENO);
+		ft_putstr_fd("\"\n", STDOUT_FILENO);
 	}
 	else
 	{
-		if (printf("declare -x %s\n", env_str) < 0)
-			return (1);
+		ft_putstr_fd("declare -x ", STDOUT_FILENO);
+		ft_putstr_fd(env_str, STDOUT_FILENO);
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	}
 	return (0);
 }

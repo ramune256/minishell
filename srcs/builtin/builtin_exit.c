@@ -33,6 +33,6 @@ int	c_exit(char **line, t_alloc *heap)
 	if (line[2])
 		return (puterr("exit", "too many arguments"), 1);
 	cleanup(heap);
-	exit((unsigned char)arg); //モジュロ演算
-	return (0); //到達しない
+	exit((unsigned char)arg);
+	return (0);
 }
