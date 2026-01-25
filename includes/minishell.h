@@ -110,7 +110,6 @@ void	puterr(char *cmd_name, char *msg);
 
 //utils
 void	cleanup(t_alloc *alloc);
-void	cleanup_and_exit(t_alloc *heap, int status);
 void	get_input(char **line, const char *message);
 void	print_exit(t_alloc *heap);
 void	free_2d_array(char ***array);

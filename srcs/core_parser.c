@@ -23,7 +23,7 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 	}
 	new_argv = ft_calloc(size + 1 + 1, sizeof(char *));
 	if (!new_argv)
-		cleanup_and_exit(heap, 1);
+		(cleanup(heap), rl_clear_history(), exit(1));
 	i = 0;
 	while (i < size)
 	{
@@ -32,7 +32,7 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 	}
 	new_argv[i] = ft_strdup(arg);
 	if (!new_argv[i])
-		(free(new_argv), cleanup_and_exit(heap, 1));
+		(free(new_argv), cleanup(heap), rl_clear_history(), exit(1));
 	free(cmd->argv);
 	cmd->argv = new_argv;
 }
@@ -44,7 +44,7 @@ static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
 
 	node_exec = exec_cmd_constructor();
 	if (!node_exec)
-		cleanup_and_exit(heap, 1);
+		(cleanup(heap), rl_clear_history(), exit(1));
 	result_ptr = node_exec;
 	while (*tokens && (*tokens)->type != TOKEN_PIPE && (*tokens)->type != TOKEN_EOF)
 	{
@@ -84,7 +84,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 			return (free_ast(cmd), NULL);
 		new_pipe_node = pipe_cmd_constructor(cmd, right);
 		if (!new_pipe_node)
-			(free_ast(cmd), free_ast(right), cleanup_and_exit(heap, 1));
+			(free_ast(cmd), free_ast(right), cleanup(heap), rl_clear_history(), exit(1));
 		cmd = new_pipe_node;
 	}
 	return (cmd);

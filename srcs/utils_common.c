@@ -35,13 +35,6 @@ void	cleanup(t_alloc *alloc)
 	}
 }
 
-void	cleanup_and_exit(t_alloc *heap, int status)
-{
-	cleanup(heap);
-	rl_clear_history();
-	exit(status);
-}
-
 void	get_input(char **line, const char *message)
 {
 	if (isatty(STDIN_FILENO))
@@ -54,7 +47,9 @@ void	print_exit(t_alloc *heap)
 {
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", 2);
-	cleanup_and_exit(heap, 0);
+	cleanup(heap);
+	rl_clear_history();
+	exit(0);
 }
 
 void	free_2d_array(char ***array)

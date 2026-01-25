@@ -20,7 +20,7 @@ int	c_exit(char **line, t_alloc *heap)
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", 2);
 	if (!line || !line[1])
-		cleanup_and_exit(heap, heap->exit_status);
+		(cleanup(heap), rl_clear_history(), exit(heap->exit_status));
 	error = false;
 	arg = ft_atol(line[1], &error);
 	if (error)
@@ -28,10 +28,12 @@ int	c_exit(char **line, t_alloc *heap)
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(line[1], 2);
 		ft_putendl_fd(": numeric argument required", 2);
-		cleanup_and_exit(heap, 255);
+		(cleanup(heap), rl_clear_history(), exit(255));
 	}
 	if (line[2])
 		return (puterr("exit", "too many arguments"), 1);
-	cleanup_and_exit(heap, (unsigned char)arg);
+	cleanup(heap);
+	rl_clear_history();
+	exit((unsigned char)arg);
 	return (0);
 }

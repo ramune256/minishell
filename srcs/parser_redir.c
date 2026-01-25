@@ -55,11 +55,11 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
 	}
 	filename = ft_strdup((*tokens)->value);
 	if (!filename)
-		(free_ast(cmd), cleanup_and_exit(heap, 1));
+		(free_ast(cmd), cleanup(heap), rl_clear_history(), exit(1));
 	*tokens = (*tokens)->next;
 	set_redir_mode_fd(redir_token, &mode, &fd);
 	new_redir_node = redir_cmd_constructor(cmd, filename, mode, fd);
 	if (!new_redir_node)
-		(free_ast(cmd), free(filename), cleanup_and_exit(heap, 1));
+		(free_ast(cmd), free(filename), cleanup(heap), rl_clear_history(), exit(1));
 	return (new_redir_node);
 }
