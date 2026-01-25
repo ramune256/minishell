@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2026/01/02 21:21:22 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/28 01:50:05 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,6 @@ static void	execute_single_command(t_cmd *ast, t_alloc *heap)
 
 	if (ast->type != NODE_PIPE)
 		find_and_process_heredocs(ast, heap);
-	if (g_sig_status)
-		return ;
 	pid = fork();
 	if (pid == -1)
 		(perror("fork"), cleanup(heap), exit(1));
