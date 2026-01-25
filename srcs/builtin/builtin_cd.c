@@ -21,7 +21,7 @@ static void	update_pwd(const char *var, char *pwd, t_alloc *heap)
 	tmp = ft_strjoin(var, pwd);
 	free(pwd);
 	if (!tmp)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	update_env(tmp, heap);
 	free(tmp);
 }

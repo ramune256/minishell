@@ -24,9 +24,9 @@ static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
 	exec_node = handle_redirections(ast->subcmd, heap);
 	file_fd = open(ast->file, ast->mode, 0644);
 	if (file_fd == -1)
-		(perror(ast->file), cleanup(heap), exit(1));
+		(perror(ast->file), cleanup_and_exit(heap, 1));
 	if (dup2(file_fd, ast->fd) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
+		(perror("dup2"), cleanup_and_exit(heap, 1));
 	close(file_fd);
 	return (exec_node);
 }
@@ -39,12 +39,12 @@ void	execute_child_task(t_cmd *node, t_alloc *heap)
 	set_signal_child();
 	exec_node = handle_redirections(node, heap);
 	if (execute_builtin(exec_node, heap))
-		(cleanup(heap), exit(heap->exit_status));
+		cleanup_and_exit(heap, heap->exit_status);
 	fullpath = get_fullpath(exec_node->argv[0], heap);
 	if (fullpath == NULL)
-		(cleanup(heap), exit(127));
+		cleanup_and_exit(heap, 127);
 	if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
-		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
+		(perror(fullpath), free(fullpath), cleanup_and_exit(heap, 126));
 }
 
 static void	execute_single_command(t_cmd *ast, t_alloc *heap)
@@ -56,7 +56,7 @@ static void	execute_single_command(t_cmd *ast, t_alloc *heap)
 		find_and_process_heredocs(ast, heap);
 	pid = fork();
 	if (pid == -1)
-		(perror("fork"), cleanup(heap), exit(1));
+		(perror("fork"), cleanup_and_exit(heap, 1));
 	if (pid == 0)
 		execute_child_task(ast, heap);
 	set_signal_parent();
@@ -78,28 +78,28 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 	pid_t	pid_right;
 
 	if (pipe(pipefd) == -1)
-		(perror("pipe"), cleanup(heap), exit(1));
+		(perror("pipe"), cleanup_and_exit(heap, 1));
 	pid_left = fork();
 	if (pid_left == -1)
-		(perror("fork"), cleanup(heap), exit(1));
+		(perror("fork"), cleanup_and_exit(heap, 1));
 	if (pid_left == 0)
 	{
 		set_signal_child();
 		dup2(pipefd[1], STDOUT_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
 		branch_pipe_or_child_task(ast->left, heap);
-		(cleanup(heap), exit(heap->exit_status));
+		cleanup_and_exit(heap, heap->exit_status);
 	}
 	pid_right = fork();
 	if (pid_right == -1)
-		(perror("fork"), cleanup(heap), exit(1));
+		(perror("fork"), cleanup_and_exit(heap, 1));
 	if (pid_right == 0)
 	{
 		set_signal_child();
 		dup2(pipefd[0], STDIN_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
 		branch_pipe_or_child_task(ast->right, heap);
-		(cleanup(heap), exit(heap->exit_status));
+		cleanup_and_exit(heap, heap->exit_status);
 	}
 	(close(pipefd[0]), close(pipefd[1]));
 	set_signal_parent();

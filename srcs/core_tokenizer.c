@@ -19,7 +19,7 @@ static void	append_token(t_alloc *heap, t_token_type token_type, char *value)
 
 	new_token = (t_token *)ft_calloc(1, sizeof(t_token));
 	if (!new_token || (value == NULL && token_type != TOKEN_EOF))
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	new_token->type = token_type;
 	new_token->value = value;
 	new_token->next = NULL;
@@ -43,14 +43,14 @@ static void	join_lines(t_alloc *heap, char *new_line)
 	{
 		tmp = ft_strjoin(heap->line, "\n");
 		if (!tmp)
-			(free(new_line), cleanup(heap), exit(1));
+			(free(new_line), cleanup_and_exit(heap, 1));
 		joined = ft_strjoin(tmp, new_line);
 		free(tmp);
 	}
 	else
 		joined = ft_strjoin(heap->line, new_line);
 	if (!joined)
-		(free(new_line), cleanup(heap), exit(1));
+		(free(new_line), cleanup_and_exit(heap, 1));
 	free(heap->line);
 	heap->line = joined;
 }

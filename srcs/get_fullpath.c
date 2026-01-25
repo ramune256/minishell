@@ -37,7 +37,7 @@ static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 	{
 		fullpath = join_path(bin_dir[i], cmd_name);
 		if (!fullpath)
-			(free_2d_array(&bin_dir), cleanup(heap), exit(1));
+			(free_2d_array(&bin_dir), cleanup_and_exit(heap, 1));
 		if (access(fullpath, F_OK) == 0)
 		{
 			if (access(fullpath, X_OK) == 0)
@@ -65,7 +65,7 @@ static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
 		return (puterr(tentative_path, "Permission denied"), NULL);
 	result = ft_strdup(tentative_path);
 	if (!result)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	return (result);
 }
 
@@ -84,7 +84,7 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 		return (puterr(cmd_name, "No such file or directory"), NULL);
 	bin_dir = ft_split(envp_path, ':');
 	if (!bin_dir)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	fullpath = check_path_and_perm(bin_dir, cmd_name, heap);
 	return (free_2d_array(&bin_dir), fullpath);
 }

@@ -57,11 +57,11 @@ static char	*generate_temp_filename(t_alloc *heap)
 
 	num = ft_itoa(id++);
 	if (!num)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	filename = ft_strjoin("/tmp/.minishell_heredoc_", num);
 	free(num);
 	if (!filename)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	return (filename);
 }
 
@@ -74,7 +74,7 @@ static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
 	fn = generate_temp_filename(heap);
 	tmp_fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (tmp_fd == -1)
-		(perror("open"), cleanup(heap), exit(1));
+		(perror("open"), cleanup_and_exit(heap, 1));
 	while (1)
 	{
 		get_input(&line, "> ");

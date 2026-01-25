@@ -23,13 +23,13 @@ void	clone_ev(char **ev, t_alloc *heap)
 		i++;
 	heap->ev_clone = ft_calloc(i + 1, sizeof(char *));
 	if (!heap->ev_clone)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	i = 0;
 	while (ev[i])
 	{
 		heap->ev_clone[i] = ft_strdup(ev[i]);
 		if (!heap->ev_clone[i])
-			(cleanup(heap), exit(1));
+			cleanup_and_exit(heap, 1);
 		i++;
 	}
 	heap->ev_clone[i] = NULL;

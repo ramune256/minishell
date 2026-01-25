@@ -129,9 +129,9 @@ static void	expand_envs(char **str, t_alloc *heap)
 			start = i;
 			val = get_env_val(*str, &i, heap);
 			if (!val)
-				(cleanup(heap), exit(1));
+				cleanup_and_exit(heap, 1);
 			if (!ft_replace(str, val, start, i - start))
-				(free(val), cleanup(heap), exit(1));
+				(free(val), cleanup_and_exit(heap, 1));
 			i = start + ft_strlen(val);
 			free(val);
 		}
@@ -183,7 +183,7 @@ static void	process_an_arg(char **arg, t_alloc *heap)
 	expand_envs(arg, heap);
 	result = remove_quotes(*arg);
 	if (!result)
-		(cleanup(heap), exit(1));
+		cleanup_and_exit(heap, 1);
 	free(*arg);
 	*arg = result;
 }

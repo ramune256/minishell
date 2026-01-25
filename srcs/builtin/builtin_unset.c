@@ -37,7 +37,7 @@ static int    recreate_env(char **args, t_alloc *heap, size_t new_size)
 
     new_ev = ft_calloc(new_size + 1, sizeof(char *));
     if (!new_ev)
-        (cleanup(heap), exit(1));
+        cleanup_and_exit(heap, 1);
     i = 0;
     j = 0;
     while (heap->ev_clone[i])
@@ -46,7 +46,7 @@ static int    recreate_env(char **args, t_alloc *heap, size_t new_size)
         {
             new_ev[j] = ft_strdup(heap->ev_clone[i]);
             if (!new_ev[j])
-                (free_2d_array(&new_ev), cleanup(heap), exit(1));
+                (free_2d_array(&new_ev), cleanup_and_exit(heap, 1));
             j++;
         }
         i++;
