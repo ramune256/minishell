@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_heredoc.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 17:51:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 18:45:14 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/01/02 21:44:16 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,19 +65,47 @@ static char	*generate_temp_filename(t_alloc *heap)
 	return (filename);
 }
 
+static bool	get_heredoc_input(char **line, const char *message)
+{
+	void	(*tmp_handle_sigint)(int);
+
+	*line = NULL;
+	tmp_handle_sigint = signal(SIGINT, handle_heredoc);
+	if (isatty(STDIN_FILENO))
+		*line = readline(message);
+	else
+		*line = get_next_line(STDIN_FILENO);
+	signal(SIGINT, tmp_handle_sigint);
+	if (g_sig_status)
+	{
+		if (*line)
+			free(*line);
+		return (*line = NULL, false);
+	}
+	return (true);
+}
+
 static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
 {
 	char	*line;
 	int		tmp_fd;
 	char	*fn;
+	int		stdin_backup;
 
+	line = NULL;
+	stdin_backup = dup(STDIN_FILENO);
 	fn = generate_temp_filename(heap);
 	tmp_fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (tmp_fd == -1)
 		(perror("open"), cleanup(heap), exit(1));
 	while (1)
 	{
-		get_input(&line, "> ");
+		if (get_heredoc_input(&line, "> ") == false)
+		{
+			dup2(stdin_backup, STDIN_FILENO);
+			(close(stdin_backup), close(tmp_fd));
+			return ;
+		}
 		if (line == NULL)
 			break ;
 		if (put_line_to_tmpfile(line, node->file, tmp_fd))
@@ -87,7 +115,7 @@ static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
 		}
 		free(line);
 	}
-	close(tmp_fd);
+	(close(tmp_fd), close(stdin_backup));
 	free(node->file);
 	node->file = fn;
 	node->mode = O_RDONLY;
@@ -101,12 +129,16 @@ void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap)
 	if (ast->type == NODE_PIPE)
 	{
 		find_and_process_heredocs(ast->left, heap);
+		if (g_sig_status)
+			return ;
 		find_and_process_heredocs(ast->right, heap);
 	}
 	else if (ast->type == NODE_REDIR)
 	{
 		if (ast->mode == TOKEN_HEREDOC)
 			read_heredoc_input(ast, heap);
+		if (g_sig_status)
+			return ;
 		find_and_process_heredocs(ast->subcmd, heap);
 	}
 }
