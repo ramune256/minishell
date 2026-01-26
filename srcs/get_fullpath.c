@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_fullpath.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:45:35 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/01/27 02:00:10 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,64 +27,77 @@ static char	*join_path(char *bin_dir, char *cmd_name)
 	return (fullpath);
 }
 
-static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
+static char    *check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 {
-	char	*fullpath;
-	size_t	i;
+    char    *fullpath;
+    size_t    i;
 
-	i = 0;
-	while (bin_dir[i])
-	{
-		fullpath = join_path(bin_dir[i], cmd_name);
-		if (!fullpath)
-			(free_2d_array(&bin_dir), cleanup(heap), exit(1));
-		if (access(fullpath, F_OK) == 0)
-		{
-			if (access(fullpath, X_OK) == 0)
-				return (fullpath);
-			puterr(cmd_name, "Permission denied");
-			return (free(fullpath), NULL);
-		}
-		free(fullpath);
-		i++;
-	}
-	return (puterr(cmd_name, "command not found"), NULL);
+    i = 0;
+    while (bin_dir[i])
+    {
+        fullpath = join_path(bin_dir[i], cmd_name);
+        if (!fullpath)
+            (free_2d_array(&bin_dir), cleanup(heap), exit(1));
+        if (access(fullpath, F_OK) == 0)
+        {
+            if (access(fullpath, X_OK) == 0)
+                return (fullpath);
+            puterr(cmd_name, "Permission denied");
+            return (free(fullpath), heap->exit_status = 126, NULL);
+        }
+        free(fullpath);
+        i++;
+    }
+    heap->exit_status = 127;
+    return (puterr(cmd_name, "command not found"), NULL);
 }
 
-static char	*check_absolute_path(char *tentative_path, t_alloc *heap)
+static char    *check_absolute_path(char *tentative_path, t_alloc *heap)
 {
-	char		*result;
-	struct stat	path_stat;
+    char        *result;
+    struct stat    path_stat;
 
-	if (access(tentative_path, F_OK) != 0)
-		return (puterr(tentative_path, "No such file or directory"), NULL);
-	stat(tentative_path, &path_stat);
-	if (S_ISDIR(path_stat.st_mode))
-		return (puterr(tentative_path, "Is a directory"), NULL);
-	if (access(tentative_path, X_OK) != 0)
-		return (puterr(tentative_path, "Permission denied"), NULL);
-	result = ft_strdup(tentative_path);
-	if (!result)
-		(cleanup(heap), exit(1));
-	return (result);
+    if (access(tentative_path, F_OK) != 0)
+    {
+        heap->exit_status = 127;
+        return (puterr(tentative_path, "No such file or directory"), NULL);
+    }
+    stat(tentative_path, &path_stat);
+    if (S_ISDIR(path_stat.st_mode))
+    {
+        heap->exit_status = 126;
+        return (puterr(tentative_path, "Is a directory"), NULL);
+    }
+    if (access(tentative_path, X_OK) != 0)
+    {
+        heap->exit_status = 126;
+        return (puterr(tentative_path, "Permission denied"), NULL);
+    }
+    result = ft_strdup(tentative_path);
+    if (!result)
+        (cleanup(heap), exit(1));
+    return (result);
 }
 
-char	*get_fullpath(char *cmd_name, t_alloc *heap)
+char    *get_fullpath(char *cmd_name, t_alloc *heap)
 {
-	char	**bin_dir;
-	char	*fullpath;
-	char	*envp_path;
+    char    **bin_dir;
+    char    *fullpath;
+    char    *envp_path;
 
-	if (!cmd_name)
-		return (NULL);
-	if (ft_strchr(cmd_name, '/'))
-		return (check_absolute_path(cmd_name, heap));
-	envp_path = search_get_env(heap->ev_clone, "PATH");
-	if (!envp_path || ft_strlen(envp_path) == 0)
-		return (puterr(cmd_name, "No such file or directory"), NULL);
-	bin_dir = ft_split(envp_path, ':');
-	if (!bin_dir)
-		(cleanup(heap), exit(1));
-	fullpath = check_path_and_perm(bin_dir, cmd_name, heap);
-	return (free_2d_array(&bin_dir), fullpath);
+    if (!cmd_name)
+        return (NULL);
+    if (ft_strchr(cmd_name, '/'))
+        return (check_absolute_path(cmd_name, heap));
+    envp_path = search_get_env(heap->ev_clone, "PATH");
+    if (!envp_path || ft_strlen(envp_path) == 0)
+    {
+        heap->exit_status = 127;
+        return (puterr(cmd_name, "No such file or directory"), NULL);
+    }
+    bin_dir = ft_split(envp_path, ':');
+    if (!bin_dir)
+        (cleanup(heap), exit(1));
+    fullpath = check_path_and_perm(bin_dir, cmd_name, heap);
+    return (free_2d_array(&bin_dir), fullpath);
 }
