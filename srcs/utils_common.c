@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   utils_common.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
 /*   Updated: 2026/01/25 15:32:38 by nmasuda          ###   ########.fr       */

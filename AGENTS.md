@@ -127,3 +127,8 @@ char	*create_cur(size_t *j, char *cur, t_alloc *heap)
 18. **One-Line Execution:** Executing multiple functions in one line, such as `(cleanup(&something), exit(1));`, is permissible.
 19. **Comma Operator:** If you can reduce line count by putting a function inside the `return ()` parentheses (using the comma operator), you should do so.
 20. **Function Length:** All functions should possess high readability through abstraction, and the body of each function should be within 25 lines.
+
+
+# How to verify the code
+* Build your code using make, make clean, make fclean and make re.
+* To check for memory leaks, use valgrind.

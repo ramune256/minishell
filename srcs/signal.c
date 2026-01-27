@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 19:59:04 by shunwata          #+#    #+#             */
-/*   Updated: 2026/01/02 21:41:17 by nmasuda          ###   ########.fr       */
+/*   Updated: 2025/12/21 15:21:44 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,6 @@ void	handle_sigint(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-}
-
-void	handle_heredoc(int sig)
-{
-	int	dummy;
-
-	(void)sig;
-	g_sig_status = 1;
-	dummy = write(STDOUT_FILENO, "\n", 1);
-	(void)dummy;
-	close(STDIN_FILENO);
 }
 
 void	set_signal_shell(void)
