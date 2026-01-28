@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2026/01/28 16:10:01 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/01/28 18:19:28 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	execute_child_task(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
 	char	*fullpath;
+	int tmp_exit_status;
 
 	set_signal_child();
 	exec_node = handle_redirections(node, heap);
@@ -42,7 +43,13 @@ void	execute_child_task(t_cmd *node, t_alloc *heap)
 		(cleanup(heap), exit(heap->exit_status));
 	fullpath = get_fullpath(exec_node->argv[0], heap);
 	if (fullpath == NULL)
-		(cleanup(heap), exit(127));
+	{
+		tmp_exit_status = heap->exit_status;
+		heap->success = false;
+		cleanup(heap);
+		heap->exit_status = tmp_exit_status;
+		(exit(heap->exit_status));
+	}
 	if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 }
