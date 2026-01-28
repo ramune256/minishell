@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_signal.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 20:01:10 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/18 16:31:09 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/01/28 16:15:38 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,7 @@ extern volatile sig_atomic_t	g_sig_status;
 void	set_signal_shell(void);
 void	set_signal_child(void);
 void	set_signal_parent(void);
+void    handle_heredoc(int sig);
+void	handle_sigint(int sig);
 
 #endif
