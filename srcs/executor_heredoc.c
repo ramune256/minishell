@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_heredoc.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 17:51:08 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/14 18:45:14 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/01/28 16:24:40 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,33 +65,62 @@ static char	*generate_temp_filename(t_alloc *heap)
 	return (filename);
 }
 
-static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
+static bool    get_heredoc_input(char **line, const char *message)
 {
-	char	*line;
-	int		tmp_fd;
-	char	*fn;
+    void    (*tmp_handle_sigint)(int);
 
-	fn = generate_temp_filename(heap);
-	tmp_fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-	if (tmp_fd == -1)
-		(perror("open"), cleanup(heap), exit(1));
-	while (1)
-	{
-		get_input(&line, "> ");
-		if (line == NULL)
-			break ;
-		if (put_line_to_tmpfile(line, node->file, tmp_fd))
-		{
-			free(line);
-			break ;
-		}
-		free(line);
-	}
-	close(tmp_fd);
-	free(node->file);
-	node->file = fn;
-	node->mode = O_RDONLY;
-	ft_lstadd_back(&heap->temp_files, ft_lstnew(ft_strdup(fn)));
+    *line = NULL;
+    tmp_handle_sigint = signal(SIGINT, handle_heredoc);
+    if (isatty(STDIN_FILENO))
+        *line = readline(message);
+    else
+        *line = get_next_line(STDIN_FILENO);
+    signal(SIGINT, tmp_handle_sigint);
+    if (g_sig_status)
+    {
+        if (*line)
+            free(*line);
+        return (*line = NULL, false);
+    }
+    return (true);
+}
+
+static void    read_heredoc_input(t_cmd *node, t_alloc *heap)
+{
+    char    *line;
+    int        tmp_fd;
+    char    *fn;
+    int        stdin_backup;
+
+    line = NULL;
+    stdin_backup = dup(STDIN_FILENO);
+    fn = generate_temp_filename(heap);
+    tmp_fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+    if (tmp_fd == -1)
+        (perror("open"), cleanup(heap), exit(1));
+    while (1)
+    {
+        if (get_heredoc_input(&line, "> ") == false)
+        {
+            dup2(stdin_backup, STDIN_FILENO);
+            (close(stdin_backup), close(tmp_fd));
+			free(fn);
+            return ;
+        }
+        if (line == NULL)
+            break ;
+        if (put_line_to_tmpfile(line, node->file, tmp_fd))
+        {
+            free(line);
+            break ;
+        }
+        free(line);
+    }
+    (close(tmp_fd), close(stdin_backup));
+    free(node->file);
+    node->file = fn;
+    node->mode = O_RDONLY;
+    ft_lstadd_back(&heap->temp_files, ft_lstnew(ft_strdup(fn)));
 }
 
 void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap)

@@ -3,36 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:25:47 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/01/27 02:03:00 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	c_exit(char **line, t_alloc *heap)
+int    c_exit(char **line, t_alloc *heap)
 {
-	long long	arg;
-	bool		error;
+    long long    arg;
+    bool        error;
 
-	if (isatty(STDIN_FILENO))
-		ft_putendl_fd("exit", 2);
-	if (!line || !line[1])
-		(cleanup(heap), exit(heap->exit_status));
-	error = false;
-	arg = ft_atol(line[1], &error);
-	if (error)
-	{
-		ft_putstr_fd("minishell: exit: ", 2);
-		ft_putstr_fd(line[1], 2);
-		ft_putendl_fd(": numeric argument required", 2);
-		(cleanup(heap), exit(255));
-	}
-	if (line[2])
-		return (puterr("exit", "too many arguments"), 1);
-	cleanup(heap);
-	exit((unsigned char)arg);
-	return (0);
+    if (isatty(STDIN_FILENO))
+        ft_putendl_fd("exit", 2);
+    if (!line || !line[1])
+        (cleanup(heap), exit(heap->exit_status));
+    error = false;
+    arg = ft_atol(line[1], &error);
+    if (error)
+    {
+        ft_putstr_fd("minishell: exit: ", 2);
+        ft_putstr_fd(line[1], 2);
+        ft_putendl_fd(": numeric argument required", 2);
+        (cleanup(heap), exit(2));
+    }
+    if (line[2])
+        return (puterr("exit", "too many arguments"), 2);
+    cleanup(heap);
+    exit((unsigned char)arg);
+    return (0);
 }

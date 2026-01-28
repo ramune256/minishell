@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:50:05 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/01/28 18:19:28 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	execute_child_task(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
 	char	*fullpath;
+	int tmp_exit_status;
 
 	set_signal_child();
 	exec_node = handle_redirections(node, heap);
@@ -42,32 +43,40 @@ void	execute_child_task(t_cmd *node, t_alloc *heap)
 		(cleanup(heap), exit(heap->exit_status));
 	fullpath = get_fullpath(exec_node->argv[0], heap);
 	if (fullpath == NULL)
-		(cleanup(heap), exit(127));
+	{
+		tmp_exit_status = heap->exit_status;
+		heap->success = false;
+		cleanup(heap);
+		heap->exit_status = tmp_exit_status;
+		(exit(heap->exit_status));
+	}
 	if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 }
 
-static void	execute_single_command(t_cmd *ast, t_alloc *heap)
+static void    execute_single_command(t_cmd *ast, t_alloc *heap)
 {
-	pid_t	pid;
-	int		status;
+    pid_t    pid;
+    int        status;
 
-	if (ast->type != NODE_PIPE)
-		find_and_process_heredocs(ast, heap);
-	pid = fork();
-	if (pid == -1)
-		(perror("fork"), cleanup(heap), exit(1));
-	if (pid == 0)
-		execute_child_task(ast, heap);
-	set_signal_parent();
-	waitpid(pid, &status, 0);
-	set_signal_shell();
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-		ft_putstr_fd("\n", STDOUT_FILENO);
-	else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
-		ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
-	get_exit_status(heap, status);
-	cleanup_temp_files(&heap->temp_files);
+    if (ast->type != NODE_PIPE)
+        find_and_process_heredocs(ast, heap);
+    if (g_sig_status)
+        return ;
+    pid = fork();
+    if (pid == -1)
+        (perror("fork"), cleanup(heap), exit(1));
+    if (pid == 0)
+        execute_child_task(ast, heap);
+    set_signal_parent();
+    waitpid(pid, &status, 0);
+    set_signal_shell();
+    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+        ft_putstr_fd("\n", STDOUT_FILENO);
+    else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
+        ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
+    get_exit_status(heap, status);
+    cleanup_temp_files(&heap->temp_files);
 }
 
 static void	execute_pipe(t_cmd *ast, t_alloc *heap)
