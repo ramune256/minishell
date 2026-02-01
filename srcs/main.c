@@ -27,8 +27,8 @@ static void	interpret(t_alloc *heap)
 		add_history(heap->line);
 	tokenize(heap);
 	parse(heap);
-	expand(heap->ast, heap);
-	execute(heap->ast, heap);
+	expand(heap->node, heap);
+	execute(heap->node, heap);
 }
 
 int	main(int ac, char **av, char **ev)

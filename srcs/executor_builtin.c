@@ -13,20 +13,20 @@
 #include "minishell.h"
 #include "builtin.h"
 
-bool	is_parent_builtin(t_cmd *ast)
+bool	is_parent_builtin(t_cmd *node)
 {
 	char	*cmd;
 
-	if (ast == NULL || ast->type != NODE_EXEC || ast->argv == NULL)
+	if (node == NULL || node->type != NODE_EXEC || node->argv == NULL)
 		return (false);
-	cmd = ast->argv[0];
+	cmd = node->argv[0];
 	if (cmd == NULL)
 		return (false);
 	if (ft_strcmp(cmd, "cd") == 0)
 		return (true);
 	if (ft_strcmp(cmd, "exit") == 0)
 		return (true);
-	if (ft_strcmp(cmd, "export") == 0 && ast->argv[1] != NULL)
+	if (ft_strcmp(cmd, "export") == 0 && node->argv[1] != NULL)
 		return (true);
 	if (ft_strcmp(cmd, "unset") == 0)
 		return (true);
