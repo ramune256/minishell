@@ -12,15 +12,6 @@
 
 #include "minishell.h"
 
-static void	import_signal_status(t_alloc *heap)
-{
-	if (g_sig_status)
-	{
-		heap->exit_status = 128 + SIGINT;
-		g_sig_status = 0;
-	}
-}
-
 static void	interpret(t_alloc *heap)
 {
 	if (isatty(STDIN_FILENO))

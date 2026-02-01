@@ -29,7 +29,7 @@ static t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
 	return (exec_node);
 }
 
-void	execute_command(t_cmd *node, t_alloc *heap)
+static void	execute_command(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
 	char	*fullpath;
