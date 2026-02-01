@@ -23,7 +23,7 @@ void	cleanup(t_alloc *alloc)
 	tmp_success = alloc->success;
 	free(alloc->line);
 	free_tokens(alloc->head);
-	free_ast(alloc->ast);
+	free_ast(alloc->node);
 	cleanup_temp_files(&alloc->temp_files);
 	if (tmp_success == false)
 		free_2d_array(&(alloc->ev_clone));

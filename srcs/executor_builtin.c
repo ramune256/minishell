@@ -58,4 +58,5 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 		heap->exit_status = c_unset(exec_node->argv, heap);
 	else
 		return (false);
+	return (true);
 }

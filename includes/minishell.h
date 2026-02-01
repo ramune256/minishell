@@ -66,7 +66,7 @@ typedef struct s_alloc
 {
 	char	*line;
 	t_token	*head;
-	t_cmd	*ast;
+	t_cmd	*node;
 	t_list	*temp_files;
 	char	**ev_clone;
 	int		exit_status;
@@ -92,18 +92,18 @@ bool	is_redirection(t_token_type type);
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
 // expander
-void	expand(t_cmd *ast, t_alloc *heap);
+void	expand(t_cmd *node, t_alloc *heap);
 
 //executor
-void	execute(t_cmd *ast, t_alloc *heap);
+void	execute(t_cmd *node, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
 void	get_exit_status(t_alloc *heap, int status);
 
-bool	is_parent_builtin(t_cmd *ast);
+bool	is_parent_builtin(t_cmd *node);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
 void	cleanup_temp_files(t_list **list);
-void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
+void	find_and_process_heredocs(t_cmd *node, t_alloc *heap);
 
 //error
 void	puterr(char *cmd_name, char *msg);
