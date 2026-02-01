@@ -39,13 +39,13 @@ static void	execute_command(t_cmd *node, t_alloc *heap)
 	exec_node = handle_redirections(node, heap);
 	if (execute_builtin(exec_node, heap))
 		(cleanup(heap), exit(heap->exit_status));
+	if ((!exec_node->argv))
+		(cleanup(heap), exit(heap->exit_status));
 	fullpath = get_fullpath(exec_node->argv[0], heap);
 	if (fullpath == NULL)
 	{
 		tmp_exit_status = heap->exit_status;
-		cleanup(heap);
-		heap->exit_status = tmp_exit_status;
-		(exit(heap->exit_status));
+		(cleanup(heap), exit(tmp_exit_status));
 	}
 	if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
