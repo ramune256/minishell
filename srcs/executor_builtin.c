@@ -38,10 +38,10 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 	char	*cmd;
 
 	if (exec_node == NULL || exec_node->argv == NULL)
-		return (0);
+		return (false);
 	cmd = exec_node->argv[0];
 	if (!cmd)
-		return (0);
+		return (false);
 	if (ft_strcmp(cmd, "cd") == 0)
 		heap->exit_status = c_cd(exec_node->argv, heap);
 	else if (ft_strcmp(cmd, "echo") == 0)
@@ -58,5 +58,4 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 		heap->exit_status = c_unset(exec_node->argv, heap);
 	else
 		return (false);
-	return (true);
 }
