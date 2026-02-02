@@ -80,17 +80,18 @@ static bool    get_heredoc_input(char **line, const char *message)
     {
         if (*line)
             free(*line);
-        return (*line = NULL, false);
+		*line = NULL;
+        return (false);
     }
     return (true);
 }
 
 static void    read_heredoc_input(t_cmd *node, t_alloc *heap)
 {
-    char    *line;
-    int        tmp_fd;
-    char    *fn;
-    int        stdin_backup;
+    char	*line;
+    int		tmp_fd;
+    char	*fn;
+    int		stdin_backup;
 
     line = NULL;
     stdin_backup = dup(STDIN_FILENO);
