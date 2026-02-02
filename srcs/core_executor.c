@@ -56,8 +56,8 @@ static void    execute_exec(t_cmd *node, t_alloc *heap)
     pid_t    pid;
     int        status;
 
-    if (node->type != NODE_PIPE)
-        find_and_process_heredocs(node, heap);
+    //if (node->type != NODE_PIPE)
+    //    find_and_process_heredocs(node, heap);
     if (g_sig_status)
         return ;
     pid = fork();
@@ -95,7 +95,7 @@ static void	execute_pipe(t_cmd *node, t_alloc *heap)
 		set_signal_child();
 		dup2(pipefd[1], STDOUT_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
-		execute_pipe(node->left, heap);
+		execute(node->left, heap);
 		(cleanup(heap), exit(heap->exit_status));
 	}
 	pid_right = fork();
@@ -106,7 +106,7 @@ static void	execute_pipe(t_cmd *node, t_alloc *heap)
 		set_signal_child();
 		dup2(pipefd[0], STDIN_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
-		execute_pipe(node->right, heap);
+		execute(node->right, heap);
 		(cleanup(heap), exit(heap->exit_status));
 	}
 	(close(pipefd[0]), close(pipefd[1]));

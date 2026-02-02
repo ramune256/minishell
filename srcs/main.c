@@ -19,6 +19,7 @@ static void	interpret(t_alloc *heap)
 	tokenize(heap);
 	parse(heap);
 	expand(heap->node, heap);
+	find_and_process_heredocs(heap->node, heap);
 	execute(heap->node, heap);
 }
 

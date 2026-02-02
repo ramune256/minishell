@@ -29,8 +29,8 @@ GNL_DIR			= $(L_SRC_DIR)/get_next_line
 ADDITIONAL_DIR	= $(L_SRC_DIR)/additional
 
 MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
-					core_tokenizer.c executor_builtin.c executor_heredoc.c \
-					expander.c get_fullpath.c init.c main.c parser_redir.c \
+					core_tokenizer.c executor_builtin.c expander.c \
+					get_fullpath.c heredoc.c init.c main.c parser_redir.c \
 					puterr.c signal.c utils_common.c utils_executor.c \
 					utils_parser.c utils_tokenizer.c)
 
