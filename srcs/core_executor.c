@@ -95,7 +95,7 @@ static void	execute_pipe(t_cmd *node, t_alloc *heap)
 		set_signal_child();
 		dup2(pipefd[1], STDOUT_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
-		execute_pipe(node, heap);
+		execute_pipe(node->left, heap);
 		(cleanup(heap), exit(heap->exit_status));
 	}
 	pid_right = fork();
@@ -106,7 +106,7 @@ static void	execute_pipe(t_cmd *node, t_alloc *heap)
 		set_signal_child();
 		dup2(pipefd[0], STDIN_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
-		execute_pipe(node, heap);
+		execute_pipe(node->right, heap);
 		(cleanup(heap), exit(heap->exit_status));
 	}
 	(close(pipefd[0]), close(pipefd[1]));
