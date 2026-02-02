@@ -26,7 +26,10 @@ void	cleanup(t_alloc *alloc)
 	free_ast(alloc->node);
 	cleanup_temp_files(&alloc->temp_files);
 	if (tmp_success == false)
+	{
 		free_2d_array(&(alloc->ev_clone));
+		rl_clear_history();
+	}
 	ft_bzero(alloc, sizeof(t_alloc));
 	if (tmp_success == true)
 	{
