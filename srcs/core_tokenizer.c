@@ -81,7 +81,8 @@ static bool	process_quotes(char *line, int *i)
 			quote = line[*i];
 		else if (quote != 0 && line[*i] == quote)
 			quote = 0;
-		if (quote == 0 && (ft_strchr(" \t\n", line[*i]) || is_metachar(line[*i])))
+		if (quote == 0 && (ft_strchr(" \t\n", line[*i]) \
+					|| is_metachar(line[*i])))
 			break ;
 		(*i)++;
 	}
