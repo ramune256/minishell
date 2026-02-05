@@ -36,15 +36,15 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
-void    handle_heredoc(int sig)
+void	handle_heredoc(int sig)
 {
-    int    dummy;
+	int	dummy;
 
-    (void)sig;
-    g_sig_status = 1;
-    dummy = write(STDOUT_FILENO, "\n", 1);
-    (void)dummy;
-    close(STDIN_FILENO);
+	(void)sig;
+	g_sig_status = 1;
+	dummy = write(STDOUT_FILENO, "\n", 1);
+	(void)dummy;
+	close(STDIN_FILENO);
 }
 
 void	set_signal_shell(void)
