@@ -72,6 +72,6 @@ void	free_ast(t_cmd *cmd)
 
 bool	is_redirection(t_token_type type)
 {
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT \
-			|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
+	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
+		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }

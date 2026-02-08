@@ -65,7 +65,7 @@ static char	*generate_temp_filename(t_alloc *heap)
 	return (filename);
 }
 
-static bool    get_heredoc_input(char **line, const char *message)
+static bool	get_heredoc_input(char **line, const char *message)
 {
     void    (*tmp_handle_sigint)(int);
 
