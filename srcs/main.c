@@ -12,23 +12,15 @@
 
 #include "minishell.h"
 
-static void	import_signal_status(t_alloc *heap)
-{
-	if (g_sig_status)
-	{
-		heap->exit_status = 128 + SIGINT;
-		g_sig_status = 0;
-	}
-}
-
 static void	interpret(t_alloc *heap)
 {
 	if (isatty(STDIN_FILENO))
 		add_history(heap->line);
 	tokenize(heap);
 	parse(heap);
-	expand(heap->ast, heap);
-	execute(heap->ast, heap);
+	expand(heap->node, heap);
+	find_and_process_heredocs(heap->node, heap);
+	execute(heap->node, heap);
 }
 
 int	main(int ac, char **av, char **ev)

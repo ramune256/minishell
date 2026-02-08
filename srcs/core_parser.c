@@ -97,13 +97,13 @@ void	parse(t_alloc *heap)
 	tokens = heap->head;
 	if (!tokens || tokens->type == TOKEN_EOF)
 		return ;
-	heap->ast = parse_pipeline(&tokens, heap);
-	if (!heap->ast)
+	heap->node = parse_pipeline(&tokens, heap);
+	if (!heap->node)
 		return ;
 	if (tokens->type != TOKEN_EOF)
 	{
 		ft_putstr_fd("minishell: syntax error\n", 2);
-		free_ast(heap->ast);
-		heap->ast = NULL;
+		free_ast(heap->node);
+		heap->node = NULL;
 	}
 }

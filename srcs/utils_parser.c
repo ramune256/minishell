@@ -54,7 +54,7 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 void	free_ast(t_cmd *cmd)
 {
 	if (!cmd)
-		return;
+		return ;
 	if (cmd->type == NODE_EXEC)
 		free_2d_array(&(cmd->argv));
 	else if (cmd->type == NODE_PIPE)
@@ -72,6 +72,6 @@ void	free_ast(t_cmd *cmd)
 
 bool	is_redirection(t_token_type type)
 {
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT ||
-			type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
+	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
+		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }

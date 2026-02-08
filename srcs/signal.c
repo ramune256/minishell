@@ -14,6 +14,15 @@
 
 volatile sig_atomic_t	g_sig_status = 0;
 
+void	import_signal_status(t_alloc *heap)
+{
+	if (g_sig_status)
+	{
+		heap->exit_status = 128 + SIGINT;
+		g_sig_status = 0;
+	}
+}
+
 void	handle_sigint(int sig)
 {
 	int	dummy;
@@ -27,15 +36,15 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
-void    handle_heredoc(int sig)
+void	handle_heredoc(int sig)
 {
-    int    dummy;
+	int	dummy;
 
-    (void)sig;
-    g_sig_status = 1;
-    dummy = write(STDOUT_FILENO, "\n", 1);
-    (void)dummy;
-    close(STDIN_FILENO);
+	(void)sig;
+	g_sig_status = 1;
+	dummy = write(STDOUT_FILENO, "\n", 1);
+	(void)dummy;
+	close(STDIN_FILENO);
 }
 
 void	set_signal_shell(void)

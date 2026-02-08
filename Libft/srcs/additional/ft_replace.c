@@ -19,7 +19,7 @@ bool	ft_replace(char **origin, const char *replace, size_t start, size_t len)
 
 	if (!origin || !*origin || !replace)
 		return (false);
-	new_len =  ft_strlen(*origin) - len + ft_strlen(replace);
+	new_len = ft_strlen(*origin) - len + ft_strlen(replace);
 	new_str = ft_calloc(new_len + 1, sizeof(char));
 	if (!new_str)
 		return (false);

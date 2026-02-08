@@ -65,7 +65,7 @@ static char	*generate_temp_filename(t_alloc *heap)
 	return (filename);
 }
 
-static bool    get_heredoc_input(char **line, const char *message)
+static bool	get_heredoc_input(char **line, const char *message)
 {
     void    (*tmp_handle_sigint)(int);
 
@@ -80,17 +80,18 @@ static bool    get_heredoc_input(char **line, const char *message)
     {
         if (*line)
             free(*line);
-        return (*line = NULL, false);
+		*line = NULL;
+        return (false);
     }
     return (true);
 }
 
 static void    read_heredoc_input(t_cmd *node, t_alloc *heap)
 {
-    char    *line;
-    int        tmp_fd;
-    char    *fn;
-    int        stdin_backup;
+    char	*line;
+    int		tmp_fd;
+    char	*fn;
+    int		stdin_backup;
 
     line = NULL;
     stdin_backup = dup(STDIN_FILENO);
@@ -123,19 +124,19 @@ static void    read_heredoc_input(t_cmd *node, t_alloc *heap)
     ft_lstadd_back(&heap->temp_files, ft_lstnew(ft_strdup(fn)));
 }
 
-void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap)
+void	find_and_process_heredocs(t_cmd *node, t_alloc *heap)
 {
-	if (!ast)
+	if (!node)
 		return ;
-	if (ast->type == NODE_PIPE)
+	if (node->type == NODE_PIPE)
 	{
-		find_and_process_heredocs(ast->left, heap);
-		find_and_process_heredocs(ast->right, heap);
+		find_and_process_heredocs(node->left, heap);
+		find_and_process_heredocs(node->right, heap);
 	}
-	else if (ast->type == NODE_REDIR)
+	else if (node->type == NODE_REDIR)
 	{
-		if (ast->mode == TOKEN_HEREDOC)
-			read_heredoc_input(ast, heap);
-		find_and_process_heredocs(ast->subcmd, heap);
+		if (node->mode == TOKEN_HEREDOC)
+			read_heredoc_input(node, heap);
+		find_and_process_heredocs(node->subcmd, heap);
 	}
 }

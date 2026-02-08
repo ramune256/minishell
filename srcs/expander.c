@@ -188,30 +188,30 @@ static void	process_an_arg(char **arg, t_alloc *heap)
 	*arg = result;
 }
 
-static void	check_args(t_cmd *ast, t_alloc *heap)
+static void	check_args(t_cmd *node, t_alloc *heap)
 {
 	int	i;
 
 	i = 0;
-	while (ast->argv[i])
+	while (node->argv[i])
 	{
-		process_an_arg(&(ast->argv[i]), heap);
+		process_an_arg(&(node->argv[i]), heap);
 		i++;
 	}
 }
 
-void	expand(t_cmd *ast, t_alloc *heap)
+void	expand(t_cmd *node, t_alloc *heap)
 {
-	if (ast == NULL)
+	if (node == NULL)
 		return ;
-	if (ast->type == NODE_EXEC && ast->argv)
-		check_args(ast, heap);
-	if (ast->type == NODE_REDIR && ast->file)
-		process_an_arg(&(ast->file), heap);
-	if (ast->left)
-		expand(ast->left, heap);
-	if (ast->right)
-		expand(ast->right, heap);
-	if (ast->subcmd)
-		expand(ast->subcmd, heap);
+	if (node->type == NODE_EXEC && node->argv)
+		check_args(node, heap);
+	if (node->type == NODE_REDIR && node->file)
+		process_an_arg(&(node->file), heap);
+	if (node->left)
+		expand(node->left, heap);
+	if (node->right)
+		expand(node->right, heap);
+	if (node->subcmd)
+		expand(node->subcmd, heap);
 }

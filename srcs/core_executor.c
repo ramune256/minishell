@@ -12,62 +12,59 @@
 
 #include "minishell.h"
 
-static void	branch_pipe_or_child_task(t_cmd *node, t_alloc *heap);
-
-static t_cmd	*handle_redirections(t_cmd *ast, t_alloc *heap)
+static t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
 	int		file_fd;
 
-	if (ast->type == NODE_EXEC)
-		return (ast);
-	exec_node = handle_redirections(ast->subcmd, heap);
-	file_fd = open(ast->file, ast->mode, 0644);
+	if (node->type == NODE_EXEC)
+		return (node);
+	exec_node = handle_redirections(node->subcmd, heap);
+	file_fd = open(node->file, node->mode, 0644);
 	if (file_fd == -1)
-		(perror(ast->file), cleanup(heap), exit(1));
-	if (dup2(file_fd, ast->fd) == -1)
+		(perror(node->file), cleanup(heap), exit(1));
+	if (dup2(file_fd, node->fd) == -1)
 		(perror("dup2"), cleanup(heap), exit(1));
 	close(file_fd);
 	return (exec_node);
 }
 
-void	execute_child_task(t_cmd *node, t_alloc *heap)
+static void	execute_command(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
 	char	*fullpath;
-	int tmp_exit_status;
+	int		tmp_exit_status;
 
 	set_signal_child();
 	exec_node = handle_redirections(node, heap);
 	if (execute_builtin(exec_node, heap))
 		(cleanup(heap), exit(heap->exit_status));
+	if ((!exec_node->argv))
+		(cleanup(heap), exit(heap->exit_status));
 	fullpath = get_fullpath(exec_node->argv[0], heap);
 	if (fullpath == NULL)
 	{
 		tmp_exit_status = heap->exit_status;
-		heap->success = false;
-		cleanup(heap);
-		heap->exit_status = tmp_exit_status;
-		(exit(heap->exit_status));
+		(cleanup(heap), exit(tmp_exit_status));
 	}
 	if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
 		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 }
 
-static void    execute_single_command(t_cmd *ast, t_alloc *heap)
+static void    execute_exec(t_cmd *node, t_alloc *heap)
 {
     pid_t    pid;
     int        status;
 
-    if (ast->type != NODE_PIPE)
-        find_and_process_heredocs(ast, heap);
+    //if (node->type != NODE_PIPE)
+    //    find_and_process_heredocs(node, heap);
     if (g_sig_status)
         return ;
     pid = fork();
     if (pid == -1)
         (perror("fork"), cleanup(heap), exit(1));
     if (pid == 0)
-        execute_child_task(ast, heap);
+        execute_command(node, heap);
     set_signal_parent();
     waitpid(pid, &status, 0);
     set_signal_shell();
@@ -79,13 +76,15 @@ static void    execute_single_command(t_cmd *ast, t_alloc *heap)
     cleanup_temp_files(&heap->temp_files);
 }
 
-static void	execute_pipe(t_cmd *ast, t_alloc *heap)
+static void	execute_pipe(t_cmd *node, t_alloc *heap)
 {
 	int		status;
 	int		pipefd[2];
 	pid_t	pid_left;
 	pid_t	pid_right;
 
+	if (node->type == NODE_EXEC)
+		execute_exec(node, heap);
 	if (pipe(pipefd) == -1)
 		(perror("pipe"), cleanup(heap), exit(1));
 	pid_left = fork();
@@ -96,7 +95,7 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 		set_signal_child();
 		dup2(pipefd[1], STDOUT_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
-		branch_pipe_or_child_task(ast->left, heap);
+		execute(node->left, heap);
 		(cleanup(heap), exit(heap->exit_status));
 	}
 	pid_right = fork();
@@ -107,7 +106,7 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 		set_signal_child();
 		dup2(pipefd[0], STDIN_FILENO);
 		(close(pipefd[0]), close(pipefd[1]));
-		branch_pipe_or_child_task(ast->right, heap);
+		execute(node->right, heap);
 		(cleanup(heap), exit(heap->exit_status));
 	}
 	(close(pipefd[0]), close(pipefd[1]));
@@ -117,29 +116,19 @@ static void	execute_pipe(t_cmd *ast, t_alloc *heap)
 	get_exit_status(heap, status);
 }
 
-static void	branch_pipe_or_child_task(t_cmd *node, t_alloc *heap)
+void	execute(t_cmd *node, t_alloc *heap)
 {
-	if (!node)
+	if (node == NULL)
 		return ;
 	if (node->type == NODE_PIPE)
 		execute_pipe(node, heap);
-	else
-		execute_child_task(node, heap);
-}
-
-void	execute(t_cmd *ast, t_alloc *heap)
-{
-	if (ast == NULL)
-		return ;
-	if (ast->type == NODE_PIPE)
-		execute_pipe(ast, heap);
-	else if (ast->type == NODE_REDIR)
-		execute_single_command(ast, heap);
-	else if (ast->type == NODE_EXEC)
+	else if (node->type == NODE_REDIR)
+		execute_exec(node, heap);
+	else if (node->type == NODE_EXEC)
 	{
-		if (is_parent_builtin(ast))
-			execute_builtin(ast, heap);
+		if (is_parent_builtin(node))
+			execute_builtin(node, heap);
 		else
-			execute_single_command(ast, heap);
+			execute_exec(node, heap);
 	}
 }
