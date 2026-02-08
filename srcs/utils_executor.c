@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/10 18:30:58 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/04 18:30:38 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/08 23:43:23 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ static void	init(const char *s, size_t *j, size_t *start, size_t *count)
 	*start = 0;
 	*count = 1;
 
-	while (s[i++])
+	while (s[i])
 	{
 		if (s[i] == ':')
-			count++;
+			(*count)++;
 		i++;
 	}
 }
@@ -54,7 +54,10 @@ char	**split_path_keep_empty(const char *s)
 	{
 		if (s[i] == ':' || s[i] == '\0')
 		{
-			res[j++] = ft_substr(s, start, i - start);
+			res[j] = ft_substr(s, start, i - start);
+			if(!res[j])
+				return (free_2d_array(&res), NULL);
+			j++;
 			start = i + 1;
 		}
 		if (s[i] == '\0')
