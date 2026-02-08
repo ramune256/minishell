@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "additional.h"
+#include "additional.h"
 
 size_t	ft_strnlen(const char *s, size_t n)
 {
