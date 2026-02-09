@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:46:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/09 22:10:08 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,6 @@ typedef struct s_alloc
 	bool	success;
 }	t_alloc;
 
-# include "builtin.h"
-# include "minishell_signal.h"
-
 //tokenizer
 void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
@@ -112,7 +109,6 @@ void	puterr(char *cmd_name, char *msg);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
 void	print_exit(t_alloc *heap);
-void	free_2d_array(char ***array);
 
 //initialize
 void	clone_ev(char **ev, t_alloc *heap);

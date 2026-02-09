@@ -6,11 +6,12 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 20:29:55 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/09 22:18:15 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "minishell_signal.h"
 
 static void	interpret(t_alloc *heap)
 {

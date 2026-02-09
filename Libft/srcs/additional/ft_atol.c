@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_ft_atol.c                                    :+:      :+:    :+:   */
+/*   ft_atol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:39:12 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/22 22:25:24 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/09 22:08:53 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "additional.h"
 
 static void	skip_spaces(const char **s)
 {

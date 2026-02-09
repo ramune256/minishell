@@ -37,7 +37,7 @@ MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
 					builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)
 
-B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_ft_atol.c utils_search.c)
+B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_search.c)
 
 SRCS			= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
 

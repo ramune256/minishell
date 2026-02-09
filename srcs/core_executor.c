@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   core_executor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2026/01/28 18:19:28 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/09 21:55:16 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "minishell_signal.h"
 
 static t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
 {
@@ -51,29 +52,27 @@ static void	execute_command(t_cmd *node, t_alloc *heap)
 		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
 }
 
-static void    execute_exec(t_cmd *node, t_alloc *heap)
+static void	execute_exec(t_cmd *node, t_alloc *heap)
 {
-    pid_t    pid;
-    int        status;
+	pid_t	pid;
+	int		status;
 
-    //if (node->type != NODE_PIPE)
-    //    find_and_process_heredocs(node, heap);
-    if (g_sig_status)
-        return ;
-    pid = fork();
-    if (pid == -1)
-        (perror("fork"), cleanup(heap), exit(1));
-    if (pid == 0)
-        execute_command(node, heap);
-    set_signal_parent();
-    waitpid(pid, &status, 0);
-    set_signal_shell();
-    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-        ft_putstr_fd("\n", STDOUT_FILENO);
-    else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
-        ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
-    get_exit_status(heap, status);
-    cleanup_temp_files(&heap->temp_files);
+	if (g_sig_status)
+		return ;
+	pid = fork();
+	if (pid == -1)
+		(perror("fork"), cleanup(heap), exit(1));
+	if (pid == 0)
+		execute_command(node, heap);
+	set_signal_parent();
+	waitpid(pid, &status, 0);
+	set_signal_shell();
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		ft_putstr_fd("\n", STDOUT_FILENO);
+	else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
+		ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
+	get_exit_status(heap, status);
+	cleanup_temp_files(&heap->temp_files);
 }
 
 static void	execute_pipe(t_cmd *node, t_alloc *heap)
