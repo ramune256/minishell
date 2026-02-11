@@ -13,53 +13,6 @@
 #include "minishell.h"
 #include "minishell_signal.h"
 
-void	cleanup_tmp_files(t_list **list)
-{
-	t_list	*current;
-	t_list	*tmp;
-
-	current = *list;
-	while (current)
-	{
-		tmp = current->next;
-		unlink((char *)current->content);
-		free(current->content);
-		free(current);
-		current = tmp;
-	}
-	*list = NULL;
-}
-
-bool	is_delimiter(const char *line, const char *delimiter)
-{
-	size_t	len;
-	bool	atty;
-
-	atty = isatty(STDIN_FILENO);
-	len = ft_strlen(delimiter);
-	if (atty && ft_strcmp(line, delimiter) == 0)
-		return (true);
-	if (!atty && ft_strncmp(line, delimiter, len) == 0 && line[len] == '\n')
-		return (true);
-	return (false);
-}
-
-char	*generate_tmp_filename(t_alloc *heap)
-{
-	static int	id = 0;
-	char		*num;
-	char		*filename;
-
-	num = ft_itoa(id++);
-	if (!num)
-		(cleanup(heap), exit(1));
-	filename = ft_strjoin("/tmp/.minishell_heredoc_", num);
-	free(num);
-	if (!filename)
-		(cleanup(heap), exit(1));
-	return (filename);
-}
-
 static void	set_heredoc_file(t_cmd *node, char *tmp_filename, t_alloc *heap)
 {
 	char	*copy;
@@ -126,29 +79,43 @@ static void	make_heredoc_file(t_cmd *node, t_alloc *heap)
 	char	*tmp_filename;
 
 	stdin_backup = dup(STDIN_FILENO);
+	if (stdin_backup == -1)
+		(perror("dup"), cleanup(heap), exit(1));
 	tmp_filename = generate_tmp_filename(heap);
 	tmp_filefd = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (tmp_filefd == -1)
 		(perror("open"), cleanup(heap), exit(1));
 	write_heredoc_lines(node->file, tmp_filefd);
 	close(tmp_filefd);
+	if (g_sig_status)
+	{
+		(dup2(stdin_backup, STDIN_FILENO), close(stdin_backup));
+		(unlink(tmp_filename), free(tmp_filename));
+		return ;
+	}
 	(dup2(stdin_backup, STDIN_FILENO), close(stdin_backup));
 	set_heredoc_file(node, tmp_filename, heap);
 }
 
 void	heredoc(t_cmd *node, t_alloc *heap)
 {
-	if (!node)
+	if (!node || g_sig_status)
 		return ;
 	if (node->type == NODE_PIPE)
 	{
 		heredoc(node->left, heap);
+		if (g_sig_status)
+			return ;
 		heredoc(node->right, heap);
 	}
 	else if (node->type == NODE_REDIR)
 	{
 		if (node->mode == TOKEN_HEREDOC)
+		{
 			make_heredoc_file(node, heap);
+			if (g_sig_status)
+				return ;
+		}
 		heredoc(node->subcmd, heap);
 	}
 }

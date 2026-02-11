@@ -102,8 +102,10 @@ pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap);
 bool	is_parent_builtin(t_cmd *node);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
-void	cleanup_tmp_files(t_list **list);
 void	heredoc(t_cmd *node, t_alloc *heap);
+void	cleanup_tmp_files(t_list **list);
+bool	is_delimiter(const char *line, const char *delimiter);
+char	*generate_tmp_filename(t_alloc *heap);
 
 //error
 void	puterr(char *cmd_name, char *msg);
