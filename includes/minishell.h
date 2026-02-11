@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 22:10:08 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:22:27 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ typedef struct s_alloc
 	char	*line;
 	t_token	*head;
 	t_cmd	*node;
-	t_list	*temp_files;
+	t_list	*tmp_files;
 	char	**ev_clone;
 	int		exit_status;
 	bool	success;
@@ -95,12 +95,15 @@ void	expand(t_cmd *node, t_alloc *heap);
 void	execute(t_cmd *node, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
 void	get_exit_status(t_alloc *heap, int status);
+t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap);
+void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap);
+pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap);
 
 bool	is_parent_builtin(t_cmd *node);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
-void	cleanup_temp_files(t_list **list);
-void	find_and_process_heredocs(t_cmd *node, t_alloc *heap);
+void	cleanup_tmp_files(t_list **list);
+void	heredoc(t_cmd *node, t_alloc *heap);
 
 //error
 void	puterr(char *cmd_name, char *msg);

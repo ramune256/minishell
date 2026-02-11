@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 22:18:15 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/11 13:21:22 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static void	interpret(t_alloc *heap)
 	tokenize(heap);
 	parse(heap);
 	expand(heap->node, heap);
-	find_and_process_heredocs(heap->node, heap);
+	heredoc(heap->node, heap);
 	execute(heap->node, heap);
 }
 

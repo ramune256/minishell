@@ -6,29 +6,12 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 21:55:16 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/11 12:53:45 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "minishell_signal.h"
-
-static t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
-{
-	t_cmd	*exec_node;
-	int		file_fd;
-
-	if (node->type == NODE_EXEC)
-		return (node);
-	exec_node = handle_redirections(node->subcmd, heap);
-	file_fd = open(node->file, node->mode, 0644);
-	if (file_fd == -1)
-		(perror(node->file), cleanup(heap), exit(1));
-	if (dup2(file_fd, node->fd) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
-	close(file_fd);
-	return (exec_node);
-}
 
 static void	execute_command(t_cmd *node, t_alloc *heap)
 {
@@ -72,7 +55,7 @@ static void	execute_exec(t_cmd *node, t_alloc *heap)
 	else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
 		ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
 	get_exit_status(heap, status);
-	cleanup_temp_files(&heap->temp_files);
+	cleanup_tmp_files(&heap->tmp_files);
 }
 
 static void	execute_pipe(t_cmd *node, t_alloc *heap)
@@ -83,31 +66,14 @@ static void	execute_pipe(t_cmd *node, t_alloc *heap)
 	pid_t	pid_right;
 
 	if (node->type == NODE_EXEC)
+	{
 		execute_exec(node, heap);
+		return ;
+	}
 	if (pipe(pipefd) == -1)
 		(perror("pipe"), cleanup(heap), exit(1));
-	pid_left = fork();
-	if (pid_left == -1)
-		(perror("fork"), cleanup(heap), exit(1));
-	if (pid_left == 0)
-	{
-		set_signal_child();
-		dup2(pipefd[1], STDOUT_FILENO);
-		(close(pipefd[0]), close(pipefd[1]));
-		execute(node->left, heap);
-		(cleanup(heap), exit(heap->exit_status));
-	}
-	pid_right = fork();
-	if (pid_right == -1)
-		(perror("fork"), cleanup(heap), exit(1));
-	if (pid_right == 0)
-	{
-		set_signal_child();
-		dup2(pipefd[0], STDIN_FILENO);
-		(close(pipefd[0]), close(pipefd[1]));
-		execute(node->right, heap);
-		(cleanup(heap), exit(heap->exit_status));
-	}
+	pid_left = execute_subnode(node->left, pipefd, STDOUT_FILENO, heap);
+	pid_right = execute_subnode(node->right, pipefd, STDIN_FILENO, heap);
 	(close(pipefd[0]), close(pipefd[1]));
 	set_signal_parent();
 	(waitpid(pid_left, NULL, 0), waitpid(pid_right, &status, 0));

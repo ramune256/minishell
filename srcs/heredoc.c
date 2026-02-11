@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 17:51:08 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 22:17:55 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/11 14:10:34 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "minishell_signal.h"
 
-void	cleanup_temp_files(t_list **list)
+void	cleanup_tmp_files(t_list **list)
 {
 	t_list	*current;
 	t_list	*tmp;
@@ -30,27 +30,21 @@ void	cleanup_temp_files(t_list **list)
 	*list = NULL;
 }
 
-static bool	put_line_to_tmpfile(char *line, char *delimiter, int tmp_fd)
+bool	is_delimiter(const char *line, const char *delimiter)
 {
-	bool	atty;
-	bool	is_del;
 	size_t	len;
+	bool	atty;
 
 	atty = isatty(STDIN_FILENO);
 	len = ft_strlen(delimiter);
-	if (atty)
-		is_del = (ft_strcmp(line, delimiter) == 0);
-	else
-		is_del = (ft_strncmp(line, delimiter, len) == 0 && line[len] == '\n');
-	if (is_del)
+	if (atty && ft_strcmp(line, delimiter) == 0)
 		return (true);
-	ft_putstr_fd(line, tmp_fd);
-	if (atty)
-		ft_putstr_fd("\n", tmp_fd);
+	if (!atty && ft_strncmp(line, delimiter, len) == 0 && line[len] == '\n')
+		return (true);
 	return (false);
 }
 
-static char	*generate_temp_filename(t_alloc *heap)
+char	*generate_tmp_filename(t_alloc *heap)
 {
 	static int	id = 0;
 	char		*num;
@@ -66,7 +60,24 @@ static char	*generate_temp_filename(t_alloc *heap)
 	return (filename);
 }
 
-static bool	get_heredoc_input(char **line, const char *message)
+static void	set_heredoc_file(t_cmd *node, char *tmp_filename, t_alloc *heap)
+{
+	char	*copy;
+	t_list	*list_node;
+
+	free(node->file);
+	node->file = tmp_filename;
+	node->mode = O_RDONLY;
+	copy = ft_strdup(tmp_filename);
+	if (!copy)
+		(cleanup(heap), exit(1));
+	list_node = ft_lstnew(copy);
+	if (!list_node)
+		(free(copy), cleanup(heap), exit(1));
+	ft_lstadd_back(&heap->tmp_files, list_node);
+}
+
+static bool	read_heredoc_input(char **line, const char *message)
 {
 	void	(*tmp_handle_sigint)(int);
 
@@ -87,54 +98,57 @@ static bool	get_heredoc_input(char **line, const char *message)
 	return (true);
 }
 
-static void	read_heredoc_input(t_cmd *node, t_alloc *heap)
+static void	write_heredoc_lines(const char *del, int tmp_filefd)
 {
 	char	*line;
-	int		tmp_fd;
-	char	*fn;
-	int		stdin_backup;
 
 	line = NULL;
-	stdin_backup = dup(STDIN_FILENO);
-	fn = generate_temp_filename(heap);
-	tmp_fd = open(fn, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-	if (tmp_fd == -1)
-		(perror("open"), cleanup(heap), exit(1));
 	while (1)
 	{
-		if (get_heredoc_input(&line, "> ") == false)
-		{
-			dup2(stdin_backup, STDIN_FILENO);
-			(close(stdin_backup), close(tmp_fd), free(fn));
+		if (read_heredoc_input(&line, "> ") == false)
 			return ;
-		}
-		if (line == NULL)
-			break ;
-		if (put_line_to_tmpfile(line, node->file, tmp_fd))
+		if (line == NULL || is_delimiter(line, del))
 		{
 			free(line);
-			break ;
+			return ;
 		}
+		ft_putstr_fd(line, tmp_filefd);
+		if (isatty(STDIN_FILENO))
+			ft_putstr_fd("\n", tmp_filefd);
 		free(line);
 	}
-	(close(tmp_fd), close(stdin_backup));
-	(free(node->file), node->file = fn, node->mode = O_RDONLY);
-	ft_lstadd_back(&heap->temp_files, ft_lstnew(ft_strdup(fn)));
 }
 
-void	find_and_process_heredocs(t_cmd *node, t_alloc *heap)
+static void	make_heredoc_file(t_cmd *node, t_alloc *heap)
+{
+	int		stdin_backup;
+	int		tmp_filefd;
+	char	*tmp_filename;
+
+	stdin_backup = dup(STDIN_FILENO);
+	tmp_filename = generate_tmp_filename(heap);
+	tmp_filefd = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
+	if (tmp_filefd == -1)
+		(perror("open"), cleanup(heap), exit(1));
+	write_heredoc_lines(node->file, tmp_filefd);
+	close(tmp_filefd);
+	(dup2(stdin_backup, STDIN_FILENO), close(stdin_backup));
+	set_heredoc_file(node, tmp_filename, heap);
+}
+
+void	heredoc(t_cmd *node, t_alloc *heap)
 {
 	if (!node)
 		return ;
 	if (node->type == NODE_PIPE)
 	{
-		find_and_process_heredocs(node->left, heap);
-		find_and_process_heredocs(node->right, heap);
+		heredoc(node->left, heap);
+		heredoc(node->right, heap);
 	}
 	else if (node->type == NODE_REDIR)
 	{
 		if (node->mode == TOKEN_HEREDOC)
-			read_heredoc_input(node, heap);
-		find_and_process_heredocs(node->subcmd, heap);
+			make_heredoc_file(node, heap);
+		heredoc(node->subcmd, heap);
 	}
 }
