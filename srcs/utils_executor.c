@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "minishell_signal.h"
 
 void	get_exit_status(t_alloc *heap, int status)
 {
