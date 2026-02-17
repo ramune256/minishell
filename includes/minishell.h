@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/17 23:14:02 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/17 23:25:23 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ typedef struct s_alloc
 	char	**ev_clone;
 	int		exit_status;
 	bool	success;
-	char	**av;
 	int		ac;
+	char	**av;
 }	t_alloc;
 
 # include "builtin.h"
