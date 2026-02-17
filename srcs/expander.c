@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 20:34:08 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/17 23:22:58 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/18 00:06:00 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,23 @@
 
 static bool	is_valid_var_head(char c)
 {
-	return (ft_isalnum(c) || c == '_' || c == '?' || 
-        c == '$' || c == '#' || c == '*' || c == '@' || c == '!');
+	return (ft_isalnum(c) || c == '_' || c == '?' || c == '$' || c == '#');
 }
 
-static char *check_special_vars(const char c,int *i,t_alloc *heap)
+static char *check_special_vars(const char c,t_alloc *heap)
 {
 	if (c == '?')
 		return (ft_itoa(heap->exit_status));
-	if (c == '$')
-        return (ft_itoa(getpid()));
-    if (c == '#') 
-        return (ft_itoa(heap->ac - 1));
-    if (c == '0') 
-        return (ft_strdup(heap->av[0]));
-    if (ft_isdigit(c))
-	{
-        int n = c - '0';
-        if (n < heap->ac)
-            return (ft_strdup(heap->av[n]));
-        return (ft_strdup(""));
-    }
-	return (ft_strdup("don't match"));
+	else if (c == '$')
+	    return (ft_itoa(getpid()));
+	else if (c == '#') 
+	    return (ft_itoa(heap->ac - 1));
+	else if (c == '0') 
+	    return (ft_strdup(heap->av[0]));
+	else if (ft_isdigit(c))
+		return (ft_strdup(""));
+	else
+		return (ft_strdup("don't match"));
 }
 
 char	*get_env_val(const char *str, int *i, t_alloc *heap)
@@ -49,11 +44,11 @@ char	*get_env_val(const char *str, int *i, t_alloc *heap)
 	(*i)++;
 	start = *i;
 	match_vars = NULL;
-	match_vars = check_special_vars(str[*i],&i,heap);
+	match_vars = check_special_vars(str[*i],heap);
 	if(!match_vars)
 		return (NULL);
 	if(ft_strncmp("don't match",match_vars,12))
-		return ((*i)++,match_vars);
+		return ((*i)++, match_vars);
 	free(match_vars);
 	while (ft_isalnum(str[*i]) || str[*i] == '_')
 		(*i)++;
