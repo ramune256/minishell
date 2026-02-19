@@ -97,6 +97,7 @@ char	*create_cur(size_t *j, char *cur, t_alloc *heap)
 ---
 
 # NORMINETTE C Coding Standard
+* To check for norminette error, use `norminette` command.
 
 ## Formatting
 1.  **Indentation:** Use "Horizontal Tabs" only (spaces are forbidden).
