@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2026/02/21 22:37:56 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/21 23:35:47 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 		(cleanup(heap), exit(1));
 	i = 0;
 	while (i < size)
-		sorted_ev[i] = ev_clone[i++];
+	{
+		sorted_ev[i] = ev_clone[i];
+		i++;
+	}
 	sorted_ev[i] = NULL;
 	sort_str_array(sorted_ev, size);
 	i = 0;
@@ -60,10 +63,10 @@ void	update_existing_env(char *arg, t_alloc *heap, int i, bool append_flag)
 
 void	update_env(char *arg, t_alloc *heap)
 {
-	size_t		key_len;
-	int			i;
-	bool		append_flag;
-	const char	**ev_c;
+	size_t	key_len;
+	int		i;
+	bool	append_flag;
+	char	**ev_c;
 
 	ev_c = heap->ev_clone;
 	append_flag = false;

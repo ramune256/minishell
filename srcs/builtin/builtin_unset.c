@@ -6,17 +6,17 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2026/02/21 22:52:14 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/21 23:36:48 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static	bool	is_unset_target(const char *env_str, char **args)
+static	bool	is_unset_target(char *env_str, char **args)
 {
-	int			i;
-	size_t		key_len;
-	const char	**ag;
+	int		i;
+	size_t	key_len;
+	char	**ag;
 
 	ag = args;
 	key_len = get_key_len(env_str, NULL);
