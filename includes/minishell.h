@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/17 23:25:23 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/21 23:22:08 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	free_tokens(t_token *tokens);
 bool	is_metachar(char c);
 
 //parser
+
 void	parse(t_alloc *heap);
 t_cmd	*exec_cmd_constructor(void);
 t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
