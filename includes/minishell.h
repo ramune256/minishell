@@ -89,6 +89,8 @@ bool	is_redirection(t_token_type type);
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
 // expander
+void	expand_envs(char **str, t_alloc *heap);
+char	*remove_quotes(const char *str);
 void	expand(t_cmd *node, t_alloc *heap);
 
 //executor
