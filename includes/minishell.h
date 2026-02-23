@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/28 01:46:41 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/04 01:47:41 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void	expand(t_cmd *ast, t_alloc *heap);
 //executor
 void	execute(t_cmd *ast, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
+char	**split_path_keep_empty(const char *s);
 void	get_exit_status(t_alloc *heap, int status);
 
 bool	is_parent_builtin(t_cmd *ast);
