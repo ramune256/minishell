@@ -3,15 +3,6 @@
 #define ERR_SYNTAX "minishell: syntax error\n"
 #define ERR_NOTCMD "minishell: syntax error near unexpected token '|'\n"
 
-static bool	is_empty_cmd(t_cmd *cmd)
-{
-	if (cmd->type == NODE_REDIR)
-		return (false);
-	if (cmd->type == NODE_EXEC && cmd->argv == NULL)
-		return (true);
-	return (false);
-}
-
 static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 {
 	char	**new_argv;
@@ -19,11 +10,11 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 	int		i;
 
 	size = 0;
+	if (!arg)
+		arg = " ";
 	if (cmd->argv)
-	{
 		while (cmd->argv[size])
 			size++;
-	}
 	new_argv = ft_calloc(size + 1 + 1, sizeof(char *));
 	if (!new_argv)
 		(cleanup(heap), exit(1));
@@ -44,16 +35,14 @@ static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
 {
 	t_cmd			*node_exec;
 	t_cmd			*result_ptr;
-	t_token_type	type;
 
-	type = (*tokens)->type;
 	node_exec = exec_cmd_constructor();
 	if (!node_exec)
 		(cleanup(heap), exit(1));
 	result_ptr = node_exec;
-	while (*tokens && type != TOKEN_PIPE && type != TOKEN_EOF)
+	while (!is_end_cmd(*tokens))
 	{
-		if (is_redirection(type))
+		if (is_redirection((*tokens)->type))
 		{
 			result_ptr = parse_redirection(result_ptr, tokens, heap);
 			if (!result_ptr)

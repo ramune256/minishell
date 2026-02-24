@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_parser.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/02 16:50:51 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/24 18:59:46 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd)
 void	free_ast(t_cmd *cmd)
 {
 	if (!cmd)
-		return;
+		return ;
 	if (cmd->type == NODE_EXEC)
 		free_2d_array(&(cmd->argv));
 	else if (cmd->type == NODE_PIPE)

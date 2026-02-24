@@ -37,7 +37,10 @@ void	append_ev(char *arg, int count, t_alloc *heap)
 		(cleanup(heap), exit(1));
 	i = 0;
 	while (heap->ev_clone[i])
-		new_ev[i] = heap->ev_clone[i++];
+	{
+		new_ev[i] = heap->ev_clone[i];
+		i++;
+	}
 	append_new_env(arg, heap, new_ev, i);
 }
 
