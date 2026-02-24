@@ -102,6 +102,7 @@ void	expand(t_cmd *ast, t_alloc *heap);
 //executor
 void	execute(t_cmd *ast, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
+char	**split_path_keep_empty(const char *s);
 void	get_exit_status(t_alloc *heap, int status);
 
 bool	is_parent_builtin(t_cmd *ast);
