@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/18 00:02:46 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/25 20:13:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,13 @@ void	cleanup(t_alloc *alloc)
 	tmp_ac = alloc->ac;
 	free(alloc->line);
 	free_tokens(alloc->head);
-	free_ast(alloc->ast);
-	cleanup_temp_files(&alloc->temp_files);
+	free_ast(alloc->node);
+	cleanup_tmp_files(&alloc->tmp_files);
 	if (tmp_success == false)
+	{
 		free_2d_array(&(alloc->ev_clone));
+		rl_clear_history();
+	}
 	ft_bzero(alloc, sizeof(t_alloc));
 	if (tmp_success == true)
 	{
@@ -55,21 +58,4 @@ void	print_exit(t_alloc *heap)
 		ft_putendl_fd("exit", 2);
 	cleanup(heap);
 	exit(0);
-}
-
-void	free_2d_array(char ***array)
-{
-	size_t	i;
-
-	if (!array || !*array)
-		return ;
-	i = 0;
-	while ((*array)[i])
-	{
-		free((*array)[i]);
-		(*array)[i] = NULL;
-		i++;
-	}
-	free(*array);
-	*array = NULL;
 }

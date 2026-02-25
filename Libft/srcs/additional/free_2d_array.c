@@ -1,22 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnlen.c                                       :+:      :+:    :+:   */
+/*   free_2d_array.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/22 19:45:33 by shunwata          #+#    #+#             */
-/*   Updated: 2025/12/22 20:31:32 by shunwata         ###   ########.fr       */
+/*   Created: 2026/02/09 22:11:27 by shunwata          #+#    #+#             */
+/*   Updated: 2026/02/09 22:11:53 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "additional.h"
 
-size_t	ft_strnlen(const char *s, size_t n)
+void	free_2d_array(char ***array)
 {
-	const char	*h = s;
+	size_t	i;
 
-	while (n && *s)
-		(void)(n--, s++);
-	return (s - h);
+	if (!array || !*array)
+		return ;
+	i = 0;
+	while ((*array)[i])
+	{
+		free((*array)[i]);
+		(*array)[i] = NULL;
+		i++;
+	}
+	free(*array);
+	*array = NULL;
 }

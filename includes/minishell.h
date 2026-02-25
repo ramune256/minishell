@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/24 19:02:15 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/25 21:05:57 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,8 @@ typedef struct s_alloc
 {
 	char	*line;
 	t_token	*head;
-	t_cmd	*ast;
-	t_list	*temp_files;
+	t_cmd	*node;
+	t_list	*tmp_files;
 	char	**ev_clone;
 	int		exit_status;
 	bool	success;
@@ -75,16 +75,12 @@ typedef struct s_alloc
 	char	**av;
 }	t_alloc;
 
-# include "builtin.h"
-# include "minishell_signal.h"
-
 //tokenizer
 void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
 bool	is_metachar(char c);
 
 //parser
-
 void	parse(t_alloc *heap);
 t_cmd	*exec_cmd_constructor(void);
 t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
@@ -97,19 +93,26 @@ bool	is_end_cmd(t_token *tokens);
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
 // expander
-void	expand(t_cmd *ast, t_alloc *heap);
+void	expand_envs(char **str, t_alloc *heap);
+char	*remove_quotes(const char *str);
+void	expand(t_cmd *node, t_alloc *heap);
 
 //executor
-void	execute(t_cmd *ast, t_alloc *heap);
+void	execute(t_cmd *node, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
 char	**split_path_keep_empty(const char *s);
 void	get_exit_status(t_alloc *heap, int status);
+t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap);
+void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap);
+pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap);
 
-bool	is_parent_builtin(t_cmd *ast);
+bool	is_parent_builtin(t_cmd *node);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
-void	cleanup_temp_files(t_list **list);
-void	find_and_process_heredocs(t_cmd *ast, t_alloc *heap);
+void	heredoc(t_cmd *node, t_alloc *heap);
+void	cleanup_tmp_files(t_list **list);
+bool	is_delimiter(const char *line, const char *delimiter);
+char	*generate_tmp_filename(t_alloc *heap);
 
 //error
 void	puterr(char *cmd_name, char *msg);
@@ -118,7 +121,6 @@ void	puterr(char *cmd_name, char *msg);
 void	cleanup(t_alloc *alloc);
 void	get_input(char **line, const char *message);
 void	print_exit(t_alloc *heap);
-void	free_2d_array(char ***array);
 
 //initialize
 void	clone_ev(char **ev, t_alloc *heap);

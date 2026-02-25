@@ -29,15 +29,16 @@ GNL_DIR			= $(L_SRC_DIR)/get_next_line
 ADDITIONAL_DIR	= $(L_SRC_DIR)/additional
 
 MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
-					core_tokenizer.c executor_builtin.c executor_heredoc.c \
-					expander.c get_fullpath.c init.c main.c parser_redir.c \
-					puterr.c signal.c utils_common.c utils_executor.c \
-					utils_parser.c utils_parser_is.c utils_tokenizer.c)
+					core_tokenizer.c executor_builtin.c expander.c \
+					expander_env.c expander_quotes.c get_fullpath.c \
+					heredoc.c init.c main.c parser_redir.c puterr.c \
+					signal.c utils_common.c utils_executor.c \
+					utils_heredoc.c utils_parser.c utils_parser_is.c utils_tokenizer.c)
 
 BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
 					builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)
 
-B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_export_append.c utils_ft_atol.c utils_search.c)
+B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_export_append.c utils_search.c)
 
 SRCS			= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
 
@@ -60,5 +61,8 @@ fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
+
+val: $(NAME)
+	valgrind --leak-check=full --show-leak-kinds=all --suppressions=leak.supp -q ./$(NAME)
 
 .PHONY: all clean fclean re

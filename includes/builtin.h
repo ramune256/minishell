@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-/*   Updated: 2026/02/24 18:41:52 by nmasuda          ###   ########.fr       */
+/*   Created: 2026/02/25 20:40:46 by shunwata          #+#    #+#             */
+/*   Updated: 2026/02/25 20:40:51 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # define CMD 0
 # define OPT 1
 
-# include <limits.h>
 # include <stdbool.h>
 # include <stddef.h>
 # include <stdint.h>
@@ -34,7 +33,6 @@ int			c_exit(char **line, t_alloc *heap);
 int			c_export(char **line, t_alloc *heap);
 int			c_cd(char **line, t_alloc *heap);
 
-long long	ft_atol(const char *st, bool *error);
 bool		is_valid_identifier(char *str);
 size_t		get_key_len(char *str, bool *append_flag);
 size_t		get_arr_size(char **arr);
@@ -42,8 +40,7 @@ void		sort_str_array(char **arr, size_t size);
 int			print_formatted_env(char *env_str);
 void		update_env(char *arg, t_alloc *heap);
 
-char		*search_get_env(char **ev, const char *serch);
-void		append_env_val(char *arg, t_alloc *heap, int i);
 void		append_ev(char *arg, int count, t_alloc *heap);
+void		append_env_val(char *arg, t_alloc *heap, int i);
 
 #endif

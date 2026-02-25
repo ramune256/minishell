@@ -6,20 +6,12 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/17 23:25:14 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/25 20:13:00 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	import_signal_status(t_alloc *heap)
-{
-	if (g_sig_status)
-	{
-		heap->exit_status = 128 + SIGINT;
-		g_sig_status = 0;
-	}
-}
+#include "minishell_signal.h"
 
 static void	interpret(t_alloc *heap)
 {
@@ -27,8 +19,9 @@ static void	interpret(t_alloc *heap)
 		add_history(heap->line);
 	tokenize(heap);
 	parse(heap);
-	expand(heap->ast, heap);
-	execute(heap->ast, heap);
+	expand(heap->node, heap);
+	heredoc(heap->node, heap);
+	execute(heap->node, heap);
 }
 
 int	main(int ac, char **av, char **ev)

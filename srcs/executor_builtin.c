@@ -6,27 +6,27 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:00:39 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/20 14:14:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/25 20:40:20 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "builtin.h"
 
-bool	is_parent_builtin(t_cmd *ast)
+bool	is_parent_builtin(t_cmd *node)
 {
 	char	*cmd;
 
-	if (ast == NULL || ast->type != NODE_EXEC || ast->argv == NULL)
+	if (node == NULL || node->type != NODE_EXEC || node->argv == NULL)
 		return (false);
-	cmd = ast->argv[0];
+	cmd = node->argv[0];
 	if (cmd == NULL)
 		return (false);
 	if (ft_strcmp(cmd, "cd") == 0)
 		return (true);
 	if (ft_strcmp(cmd, "exit") == 0)
 		return (true);
-	if (ft_strcmp(cmd, "export") == 0 && ast->argv[1] != NULL)
+	if (ft_strcmp(cmd, "export") == 0 && node->argv[1] != NULL)
 		return (true);
 	if (ft_strcmp(cmd, "unset") == 0)
 		return (true);
@@ -38,10 +38,10 @@ bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)
 	char	*cmd;
 
 	if (exec_node == NULL || exec_node->argv == NULL)
-		return (0);
+		return (false);
 	cmd = exec_node->argv[0];
 	if (!cmd)
-		return (0);
+		return (false);
 	if (ft_strcmp(cmd, "cd") == 0)
 		heap->exit_status = c_cd(exec_node->argv, heap);
 	else if (ft_strcmp(cmd, "echo") == 0)

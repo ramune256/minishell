@@ -14,6 +14,15 @@
 
 volatile sig_atomic_t	g_sig_status = 0;
 
+void	import_signal_status(t_alloc *heap)
+{
+	if (g_sig_status)
+	{
+		heap->exit_status = 128 + SIGINT;
+		g_sig_status = 0;
+	}
+}
+
 void	handle_sigint(int sig)
 {
 	int	dummy;

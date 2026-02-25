@@ -6,11 +6,12 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2026/02/21 23:35:47 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/25 19:58:37 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 {

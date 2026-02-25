@@ -6,31 +6,31 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2026/02/21 23:36:48 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/25 21:08:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
-static	bool	is_unset_target(char *env_str, char **args)
+static bool	is_unset_target(char *env_str, char **args)
 {
 	int		i;
 	size_t	key_len;
-	char	**ag;
 
-	ag = args;
 	key_len = get_key_len(env_str, NULL);
 	i = 1;
-	while (ag[i])
+	while (args[i])
 	{
-		if (ft_strlen(ag[i]) == key_len && !ft_strncmp(env_str, ag[i], key_len))
+		if (ft_strlen(args[i]) == key_len
+			&& !ft_strncmp(env_str, args[i], key_len))
 			return (true);
 		i++;
 	}
 	return (false);
 }
 
-static	int	recreate_env(char **args, t_alloc *heap, size_t new_size)
+static int	recreate_env(char **args, t_alloc *heap, size_t new_size)
 {
 	char	**new_ev;
 	int		i;
