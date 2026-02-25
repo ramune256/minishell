@@ -5,13 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD
 /*   Created: 2026/02/09 21:55:57 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 21:57:37 by shunwata         ###   ########.fr       */
-=======
-/*   Created: 2025/10/11 21:10:01 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/04 01:57:51 by nmasuda          ###   ########.fr       */
->>>>>>> main
+/*   Updated: 2026/02/25 20:33:23 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +31,15 @@ static char	*check_path_and_perm(char **bin_dir, char *cmd_name, t_alloc *heap)
 {
 	char	*fullpath;
 	size_t	i;
-<<<<<<< HEAD
-=======
 	char	*dir;
->>>>>>> main
 
 	i = 0;
 	while (bin_dir[i])
 	{
-<<<<<<< HEAD
-		fullpath = join_path(bin_dir[i], cmd_name);
-=======
 		dir = bin_dir[i];
 		if (dir[0] == '\0')
 			dir = ".";
 		fullpath = join_path(dir, cmd_name);
->>>>>>> main
 		if (!fullpath)
 			(free_2d_array(&bin_dir), cleanup(heap), exit(1));
 		if (access(fullpath, F_OK) == 0)
@@ -106,20 +94,12 @@ char	*get_fullpath(char *cmd_name, t_alloc *heap)
 	if (ft_strchr(cmd_name, '/'))
 		return (check_absolute_path(cmd_name, heap));
 	envp_path = search_get_env(heap->ev_clone, "PATH");
-<<<<<<< HEAD
-	if (!envp_path || ft_strlen(envp_path) == 0)
-=======
 	if (!envp_path)
->>>>>>> main
 	{
 		heap->exit_status = 127;
 		return (puterr(cmd_name, "No such file or directory"), NULL);
 	}
-<<<<<<< HEAD
-	bin_dir = ft_split(envp_path, ':');
-=======
 	bin_dir = split_path_keep_empty(envp_path);
->>>>>>> main
 	if (!bin_dir)
 		(cleanup(heap), exit(1));
 	fullpath = check_path_and_perm(bin_dir, cmd_name, heap);

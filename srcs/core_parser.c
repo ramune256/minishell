@@ -109,7 +109,7 @@ void	parse(t_alloc *heap)
 	if (tokens->type != TOKEN_EOF)
 	{
 		ft_putstr_fd(ERR_SYNTAX, 2);
-		free_ast(heap->ast);
-		heap->ast = NULL;
+		free_ast(heap->node);
+		heap->node = NULL;
 	}
 }

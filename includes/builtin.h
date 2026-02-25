@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 18:23:06 by nmasuda           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2026/02/09 22:05:57 by shunwata         ###   ########.fr       */
-=======
-/*   Updated: 2026/02/24 18:41:52 by nmasuda          ###   ########.fr       */
->>>>>>> main
+/*   Created: 2026/02/25 20:40:46 by shunwata          #+#    #+#             */
+/*   Updated: 2026/02/25 20:40:51 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +39,8 @@ size_t		get_arr_size(char **arr);
 void		sort_str_array(char **arr, size_t size);
 int			print_formatted_env(char *env_str);
 void		update_env(char *arg, t_alloc *heap);
+
+void		append_ev(char *arg, int count, t_alloc *heap);
+void		append_env_val(char *arg, t_alloc *heap, int i);
 
 #endif

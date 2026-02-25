@@ -39,7 +39,8 @@ static bool	is_expandable(const char *str, int i, char quote)
 	if (str[i] != '$' || quote == '\'')
 		return (false);
 	next = str[i + 1];
-	if (!(ft_isalnum(next) || next == '_' || next == '?'))
+	if (!(ft_isalnum(next) || next == '_' || next == '?'
+			|| next == '$' || next == '#'))
 		return (false);
 	if (is_escaped_by_backslash(str, quote, i - 1))
 		return (false);
@@ -52,20 +53,26 @@ static char	*duplicate_env_value(const char *str, int *i, t_alloc *heap)
 	char	*key;
 	char	*env_val;
 
-	(*i)++;
-	start = *i;
+	start = ++(*i);
 	if (str[*i] == '?')
 		return ((*i)++, ft_itoa(heap->exit_status));
+	if (str[*i] == '$')
+		return ((*i)++, ft_itoa(getpid()));
+	if (str[*i] == '#')
+		return ((*i)++, ft_itoa(heap->ac - 1));
+	if (str[*i] == '0')
+		return ((*i)++, ft_strdup(heap->av[0]));
+	if (ft_isdigit(str[*i]))
+		return ((*i)++, ft_strdup(""));
 	while (ft_isalnum(str[*i]) || str[*i] == '_')
 		(*i)++;
 	key = ft_substr(str, start, *i - start);
 	if (!key)
 		return (NULL);
 	env_val = search_get_env(heap->ev_clone, key);
-	free(key);
-	if (env_val)
-		return (ft_strdup(env_val));
-	return (ft_strdup(""));
+	if (!env_val)
+		return (free(key), ft_strdup(""));
+	return (free(key), ft_strdup(env_val));
 }
 
 static void	replace_env_value(char **str, int *i, int start, t_alloc *heap)
