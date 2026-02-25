@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:56:32 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/24 18:59:46 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/25 21:05:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,4 @@ void	free_ast(t_cmd *cmd)
 		free(cmd->file);
 	}
 	free(cmd);
-}
-
-bool	is_redirection(t_token_type type)
-{
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_REDIR_APPEND || type == TOKEN_HEREDOC);
 }

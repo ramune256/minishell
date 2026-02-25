@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/12 17:46:10 by nmasuda           #+#    #+#             */
-/*   Updated: 2026/02/25 20:15:40 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/25 21:08:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ static bool	is_unset_target(char *env_str, char **args)
 	i = 1;
 	while (args[i])
 	{
-		if (ft_strlen(args[i]) == key_len && \
-			!ft_strncmp(env_str, args[i], key_len))
+		if (ft_strlen(args[i]) == key_len
+			&& !ft_strncmp(env_str, args[i], key_len))
 			return (true);
 		i++;
 	}
