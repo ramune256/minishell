@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/11 13:21:22 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/25 20:13:00 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,10 @@ int	main(int ac, char **av, char **ev)
 {
 	t_alloc		heap;
 
-	((void)ac, (void)av);
 	ft_bzero(&heap, sizeof(t_alloc));
 	clone_ev(ev, &heap);
+	heap.ac = ac;
+	heap.av = av;
 	set_signal_shell();
 	while (1)
 	{

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
+#    By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2025/12/28 01:42:24 by shunwata         ###   ########.fr        #
+#    Updated: 2026/02/24 19:02:36 by nmasuda          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,12 +33,16 @@ MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 					expander_env.c expander_quotes.c get_fullpath.c \
 					heredoc.c init.c main.c parser_redir.c puterr.c \
 					signal.c utils_common.c utils_executor.c \
-					utils_heredoc.c utils_parser.c utils_tokenizer.c)
+					utils_heredoc.c utils_parser.c utils_parser_is.c utils_tokenizer.c)
 
 BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
 					builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)
 
+<<<<<<< HEAD
 B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_search.c)
+=======
+B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_export_append.c utils_ft_atol.c utils_search.c)
+>>>>>>> main
 
 SRCS			= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
 

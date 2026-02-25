@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_common.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 22:12:37 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/25 20:13:26 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,14 @@ void	cleanup(t_alloc *alloc)
 	char	**tmp_ev;
 	int		tmp_exit_status;
 	bool	tmp_success;
+	char	**tmp_av;
+	int		tmp_ac;
 
 	tmp_ev = alloc->ev_clone;
 	tmp_exit_status = alloc->exit_status;
 	tmp_success = alloc->success;
+	tmp_av = alloc->av;
+	tmp_ac = alloc->ac;
 	free(alloc->line);
 	free_tokens(alloc->head);
 	free_ast(alloc->node);
@@ -35,6 +39,8 @@ void	cleanup(t_alloc *alloc)
 	{
 		alloc->ev_clone = tmp_ev;
 		alloc->exit_status = tmp_exit_status;
+		alloc->av = tmp_av;
+		alloc->ac = tmp_ac;
 	}
 }
 
