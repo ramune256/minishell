@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 18:43:46 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 22:54:27 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:35:47 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,57 +34,10 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 	sort_str_array(sorted_ev, size);
 	i = 0;
 	while (i < size)
-	{
-		if (print_formatted_env(sorted_ev[i]) < 0)
+		if (print_formatted_env(sorted_ev[i++]) < 0)
 			return (free(sorted_ev), 1);
-		i++;
-	}
 	free(sorted_ev);
 	return (0);
-}
-
-static void	append_new_env(char *arg, t_alloc *heap, char **new_ev, int i)
-{
-	char	*tmp_val;
-	char	*tmp_key;
-	char	*equal_pos;
-
-	equal_pos = ft_strchr(arg, '=');
-	if (equal_pos && arg[equal_pos - arg - 1] == '+')
-	{
-		tmp_key = ft_substr(arg, 0, equal_pos - arg - 1);
-		if (!tmp_key)
-			(free(new_ev), cleanup(heap), exit(1));
-		tmp_val = ft_strdup(equal_pos);
-		if (!tmp_val)
-			(free(tmp_key), free(new_ev), cleanup(heap), exit(1));
-		new_ev[i] = ft_strjoin(tmp_key, tmp_val);
-		(free(tmp_key), free(tmp_val));
-	}
-	else
-		new_ev[i] = ft_strdup(arg);
-	if (!new_ev[i])
-		(free(new_ev), cleanup(heap), exit(1));
-	new_ev[i + 1] = NULL;
-	free(heap->ev_clone);
-	heap->ev_clone = new_ev;
-}
-
-static void	append_ev(char *arg, int count, t_alloc *heap)
-{
-	char	**new_ev;
-	int		i;
-
-	new_ev = ft_calloc(count + 2, sizeof(char *));
-	if (!new_ev)
-		(cleanup(heap), exit(1));
-	i = 0;
-	while (heap->ev_clone[i])
-	{
-		new_ev[i] = heap->ev_clone[i];
-		i++;
-	}
-	append_new_env(arg, heap, new_ev, i);
 }
 
 static void	replace_env(char *arg, t_alloc *heap, int i)
@@ -98,33 +51,7 @@ static void	replace_env(char *arg, t_alloc *heap, int i)
 	heap->ev_clone[i] = tmp;
 }
 
-static void	append_env_val(char *arg, t_alloc *heap, int i)
-{
-	char	*new_val;
-	char	*tmp;
-	char	*joined_key;
-
-	new_val = ft_strdup(ft_strchr(arg, '=') + 1);
-	if (!new_val)
-		(cleanup(heap), exit(1));
-	if (ft_strchr(heap->ev_clone[i], '='))
-		tmp = ft_strjoin(heap->ev_clone[i], new_val);
-	else
-	{
-		joined_key = ft_strjoin(heap->ev_clone[i], "=");
-		if (!joined_key)
-			(free(new_val), cleanup(heap), exit(1));
-		tmp = ft_strjoin(joined_key, new_val);
-		free(joined_key);
-	}
-	free(new_val);
-	if (!tmp)
-		(cleanup(heap), exit(1));
-	free(heap->ev_clone[i]);
-	heap->ev_clone[i] = tmp;
-}
-
-static void	update_existing_env(char *arg, t_alloc *heap, int i, bool append_flag)
+void	update_existing_env(char *arg, t_alloc *heap, int i, bool append_flag)
 {
 	if (!ft_strchr(arg, '='))
 		return ;
@@ -139,18 +66,21 @@ void	update_env(char *arg, t_alloc *heap)
 	size_t	key_len;
 	int		i;
 	bool	append_flag;
+	char	**ev_c;
 
+	ev_c = heap->ev_clone;
 	append_flag = false;
 	key_len = get_key_len(arg, &append_flag);
 	i = 0;
-	while (heap->ev_clone[i])
+	while (ev_c[i])
 	{
-		if (ft_strncmp(heap->ev_clone[i], arg, key_len) == 0 &&
-			(heap->ev_clone[i][key_len] == '=' ||
-			heap->ev_clone[i][key_len] == '\0'))
+		if (!ft_strncmp(ev_c[i], arg, key_len))
 		{
-			update_existing_env(arg, heap, i, append_flag);
-			return ;
+			if (ev_c[i][key_len] == '=' || ev_c[i][key_len] == '\0')
+			{
+				update_existing_env(arg, heap, i, append_flag);
+				return ;
+			}
 		}
 		i++;
 	}

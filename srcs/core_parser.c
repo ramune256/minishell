@@ -1,13 +1,7 @@
 #include "minishell.h"
 
-static bool is_empty_cmd(t_cmd *cmd)
-{
-	if (cmd->type == NODE_REDIR)
-		return (false);
-	if (cmd->type == NODE_EXEC && cmd->argv == NULL)
-		return (true);
-	return (false);
-}
+#define ERR_SYNTAX "minishell: syntax error\n"
+#define ERR_NOTCMD "minishell: syntax error near unexpected token '|'\n"
 
 static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 {
@@ -16,11 +10,11 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 	int		i;
 
 	size = 0;
+	if (!arg)
+		arg = " ";
 	if (cmd->argv)
-	{
 		while (cmd->argv[size])
 			size++;
-	}
 	new_argv = ft_calloc(size + 1 + 1, sizeof(char *));
 	if (!new_argv)
 		(cleanup(heap), exit(1));
@@ -39,14 +33,14 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 
 static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
 {
-	t_cmd	*node_exec;
-	t_cmd	*result_ptr;
+	t_cmd			*node_exec;
+	t_cmd			*result_ptr;
 
 	node_exec = exec_cmd_constructor();
 	if (!node_exec)
 		(cleanup(heap), exit(1));
 	result_ptr = node_exec;
-	while (*tokens && (*tokens)->type != TOKEN_PIPE && (*tokens)->type != TOKEN_EOF)
+	while (!is_end_cmd(*tokens))
 	{
 		if (is_redirection((*tokens)->type))
 		{
@@ -71,14 +65,14 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 
 	cmd = parse_command_unit(tokens, heap);
 	if (!cmd)
-		 return (ft_putstr_fd("minishell: syntax error\n", 2), NULL);
+		return (ft_putstr_fd(ERR_SYNTAX, 2), NULL);
 	if ((*tokens)->type == TOKEN_PIPE)
 	{
 		if (is_empty_cmd(cmd))
-			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error near unexpected token '|'\n", 2), NULL);
+			return (free_ast(cmd), ft_putstr_fd(ERR_NOTCMD, 2), NULL);
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
-			return (free_ast(cmd), ft_putstr_fd("minishell: syntax error\n", 2), NULL);
+			return (free_ast(cmd), ft_putstr_fd(ERR_SYNTAX, 2), NULL);
 		right = parse_pipeline(tokens, heap);
 		if (!right)
 			return (free_ast(cmd), NULL);
@@ -92,7 +86,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 
 void	parse(t_alloc *heap)
 {
-	t_token *tokens;
+	t_token	*tokens;
 
 	tokens = heap->head;
 	if (!tokens || tokens->type == TOKEN_EOF)
@@ -102,7 +96,7 @@ void	parse(t_alloc *heap)
 		return ;
 	if (tokens->type != TOKEN_EOF)
 	{
-		ft_putstr_fd("minishell: syntax error\n", 2);
+		ft_putstr_fd(ERR_SYNTAX, 2);
 		free_ast(heap->ast);
 		heap->ast = NULL;
 	}

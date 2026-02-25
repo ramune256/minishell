@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/04 01:47:41 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/02/24 19:02:15 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ typedef struct s_alloc
 	char	**ev_clone;
 	int		exit_status;
 	bool	success;
+	int		ac;
+	char	**av;
 }	t_alloc;
 
 # include "builtin.h"
@@ -82,12 +84,15 @@ void	free_tokens(t_token *tokens);
 bool	is_metachar(char c);
 
 //parser
+
 void	parse(t_alloc *heap);
 t_cmd	*exec_cmd_constructor(void);
 t_cmd	*pipe_cmd_constructor(t_cmd *left, t_cmd *right);
 t_cmd	*redir_cmd_constructor(t_cmd *subcmd, char *file, int mode, int fd);
 void	free_ast(t_cmd *cmd);
 bool	is_redirection(t_token_type type);
+bool	is_empty_cmd(t_cmd *cmd);
+bool	is_end_cmd(t_token *tokens);
 
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
