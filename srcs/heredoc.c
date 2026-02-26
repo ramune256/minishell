@@ -110,12 +110,14 @@ void	heredoc(t_cmd *node, t_alloc *heap)
 	}
 	else if (node->type == NODE_REDIR)
 	{
+		heredoc(node->subcmd, heap);
+		if (g_sig_status)
+			return ;
 		if (node->mode == TOKEN_HEREDOC)
 		{
 			make_heredoc_file(node, heap);
 			if (g_sig_status)
 				return ;
 		}
-		heredoc(node->subcmd, heap);
 	}
 }
