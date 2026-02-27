@@ -6,32 +6,39 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 23:16:39 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/27 15:35:11 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	append_token(t_alloc *heap, t_token_type token_type, char *value)
+typedef struct s_lexer
+{
+	const char	*line;
+	int			index;
+	t_token		*head;
+	t_token		*tail;
+	t_alloc		*heap;
+}	t_lexer;
+
+static void	append_token(t_lexer *lx, t_token_type token_type, char *value)
 {
 	t_token	*new_token;
-	t_token	*tmp;
 
 	new_token = (t_token *)ft_calloc(1, sizeof(t_token));
 	if (!new_token || (value == NULL && token_type != TOKEN_EOF))
-		(cleanup(heap), exit(1));
+		(cleanup(lx->heap), exit(1));
 	new_token->type = token_type;
 	new_token->value = value;
 	new_token->next = NULL;
-	if (!heap->head)
+	if (!lx->head)
 	{
-		heap->head = new_token;
+		lx->head = new_token;
+		lx->tail = new_token;
 		return ;
 	}
-	tmp = heap->head;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new_token;
+	lx->tail->next = new_token;
+	lx->tail = new_token;
 }
 
 static void	join_lines(t_alloc *heap, char *new_line)
@@ -59,6 +66,7 @@ static bool	append_input(t_alloc *heap)
 {
 	char	*new_line;
 
+	new_line = NULL;
 	get_input(&new_line, "> ");
 	if (new_line == NULL)
 	{
@@ -70,19 +78,19 @@ static bool	append_input(t_alloc *heap)
 	return (true);
 }
 
-static bool	process_quotes(char *line, int *i)
+static bool	scan_quotes(const char *line, int *i)
 {
 	char	quote;
 
 	quote = 0;
 	while (line[*i])
 	{
-		if (quote == 0 && (line[*i] == '\'' || line[*i] == '\"'))
+		if (quote == 0 && (line[*i] == '\'' || line[*i] == '"'))
 			quote = line[*i];
 		else if (quote != 0 && line[*i] == quote)
 			quote = 0;
-		if (quote == 0 && (ft_strchr(" \t\n", line[*i]) \
-					|| is_metachar(line[*i])))
+		if (quote == 0 && (ft_strchr(" \t\n", line[*i])
+				|| is_metachar(line[*i])))
 			break ;
 		(*i)++;
 	}
@@ -91,82 +99,110 @@ static bool	process_quotes(char *line, int *i)
 	return (true);
 }
 
-static void	handle_pipe_or_redir(t_alloc *heap, char *line, int *i)
+static void	read_operator(t_lexer *lx)
 {
-	if (line[*i] == '|')
-		(append_token(heap, TOKEN_PIPE, ft_strndup(line + *i, 1)), (*i)++);
-	else if (line[*i] == '<' && line[*i + 1] == '<')
-		(append_token(heap, TOKEN_HEREDOC, ft_strndup(line + *i, 2)), *i += 2);
-	else if (line[*i] == '>' && line[*i + 1] == '>')
-		(append_token(heap, TOKEN_REDIR_APPEND,
-				ft_strndup(line + *i, 2)), *i += 2);
-	else if (line[*i] == '<')
-		(append_token(heap, TOKEN_REDIR_IN, ft_strndup(line + *i, 1)), (*i)++);
-	else if (line[*i] == '>')
-		(append_token(heap, TOKEN_REDIR_OUT, ft_strndup(line + *i, 1)), (*i)++);
+	if (lx->line[lx->index] == '|')
+		(append_token(lx, TOKEN_PIPE,
+			ft_strndup(lx->line + lx->index, 1)), lx->index++);
+	else if (lx->line[lx->index] == '<' && lx->line[lx->index + 1] == '<')
+		(append_token(lx, TOKEN_HEREDOC,
+			ft_strndup(lx->line + lx->index, 2)), lx->index += 2);
+	else if (lx->line[lx->index] == '>' && lx->line[lx->index + 1] == '>')
+		(append_token(lx, TOKEN_REDIR_APPEND,
+			ft_strndup(lx->line + lx->index, 2)), lx->index += 2);
+	else if (lx->line[lx->index] == '<')
+		(append_token(lx, TOKEN_REDIR_IN,
+			ft_strndup(lx->line + lx->index, 1)), lx->index++);
+	else if (lx->line[lx->index] == '>')
+		(append_token(lx, TOKEN_REDIR_OUT,
+			ft_strndup(lx->line + lx->index, 1)), lx->index++);
 }
 
-static void	handle_incomplete_pipe(t_alloc *heap)
+static bool	scan_word(t_lexer *lx)
 {
-	t_token	*last;
+	int	start;
+	int	i;
 
-	last = heap->head;
-	if (!last)
-		return ;
-	while (last->next)
-		last = last->next;
-	if (last->type == TOKEN_PIPE)
+	start = lx->index;
+	i = lx->index;
+	if (!scan_quotes(lx->line, &i))
+		return (false);
+	append_token(lx, TOKEN_WORD, ft_strndup(lx->line + start, i - start));
+	lx->index = i;
+	return (true);
+}
+
+static void	skip_spaces(t_lexer *lx)
+{
+	while (lx->line[lx->index] && ft_strchr(" \t\n", lx->line[lx->index]))
+		lx->index++;
+}
+
+static bool	has_trailing_pipe(t_token *head)
+{
+	if (!head)
+		return (false);
+	while (head->next)
+		head = head->next;
+	if (head->type == TOKEN_PIPE)
+		return (true);
+	return (false);
+}
+
+static void	request_and_reparse(t_lexer *lx)
+{
+	if (!append_input(lx->heap))
 	{
-		if (!append_input(heap))
-		{
-			heap->exit_status = 2;
-			ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
-		}
-		else
-		{
-			free_tokens(heap->head);
-			heap->head = NULL;
-			tokenize(heap);
-			return ;
-		}
+		free_tokens(lx->head);
+		lx->heap->head = NULL;
+		return ;
 	}
-	append_token(heap, TOKEN_EOF, NULL);
+	free_tokens(lx->head);
+	lx->heap->head = NULL;
+	tokenize(lx->heap);
+}
+
+static bool	handle_pipe_end(t_lexer *lx)
+{
+	if (!has_trailing_pipe(lx->head))
+		return (true);
+	if (!append_input(lx->heap))
+	{
+		lx->heap->exit_status = 2;
+		free_tokens(lx->head);
+		lx->head = NULL;
+		lx->heap->head = NULL;
+		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
+		return (false);
+	}
+	free_tokens(lx->head);
+	lx->heap->head = NULL;
+	tokenize(lx->heap);
+	return (false);
 }
 
 void	tokenize(t_alloc *heap)
 {
-	int		i;
-	int		start;
-	char	*line;
+	t_lexer	lx;
 
-	i = 0;
-	line = heap->line;
-	while (line[i])
+	ft_bzero(&lx, sizeof(t_lexer));
+	lx.line = heap->line;
+	lx.heap = heap;
+	while (lx.line[lx.index])
 	{
-		while (line[i] && ft_strchr(" \t\n", line[i]))
-			i++;
-		if (!line[i])
+		skip_spaces(&lx);
+		if (!lx.line[lx.index])
 			break ;
-		if (ft_strchr("|<>", line[i]))
-			handle_pipe_or_redir(heap, line, &i);
-		else
+		if (is_metachar(lx.line[lx.index]))
+			read_operator(&lx);
+		else if (!scan_word(&lx))
 		{
-			start = i;
-			if (!process_quotes(line, &i))
-			{
-				if (!append_input(heap))
-				{
-					free_tokens(heap->head);
-					heap->head = NULL;
-					return ;
-				}
-				free_tokens(heap->head);
-				heap->head = NULL;
-				tokenize(heap);
-				return ;
-			}
-			append_token(heap, TOKEN_WORD, ft_strndup(line + start, i - start));
+			request_and_reparse(&lx);
+			return ;
 		}
 	}
-	handle_incomplete_pipe(heap);
+	if (!handle_pipe_end(&lx))
+		return ;
+	append_token(&lx, TOKEN_EOF, NULL);
+	heap->head = lx.head;
 }
