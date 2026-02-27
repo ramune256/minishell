@@ -11,7 +11,7 @@
 * **Abstraction:**
     * The purpose of splitting functions must be "abstraction."
     * Passing around variables like `int *` repeatedly is simply "splitting code without abstraction" and holds no essential value.
-    * Functions should be designed to be as reusable as possible.
+    * Functions should be designed to be as reusable as possible. Please consider adding the helper function to the Libft's additional functions.
 
 **Example of Bad Code**
 ```c
@@ -79,6 +79,9 @@ char	*create_cur(size_t *j, char *cur, t_alloc *heap)
 
 ```
 *The logic is properly abstracted.*
+
+* **Pointer:**
+    * Stop carrying around pointers and instead put the data needed for that function into a structure.
 
 * **Const Correctness:**
     * Pointer arguments that are not modified within the function should be marked as `const` (or `static` depending on context intent), and those that are modified should not.
