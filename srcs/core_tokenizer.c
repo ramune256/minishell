@@ -149,7 +149,7 @@ static bool	has_trailing_pipe(t_token *head)
 	return (false);
 }
 
-static void	request_and_reparse(t_lexer *lx)
+static void	request_missing_quote(t_lexer *lx)
 {
 	if (!append_input(lx->heap))
 	{
@@ -162,10 +162,8 @@ static void	request_and_reparse(t_lexer *lx)
 	tokenize(lx->heap);
 }
 
-static bool	handle_pipe_end(t_lexer *lx)
+static void	request_missing_pipe(t_lexer *lx)
 {
-	if (!has_trailing_pipe(lx->head))
-		return (true);
 	if (!append_input(lx->heap))
 	{
 		lx->heap->exit_status = 2;
@@ -173,12 +171,11 @@ static bool	handle_pipe_end(t_lexer *lx)
 		lx->head = NULL;
 		lx->heap->head = NULL;
 		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
-		return (false);
+		return ;
 	}
 	free_tokens(lx->head);
 	lx->heap->head = NULL;
 	tokenize(lx->heap);
-	return (false);
 }
 
 void	tokenize(t_alloc *heap)
@@ -197,12 +194,15 @@ void	tokenize(t_alloc *heap)
 			read_operator(&lx);
 		else if (!scan_word(&lx))
 		{
-			request_and_reparse(&lx);
+			request_missing_quote(&lx);
 			return ;
 		}
 	}
-	if (!handle_pipe_end(&lx))
+	if (has_trailing_pipe(lx.head))
+	{
+		request_missing_pipe(&lx);
 		return ;
+	}
 	append_token(&lx, TOKEN_EOF, NULL);
 	heap->head = lx.head;
 }
