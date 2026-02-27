@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/25 21:05:57 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/27 17:55:20 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,24 @@ typedef struct s_alloc
 	char	**av;
 }	t_alloc;
 
+typedef struct s_lexer
+{
+	const char	*line;
+	int			index;
+	t_token		*head;
+	t_token		*tail;
+	t_alloc		*heap;
+}	t_lexer;
+
 //tokenizer
 void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
 bool	is_metachar(char c);
+void	skip_spaces(t_lexer *lx);
+bool	has_trailing_pipe(t_token *head);
+bool	append_input(t_alloc *heap);
+void	request_missing_quote(t_lexer *lx);
+void	request_missing_pipe(t_lexer *lx);
 
 //parser
 void	parse(t_alloc *heap);
