@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 #define ERR_SYNTAX "minishell: syntax error\n"
-#define ERR_NOTCMD "minishell: syntax error near unexpected token '|'\n"
+#define ERR_NOCMD "minishell: syntax error near unexpected token '|'\n"
 
 static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 {
@@ -81,7 +81,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 	if ((*tokens)->type == TOKEN_PIPE)
 	{
 		if (is_empty_cmd(cmd))
-			return (free_ast(cmd), ft_putstr_fd(ERR_NOTCMD, 2), NULL);
+			return (free_ast(cmd), ft_putstr_fd(ERR_NOCMD, 2), NULL);
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
 			return (free_ast(cmd), ft_putstr_fd(ERR_SYNTAX, 2), NULL);

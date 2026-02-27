@@ -20,8 +20,6 @@ bool	is_redirection(t_token_type type)
 
 bool	is_empty_cmd(t_cmd *cmd)
 {
-	if (cmd->type == NODE_REDIR)
-		return (false);
 	if (cmd->type == NODE_EXEC && cmd->argv == NULL)
 		return (true);
 	return (false);
