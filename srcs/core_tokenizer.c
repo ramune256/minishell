@@ -12,15 +12,6 @@
 
 #include "minishell.h"
 
-typedef struct s_lexer
-{
-	const char	*line;
-	int			index;
-	t_token		*head;
-	t_token		*tail;
-	t_alloc		*heap;
-}	t_lexer;
-
 static void	append_token(t_lexer *lx, t_token_type token_type, char *value)
 {
 	t_token	*new_token;
@@ -39,43 +30,6 @@ static void	append_token(t_lexer *lx, t_token_type token_type, char *value)
 	}
 	lx->tail->next = new_token;
 	lx->tail = new_token;
-}
-
-static void	join_lines(t_alloc *heap, char *new_line)
-{
-	char	*tmp;
-	char	*joined;
-
-	if (isatty(STDIN_FILENO))
-	{
-		tmp = ft_strjoin(heap->line, "\n");
-		if (!tmp)
-			(free(new_line), cleanup(heap), exit(1));
-		joined = ft_strjoin(tmp, new_line);
-		free(tmp);
-	}
-	else
-		joined = ft_strjoin(heap->line, new_line);
-	if (!joined)
-		(free(new_line), cleanup(heap), exit(1));
-	free(heap->line);
-	heap->line = joined;
-}
-
-static bool	append_input(t_alloc *heap)
-{
-	char	*new_line;
-
-	new_line = NULL;
-	get_input(&new_line, "> ");
-	if (new_line == NULL)
-	{
-		heap->exit_status = 2;
-		return (false);
-	}
-	join_lines(heap, new_line);
-	free(new_line);
-	return (true);
 }
 
 static bool	scan_quotes(const char *line, int *i)
@@ -101,21 +55,19 @@ static bool	scan_quotes(const char *line, int *i)
 
 static void	read_operator(t_lexer *lx)
 {
-	if (lx->line[lx->index] == '|')
-		(append_token(lx, TOKEN_PIPE,
-			ft_strndup(lx->line + lx->index, 1)), lx->index++);
-	else if (lx->line[lx->index] == '<' && lx->line[lx->index + 1] == '<')
-		(append_token(lx, TOKEN_HEREDOC,
-			ft_strndup(lx->line + lx->index, 2)), lx->index += 2);
-	else if (lx->line[lx->index] == '>' && lx->line[lx->index + 1] == '>')
-		(append_token(lx, TOKEN_REDIR_APPEND,
-			ft_strndup(lx->line + lx->index, 2)), lx->index += 2);
-	else if (lx->line[lx->index] == '<')
-		(append_token(lx, TOKEN_REDIR_IN,
-			ft_strndup(lx->line + lx->index, 1)), lx->index++);
-	else if (lx->line[lx->index] == '>')
-		(append_token(lx, TOKEN_REDIR_OUT,
-			ft_strndup(lx->line + lx->index, 1)), lx->index++);
+	const char	*p;
+
+	p = lx->line + lx->index;
+	if (*p == '|')
+		(append_token(lx, TOKEN_PIPE, ft_strdup("|")), lx->index++);
+	else if (*p == '<' && *(p + 1) == '<')
+		(append_token(lx, TOKEN_HEREDOC, ft_strdup("<<")), lx->index += 2);
+	else if (*p == '>' && *(p + 1) == '>')
+		(append_token(lx, TOKEN_REDIR_APPEND, ft_strdup(">>")), lx->index += 2);
+	else if (*p == '<')
+		(append_token(lx, TOKEN_REDIR_IN, ft_strdup("<")), lx->index++);
+	else if (*p == '>')
+		(append_token(lx, TOKEN_REDIR_OUT, ft_strdup(">")), lx->index++);
 }
 
 static bool	scan_word(t_lexer *lx)
@@ -130,52 +82,6 @@ static bool	scan_word(t_lexer *lx)
 	append_token(lx, TOKEN_WORD, ft_strndup(lx->line + start, i - start));
 	lx->index = i;
 	return (true);
-}
-
-static void	skip_spaces(t_lexer *lx)
-{
-	while (lx->line[lx->index] && ft_strchr(" \t\n", lx->line[lx->index]))
-		lx->index++;
-}
-
-static bool	has_trailing_pipe(t_token *head)
-{
-	if (!head)
-		return (false);
-	while (head->next)
-		head = head->next;
-	if (head->type == TOKEN_PIPE)
-		return (true);
-	return (false);
-}
-
-static void	request_missing_quote(t_lexer *lx)
-{
-	if (!append_input(lx->heap))
-	{
-		free_tokens(lx->head);
-		lx->heap->head = NULL;
-		return ;
-	}
-	free_tokens(lx->head);
-	lx->heap->head = NULL;
-	tokenize(lx->heap);
-}
-
-static void	request_missing_pipe(t_lexer *lx)
-{
-	if (!append_input(lx->heap))
-	{
-		lx->heap->exit_status = 2;
-		free_tokens(lx->head);
-		lx->head = NULL;
-		lx->heap->head = NULL;
-		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
-		return ;
-	}
-	free_tokens(lx->head);
-	lx->heap->head = NULL;
-	tokenize(lx->heap);
 }
 
 void	tokenize(t_alloc *heap)
