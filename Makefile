@@ -6,7 +6,7 @@
 #    By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2026/02/24 19:02:36 by nmasuda          ###   ########.fr        #
+#    Updated: 2026/02/28 21:39:40 by nmasuda          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
 					builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)
 
-B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_export_append.c utils_search.c)
+B_UTILS_SRC		= $(addprefix $(B_UTILS_DIR)/, utils_export.c utils_export_append.c)
 
 SRCS			= $(MAIN_SRC) $(BUILTIN_SRC) $(B_UTILS_SRC)
 
