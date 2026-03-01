@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/25 20:13:26 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/28 22:55:03 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,28 @@
 
 void	cleanup(t_alloc *alloc)
 {
-	char	**tmp_ev;
-	int		tmp_exit_status;
-	bool	tmp_success;
-	char	**tmp_av;
-	int		tmp_ac;
+	t_alloc	tmp;
 
-	tmp_ev = alloc->ev_clone;
-	tmp_exit_status = alloc->exit_status;
-	tmp_success = alloc->success;
-	tmp_av = alloc->av;
-	tmp_ac = alloc->ac;
-	free(alloc->line);
-	free_tokens(alloc->head);
-	free_ast(alloc->node);
+	ft_bzero(&tmp, sizeof(t_alloc));
+	tmp.ev_clone = alloc->ev_clone;
+	tmp.exit_status = alloc->exit_status;
+	tmp.success = alloc->success;
+	tmp.av = alloc->av;
+	tmp.ac = alloc->ac;
+	(free(alloc->line), free_tokens(alloc->head), free_ast(alloc->node));
 	cleanup_tmp_files(&alloc->tmp_files);
-	if (tmp_success == false)
+	if (tmp.success == false)
 	{
 		free_2d_array(&(alloc->ev_clone));
 		rl_clear_history();
 	}
 	ft_bzero(alloc, sizeof(t_alloc));
-	if (tmp_success == true)
+	if (tmp.success == true)
 	{
-		alloc->ev_clone = tmp_ev;
-		alloc->exit_status = tmp_exit_status;
-		alloc->av = tmp_av;
-		alloc->ac = tmp_ac;
+		alloc->ev_clone = tmp.ev_clone;
+		alloc->exit_status = tmp.exit_status;
+		alloc->av = tmp.av;
+		alloc->ac = tmp.ac;
 	}
 }
 

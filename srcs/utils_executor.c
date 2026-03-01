@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_executor.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 20:13:40 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/25 20:13:43 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/02/28 22:09:24 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ static void	init(const char *s, size_t *j, size_t *start, size_t *count)
 	*j = 0;
 	*start = 0;
 	*count = 1;
-
 	while (s[i])
 	{
 		if (s[i] == ':')
@@ -103,7 +102,7 @@ char	**split_path_keep_empty(const char *s)
 		if (s[i] == ':' || s[i] == '\0')
 		{
 			res[j] = ft_substr(s, start, i - start);
-			if(!res[j])
+			if (!res[j])
 				return (free_2d_array(&res), NULL);
 			j++;
 			start = i + 1;
