@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   core_parser.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 21:55:21 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/09 21:55:26 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/01 15:57:29 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 
 	cmd = parse_command_unit(tokens, heap);
 	if (!cmd)
-		return (ft_putstr_fd(ERR_SYNTAX, 2), NULL);
+		return (free_ast(cmd), ft_putstr_fd(ERR_SYNTAX, 2), NULL);
 	if ((*tokens)->type == TOKEN_PIPE)
 	{
 		if (is_empty_cmd(cmd))
@@ -105,7 +105,10 @@ void	parse(t_alloc *heap)
 		return ;
 	heap->node = parse_pipeline(&tokens, heap);
 	if (!heap->node)
+	{
+		heap->exit_status = 2;
 		return ;
+	}
 	if (tokens->type != TOKEN_EOF)
 	{
 		ft_putstr_fd(ERR_SYNTAX, 2);
