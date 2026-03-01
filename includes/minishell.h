@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/01 16:22:48 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/01 17:57:48 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 # include "libft.h"
-# include "minishell_signal.h"
 
 typedef enum e_token_type
 {
