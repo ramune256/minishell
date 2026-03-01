@@ -13,6 +13,67 @@
 #include "minishell.h"
 #include "minishell_signal.h"
 
+static t_cmd	*get_exec_node(t_cmd *node)
+{
+	while (node && node->type == NODE_REDIR)
+		node = node->subcmd;
+	return (node);
+}
+
+void	restore_stdio(int backups[2], t_alloc *heap)
+{
+	if (dup2(backups[STDIN_FILENO], STDIN_FILENO) == -1)
+		(perror("dup2"), cleanup(heap), exit(1));
+	if (dup2(backups[STDOUT_FILENO], STDOUT_FILENO) == -1)
+		(perror("dup2"), cleanup(heap), exit(1));
+	close(backups[STDIN_FILENO]);
+	close(backups[STDOUT_FILENO]);
+}
+
+void	backup_stdio(int backups[2], t_alloc *heap)
+{
+	backups[STDIN_FILENO] = dup(STDIN_FILENO);
+	backups[STDOUT_FILENO] = dup(STDOUT_FILENO);
+	if (backups[STDIN_FILENO] == -1 || backups[STDOUT_FILENO] == -1)
+		(perror("dup"), cleanup(heap), exit(1));
+}
+
+static bool	apply_parent_redirections(t_cmd *node, t_alloc *heap)
+{
+	t_cmd	*current;
+	int		file_fd;
+
+	current = node;
+	while (current->type == NODE_REDIR)
+	{
+		file_fd = open(current->file, current->mode, 0644);
+		if (file_fd == -1)
+			return (perror(current->file), false);
+		if (dup2(file_fd, current->fd) == -1)
+			return (perror("dup2"), close(file_fd), false);
+		close(file_fd);
+		current = current->subcmd;
+	}
+	return (true);
+}
+
+static void	execute_parent_builtin(t_cmd *node, t_alloc *heap)
+{
+	int		backups[2];
+
+	backup_stdio(backups, heap);
+	if (apply_parent_redirections(node, backups, heap) == false)
+	{
+		restore_stdio(backups, heap);
+		heap->exit_status = 1;
+		cleanup_tmp_files(&heap->tmp_files);
+		return ;
+	}
+	execute_builtin(get_exec_node(node), heap);
+	restore_stdio(backups, heap);
+	cleanup_tmp_files(&heap->tmp_files);
+}
+
 static void	execute_command(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
@@ -88,7 +149,12 @@ void	execute(t_cmd *node, t_alloc *heap)
 	if (node->type == NODE_PIPE)
 		execute_pipe(node, heap);
 	else if (node->type == NODE_REDIR)
-		execute_exec(node, heap);
+	{
+		if (is_parent_builtin(get_exec_node(node)))
+			execute_parent_builtin(node, heap);
+		else
+			execute_exec(node, heap);
+	}
 	else if (node->type == NODE_EXEC)
 	{
 		if (is_parent_builtin(node))
