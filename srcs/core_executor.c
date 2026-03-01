@@ -40,20 +40,21 @@ void	backup_stdio(int backups[2], t_alloc *heap)
 
 bool	apply_redirections(t_cmd *node)
 {
-	t_cmd	*current;
-	int		file_fd;
+	int	file_fd;
 
-	current = node;
-	while (current->type == NODE_REDIR)
+	if (!node || node->type != NODE_REDIR)
+		return (true);
+	if (node->subcmd && node->subcmd->type == NODE_REDIR)
 	{
-		file_fd = open(current->file, current->mode, 0644);
-		if (file_fd == -1)
-			return (perror(current->file), false);
-		if (dup2(file_fd, current->fd) == -1)
-			return (perror("dup2"), close(file_fd), false);
-		close(file_fd);
-		current = current->subcmd;
+		if (apply_redirections(node->subcmd) == false)
+			return (false);
 	}
+	file_fd = open(node->file, node->mode, 0644);
+	if (file_fd == -1)
+		return (perror(node->file), false);
+	if (dup2(file_fd, node->fd) == -1)
+		return (perror("dup2"), close(file_fd), false);
+	close(file_fd);
 	return (true);
 }
 
