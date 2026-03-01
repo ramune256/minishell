@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include "minishell_signal.h"
 
-static t_cmd	*get_exec_node(t_cmd *node)
+t_cmd	*get_exec_node(t_cmd *node)
 {
 	while (node && node->type == NODE_REDIR)
 		node = node->subcmd;
@@ -38,7 +38,7 @@ void	backup_stdio(int backups[2], t_alloc *heap)
 		(perror("dup"), cleanup(heap), exit(1));
 }
 
-static bool	apply_parent_redirections(t_cmd *node, t_alloc *heap)
+bool	apply_redirections(t_cmd *node)
 {
 	t_cmd	*current;
 	int		file_fd;
@@ -62,7 +62,7 @@ static void	execute_parent_builtin(t_cmd *node, t_alloc *heap)
 	int		backups[2];
 
 	backup_stdio(backups, heap);
-	if (apply_parent_redirections(node, backups, heap) == false)
+	if (apply_redirections(node) == false)
 	{
 		restore_stdio(backups, heap);
 		heap->exit_status = 1;
@@ -81,7 +81,9 @@ static void	execute_command(t_cmd *node, t_alloc *heap)
 	int		tmp_exit_status;
 
 	set_signal_child();
-	exec_node = handle_redirections(node, heap);
+	if (!apply_redirections(node))
+		(cleanup(heap), exit(1));
+	exec_node = get_exec_node(node);
 	if (execute_builtin(exec_node, heap))
 		(cleanup(heap), exit(heap->exit_status));
 	if ((!exec_node->argv))
