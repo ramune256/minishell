@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 20:13:40 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/01 16:26:08 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/02 19:05:59 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,6 @@ void	get_exit_status(t_alloc *heap, int status)
 	else if (WIFSIGNALED(status))
 		heap->exit_status = 128 + WTERMSIG(status);
 }
-
-// t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
-// {
-// 	t_cmd	*exec_node;
-// 	int		file_fd;
-// 
-// 	if (node->type == NODE_EXEC)
-// 		return (node);
-// 	exec_node = handle_redirections(node->subcmd, heap);
-// 	file_fd = open(node->file, node->mode, 0644);
-// 	if (file_fd == -1)
-// 		(perror(node->file), cleanup(heap), exit(1));
-// 	if (dup2(file_fd, node->fd) == -1)
-// 		(perror("dup2"), cleanup(heap), exit(1));
-// 	close(file_fd);
-// 	return (exec_node);
-// }
 
 void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap)
 {
@@ -68,35 +51,15 @@ pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap)
 	return (child);
 }
 
-static void	init(const char *s, size_t *j, size_t *start, size_t *count)
+static char	**split_path(const char *s, char **res, size_t count)
 {
-	size_t	i;
-
-	i = 0;
-	*j = 0;
-	*start = 0;
-	*count = 1;
-	while (s[i])
-	{
-		if (s[i] == ':')
-			(*count)++;
-		i++;
-	}
-}
-
-char	**split_path_keep_empty(const char *s)
-{
-	char	**res;
 	size_t	i;
 	size_t	j;
 	size_t	start;
-	size_t	count;
 
-	init(s, &j, &start, &count);
-	res = ft_calloc(count + 1, sizeof(char *));
-	if (!res)
-		return (NULL);
 	i = 0;
+	j = 0;
+	start = 0;
 	while (j < count)
 	{
 		if (s[i] == ':' || s[i] == '\0')
@@ -107,9 +70,27 @@ char	**split_path_keep_empty(const char *s)
 			j++;
 			start = i + 1;
 		}
-		if (s[i] == '\0')
+		if (s[i++] == '\0')
 			break ;
-		i++;
 	}
 	return (res);
+}
+
+char	**split_path_keep_empty(const char *s)
+{
+	char	**res;
+	size_t	s_cur;
+	size_t	count;
+
+	s_cur = 0;
+	count = 1;
+	while (s[s_cur])
+	{
+		if (s[s_cur++] == ':')
+			count++;
+	}
+	res = ft_calloc(count + 1, sizeof(char *));
+	if (!res)
+		return (NULL);
+	return (split_path(s, res, count));
 }
