@@ -51,46 +51,46 @@ pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap)
 	return (child);
 }
 
-static char	**split_path(const char *s, char **res, size_t count)
+static char	**split_path(const char *s, char **result, size_t count)
 {
-	size_t	s_cur;
-	size_t	res_cur;
+	size_t	i;
+	size_t	res_i;
 	size_t	start;
 
-	s_cur = 0;
-	res_cur = 0;
+	i = 0;
+	res_i = 0;
 	start = 0;
-	while (res_cur < count)
+	while (res_i < count)
 	{
-		if (s[s_cur] == ':' || s[s_cur] == '\0')
+		if (s[i] == ':' || s[i] == '\0')
 		{
-			res[res_cur] = ft_substr(s, start, s_cur - start);
-			if (!res[res_cur])
-				return (free_2d_array(&res), NULL);
-			res_cur++;
-			start = s_cur + 1;
+			result[res_i] = ft_substr(s, start, i - start);
+			if (!result[res_i])
+				return (free_2d_array(&result), NULL);
+			res_i++;
+			start = i + 1;
 		}
-		if (s[s_cur++] == '\0')
+		if (s[i++] == '\0')
 			break ;
 	}
-	return (res);
+	return (result);
 }
 
 char	**split_path_keep_empty(const char *s)
 {
-	char	**res;
-	size_t	s_cur;
+	char	**result;
+	size_t	i;
 	size_t	count;
 
-	s_cur = 0;
+	i = 0;
 	count = 1;
-	while (s[s_cur])
+	while (s[i])
 	{
-		if (s[s_cur++] == ':')
+		if (s[i++] == ':')
 			count++;
 	}
-	res = ft_calloc(count + 1, sizeof(char *));
-	if (!res)
+	result = ft_calloc(count + 1, sizeof(char *));
+	if (!result)
 		return (NULL);
-	return (split_path(s, res, count));
+	return (split_path(s, result, count));
 }
