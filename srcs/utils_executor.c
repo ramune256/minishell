@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 20:13:40 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/28 22:09:24 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/01 16:26:08 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,22 @@ void	get_exit_status(t_alloc *heap, int status)
 		heap->exit_status = 128 + WTERMSIG(status);
 }
 
-t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
-{
-	t_cmd	*exec_node;
-	int		file_fd;
-
-	if (node->type == NODE_EXEC)
-		return (node);
-	exec_node = handle_redirections(node->subcmd, heap);
-	file_fd = open(node->file, node->mode, 0644);
-	if (file_fd == -1)
-		(perror(node->file), cleanup(heap), exit(1));
-	if (dup2(file_fd, node->fd) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
-	close(file_fd);
-	return (exec_node);
-}
+// t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap)
+// {
+// 	t_cmd	*exec_node;
+// 	int		file_fd;
+// 
+// 	if (node->type == NODE_EXEC)
+// 		return (node);
+// 	exec_node = handle_redirections(node->subcmd, heap);
+// 	file_fd = open(node->file, node->mode, 0644);
+// 	if (file_fd == -1)
+// 		(perror(node->file), cleanup(heap), exit(1));
+// 	if (dup2(file_fd, node->fd) == -1)
+// 		(perror("dup2"), cleanup(heap), exit(1));
+// 	close(file_fd);
+// 	return (exec_node);
+// }
 
 void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap)
 {

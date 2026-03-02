@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/27 17:55:20 by shunwata         ###   ########.fr       */
+/*   Created: 2026/03/01 16:25:15 by shunwata          #+#    #+#             */
+/*   Updated: 2026/03/01 16:25:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,18 +107,17 @@ bool	is_end_cmd(t_token *tokens);
 t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap);
 
 // expander
+void	expand(t_cmd *node, t_alloc *heap);
 void	expand_envs(char **str, t_alloc *heap);
 char	*remove_quotes(const char *str);
-void	expand(t_cmd *node, t_alloc *heap);
 
 //executor
 void	execute(t_cmd *node, t_alloc *heap);
 char	*get_fullpath(char *cmd_name, t_alloc *heap);
-char	**split_path_keep_empty(const char *s);
 void	get_exit_status(t_alloc *heap, int status);
-t_cmd	*handle_redirections(t_cmd *node, t_alloc *heap);
 void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap);
 pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap);
+char	**split_path_keep_empty(const char *s);
 
 bool	is_parent_builtin(t_cmd *node);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
