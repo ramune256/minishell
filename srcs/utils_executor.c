@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 20:13:40 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/02 19:05:59 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/02 19:11:58 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,24 +53,24 @@ pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap)
 
 static char	**split_path(const char *s, char **res, size_t count)
 {
-	size_t	i;
-	size_t	j;
+	size_t	s_cur;
+	size_t	res_cur;
 	size_t	start;
 
-	i = 0;
-	j = 0;
+	s_cur = 0;
+	res_cur = 0;
 	start = 0;
-	while (j < count)
+	while (res_cur < count)
 	{
-		if (s[i] == ':' || s[i] == '\0')
+		if (s[s_cur] == ':' || s[s_cur] == '\0')
 		{
-			res[j] = ft_substr(s, start, i - start);
-			if (!res[j])
+			res[res_cur] = ft_substr(s, start, s_cur - start);
+			if (!res[res_cur])
 				return (free_2d_array(&res), NULL);
-			j++;
-			start = i + 1;
+			res_cur++;
+			start = s_cur + 1;
 		}
-		if (s[i++] == '\0')
+		if (s[s_cur++] == '\0')
 			break ;
 	}
 	return (res);
