@@ -84,7 +84,7 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 			return (free_ast(cmd), ft_putstr_fd(ERR_NOCMD, 2), NULL);
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
-			return (free_ast(cmd), ft_putstr_fd(ERR_SYNTAX, 2), NULL);
+			return (free_ast(cmd), ft_putstr_fd(ERR_NOCMD, 2), NULL);
 		right = parse_pipeline(tokens, heap);
 		if (!right)
 			return (free_ast(cmd), NULL);
@@ -105,10 +105,12 @@ void	parse(t_alloc *heap)
 		return ;
 	heap->node = parse_pipeline(&tokens, heap);
 	if (!heap->node)
+	{
+		heap->exit_status = 2;
 		return ;
+	}
 	if (tokens->type != TOKEN_EOF)
 	{
-		ft_putstr_fd(ERR_SYNTAX, 2);
 		free_ast(heap->node);
 		heap->node = NULL;
 	}

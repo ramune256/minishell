@@ -89,10 +89,8 @@ void	tokenize(t_alloc *alloc);
 void	free_tokens(t_token *tokens);
 bool	is_metachar(char c);
 void	skip_spaces(t_lexer *lx);
-bool	has_trailing_pipe(t_token *head);
 bool	append_input(t_alloc *heap);
 void	request_missing_quote(t_lexer *lx);
-void	request_missing_pipe(t_lexer *lx);
 
 //parser
 void	parse(t_alloc *heap);

@@ -86,9 +86,12 @@ static void	execute_command(t_cmd *node, t_alloc *heap)
 		(cleanup(heap), exit(1));
 	exec_node = get_exec_node(node);
 	if (execute_builtin(exec_node, heap))
-		(cleanup(heap), exit(heap->exit_status));
+	{
+		tmp_exit_status = heap->exit_status;
+		(cleanup(heap), exit(tmp_exit_status));
+	}
 	if ((!exec_node->argv))
-		(cleanup(heap), exit(heap->exit_status));
+		(cleanup(heap), exit(0));
 	fullpath = get_fullpath(exec_node->argv[0], heap);
 	if (fullpath == NULL)
 	{

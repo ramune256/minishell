@@ -36,13 +36,3 @@ void	skip_spaces(t_lexer *lx)
 		lx->index++;
 }
 
-bool	has_trailing_pipe(t_token *head)
-{
-	if (!head)
-		return (false);
-	while (head->next)
-		head = head->next;
-	if (head->type == TOKEN_PIPE)
-		return (true);
-	return (false);
-}

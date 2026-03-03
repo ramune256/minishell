@@ -104,11 +104,6 @@ void	tokenize(t_alloc *heap)
 			return ;
 		}
 	}
-	if (has_trailing_pipe(lx.head))
-	{
-		request_missing_pipe(&lx);
-		return ;
-	}
 	append_token(&lx, TOKEN_EOF, NULL);
 	heap->head = lx.head;
 }

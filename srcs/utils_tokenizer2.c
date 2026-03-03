@@ -62,18 +62,3 @@ void	request_missing_quote(t_lexer *lx)
 	tokenize(lx->heap);
 }
 
-void	request_missing_pipe(t_lexer *lx)
-{
-	if (!append_input(lx->heap))
-	{
-		lx->heap->exit_status = 2;
-		free_tokens(lx->head);
-		lx->head = NULL;
-		lx->heap->head = NULL;
-		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
-		return ;
-	}
-	free_tokens(lx->head);
-	lx->heap->head = NULL;
-	tokenize(lx->heap);
-}
