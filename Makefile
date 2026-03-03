@@ -6,7 +6,7 @@
 #    By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2026/02/28 21:39:40 by nmasuda          ###   ########.fr        #
+#    Updated: 2026/03/03 19:22:08 by nmasuda          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 					core_tokenizer.c executor_builtin.c expander.c \
 					expander_env.c expander_quotes.c get_fullpath.c \
 					heredoc.c init.c main.c parser_redir.c puterr.c \
-					signal.c utils_common.c utils_executor.c \
+					signal.c utils_signal.c utils_common.c utils_executor.c \
 					utils_heredoc.c utils_parser.c utils_parser_is.c \
 					utils_tokenizer.c utils_tokenizer2.c)
 

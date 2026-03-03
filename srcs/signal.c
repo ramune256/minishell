@@ -6,22 +6,13 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 19:59:04 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/01 16:24:55 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/03 19:20:26 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "minishell_signal.h"
 
 volatile sig_atomic_t	g_sig_status = 0;
-
-void	import_signal_status(t_alloc *heap)
-{
-	if (g_sig_status)
-	{
-		heap->exit_status = 128 + SIGINT;
-		g_sig_status = 0;
-	}
-}
 
 void	handle_sigint(int sig)
 {
