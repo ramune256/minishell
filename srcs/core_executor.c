@@ -13,6 +13,68 @@
 #include "minishell.h"
 #include "minishell_signal.h"
 
+t_cmd	*get_exec_node(t_cmd *node)
+{
+	while (node && node->type == NODE_REDIR)
+		node = node->subcmd;
+	return (node);
+}
+
+void	restore_stdio(int backups[2], t_alloc *heap)
+{
+	if (dup2(backups[STDIN_FILENO], STDIN_FILENO) == -1)
+		(perror("dup2"), cleanup(heap), exit(1));
+	if (dup2(backups[STDOUT_FILENO], STDOUT_FILENO) == -1)
+		(perror("dup2"), cleanup(heap), exit(1));
+	close(backups[STDIN_FILENO]);
+	close(backups[STDOUT_FILENO]);
+}
+
+void	backup_stdio(int backups[2], t_alloc *heap)
+{
+	backups[STDIN_FILENO] = dup(STDIN_FILENO);
+	backups[STDOUT_FILENO] = dup(STDOUT_FILENO);
+	if (backups[STDIN_FILENO] == -1 || backups[STDOUT_FILENO] == -1)
+		(perror("dup"), cleanup(heap), exit(1));
+}
+
+bool	apply_redirections(t_cmd *node)
+{
+	int	file_fd;
+
+	if (!node || node->type != NODE_REDIR)
+		return (true);
+	if (node->subcmd && node->subcmd->type == NODE_REDIR)
+	{
+		if (apply_redirections(node->subcmd) == false)
+			return (false);
+	}
+	file_fd = open(node->file, node->mode, 0644);
+	if (file_fd == -1)
+		return (perror(node->file), false);
+	if (dup2(file_fd, node->fd) == -1)
+		return (perror("dup2"), close(file_fd), false);
+	close(file_fd);
+	return (true);
+}
+
+static void	execute_parent_builtin(t_cmd *node, t_alloc *heap)
+{
+	int		backups[2];
+
+	backup_stdio(backups, heap);
+	if (apply_redirections(node) == false)
+	{
+		restore_stdio(backups, heap);
+		heap->exit_status = 1;
+		cleanup_tmp_files(&heap->tmp_files);
+		return ;
+	}
+	execute_builtin(get_exec_node(node), heap);
+	restore_stdio(backups, heap);
+	cleanup_tmp_files(&heap->tmp_files);
+}
+
 static void	execute_command(t_cmd *node, t_alloc *heap)
 {
 	t_cmd	*exec_node;
@@ -20,7 +82,9 @@ static void	execute_command(t_cmd *node, t_alloc *heap)
 	int		tmp_exit_status;
 
 	set_signal_child();
-	exec_node = handle_redirections(node, heap);
+	if (!apply_redirections(node))
+		(cleanup(heap), exit(1));
+	exec_node = get_exec_node(node);
 	if (execute_builtin(exec_node, heap))
 		(cleanup(heap), exit(heap->exit_status));
 	if ((!exec_node->argv))
@@ -88,7 +152,12 @@ void	execute(t_cmd *node, t_alloc *heap)
 	if (node->type == NODE_PIPE)
 		execute_pipe(node, heap);
 	else if (node->type == NODE_REDIR)
-		execute_exec(node, heap);
+	{
+		if (is_parent_builtin(get_exec_node(node)))
+			execute_parent_builtin(node, heap);
+		else
+			execute_exec(node, heap);
+	}
 	else if (node->type == NODE_EXEC)
 	{
 		if (is_parent_builtin(node))
