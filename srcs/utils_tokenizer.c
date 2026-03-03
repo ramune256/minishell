@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_tokenizer.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 00:32:53 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/27 17:53:10 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/03 19:07:54 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,3 @@ void	skip_spaces(t_lexer *lx)
 	while (lx->line[lx->index] && ft_strchr(" \t\n", lx->line[lx->index]))
 		lx->index++;
 }
-

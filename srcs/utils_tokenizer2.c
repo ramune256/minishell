@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_tokenizer2.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 17:51:21 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/27 17:53:11 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/03 19:08:02 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,3 @@ void	request_missing_quote(t_lexer *lx)
 	lx->heap->head = NULL;
 	tokenize(lx->heap);
 }
-
