@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/04 21:27:57 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/04 21:36:53 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 22:02:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,20 @@ t_cmd	*get_exec_node(t_cmd *node)
 	return (node);
 }
 
-void	backup_stdio(int backups[2], t_alloc *heap)
+void	backup_stdio(int backups[2], t_mshell *data)
 {
 	backups[STDIN_FILENO] = dup(STDIN_FILENO);
 	backups[STDOUT_FILENO] = dup(STDOUT_FILENO);
 	if (backups[STDIN_FILENO] == -1 || backups[STDOUT_FILENO] == -1)
-		(perror("dup"), cleanup(heap), exit(1));
+		(perror("dup"), cleanup(data), exit(1));
 }
 
-void	restore_stdio(int backups[2], t_alloc *heap)
+void	restore_stdio(int backups[2], t_mshell *data)
 {
 	if (dup2(backups[STDIN_FILENO], STDIN_FILENO) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
+		(perror("dup2"), cleanup(data), exit(1));
 	if (dup2(backups[STDOUT_FILENO], STDOUT_FILENO) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
+		(perror("dup2"), cleanup(data), exit(1));
 	close(backups[STDIN_FILENO]);
 	close(backups[STDOUT_FILENO]);
 }

@@ -6,14 +6,14 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 17:51:08 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/11 14:10:34 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 22:00:29 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "minishell_signal.h"
 
-static void	set_heredoc_file(t_cmd *node, char *tmp_filename, t_alloc *heap)
+static void	set_heredoc_file(t_cmd *node, char *tmp_filename, t_mshell *data)
 {
 	char	*copy;
 	t_list	*list_node;
@@ -23,11 +23,11 @@ static void	set_heredoc_file(t_cmd *node, char *tmp_filename, t_alloc *heap)
 	node->mode = O_RDONLY;
 	copy = ft_strdup(tmp_filename);
 	if (!copy)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	list_node = ft_lstnew(copy);
 	if (!list_node)
-		(free(copy), cleanup(heap), exit(1));
-	ft_lstadd_back(&heap->tmp_files, list_node);
+		(free(copy), cleanup(data), exit(1));
+	ft_lstadd_back(&data->tmp_files, list_node);
 }
 
 static bool	read_heredoc_input(char **line, const char *message)
@@ -72,7 +72,7 @@ static void	write_heredoc_lines(const char *del, int tmp_filefd)
 	}
 }
 
-static void	make_heredoc_file(t_cmd *node, t_alloc *heap)
+static void	make_heredoc_file(t_cmd *node, t_mshell *data)
 {
 	int		stdin_backup;
 	int		tmp_filefd;
@@ -80,11 +80,11 @@ static void	make_heredoc_file(t_cmd *node, t_alloc *heap)
 
 	stdin_backup = dup(STDIN_FILENO);
 	if (stdin_backup == -1)
-		(perror("dup"), cleanup(heap), exit(1));
-	tmp_filename = generate_tmp_filename(heap);
+		(perror("dup"), cleanup(data), exit(1));
+	tmp_filename = generate_tmp_filename(data);
 	tmp_filefd = open(tmp_filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (tmp_filefd == -1)
-		(perror("open"), cleanup(heap), exit(1));
+		(perror("open"), cleanup(data), exit(1));
 	write_heredoc_lines(node->file, tmp_filefd);
 	close(tmp_filefd);
 	if (g_sig_status)
@@ -94,28 +94,28 @@ static void	make_heredoc_file(t_cmd *node, t_alloc *heap)
 		return ;
 	}
 	(dup2(stdin_backup, STDIN_FILENO), close(stdin_backup));
-	set_heredoc_file(node, tmp_filename, heap);
+	set_heredoc_file(node, tmp_filename, data);
 }
 
-void	heredoc(t_cmd *node, t_alloc *heap)
+void	heredoc(t_cmd *node, t_mshell *data)
 {
 	if (!node || g_sig_status)
 		return ;
 	if (node->type == NODE_PIPE)
 	{
-		heredoc(node->left, heap);
+		heredoc(node->left, data);
 		if (g_sig_status)
 			return ;
-		heredoc(node->right, heap);
+		heredoc(node->right, data);
 	}
 	else if (node->type == NODE_REDIR)
 	{
-		heredoc(node->subcmd, heap);
+		heredoc(node->subcmd, data);
 		if (g_sig_status)
 			return ;
 		if (node->mode == TOKEN_HEREDOC)
 		{
-			make_heredoc_file(node, heap);
+			make_heredoc_file(node, data);
 			if (g_sig_status)
 				return ;
 		}

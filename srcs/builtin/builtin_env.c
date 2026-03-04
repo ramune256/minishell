@@ -13,24 +13,24 @@
 #include "minishell.h"
 #include "builtin.h"
 
-int	c_env(char **line, t_alloc *heap)
+int	c_env(char **line, t_mshell *data)
 {
 	size_t	i;
 
 	(void)line;
-	if (!heap->ev_clone)
+	if (!data->ev_clone)
 		return (1);
 	i = 0;
-	while (heap->ev_clone[i])
+	while (data->ev_clone[i])
 	{
-		if (!ft_strncmp(heap->ev_clone[i], "_=", 2))
+		if (!ft_strncmp(data->ev_clone[i], "_=", 2))
 		{
 			ft_putstr_fd("_=/usr/bin/env\n", STDOUT_FILENO);
 			i++;
 		}
 		else
 		{
-			ft_putstr_fd(heap->ev_clone[i++], STDOUT_FILENO);
+			ft_putstr_fd(data->ev_clone[i++], STDOUT_FILENO);
 			ft_putstr_fd("\n", STDOUT_FILENO);
 		}
 	}

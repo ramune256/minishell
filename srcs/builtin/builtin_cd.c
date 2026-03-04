@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include "builtin.h"
 
-static void	update_pwd(const char *var, char *pwd, t_alloc *heap)
+static void	update_pwd(const char *var, char *pwd, t_mshell *data)
 {
 	char	*tmp;
 
@@ -22,8 +22,8 @@ static void	update_pwd(const char *var, char *pwd, t_alloc *heap)
 	tmp = ft_strjoin(var, pwd);
 	free(pwd);
 	if (!tmp)
-		(cleanup(heap), exit(1));
-	update_env(tmp, heap);
+		(cleanup(data), exit(1));
+	update_env(tmp, data);
 	free(tmp);
 }
 
@@ -50,7 +50,7 @@ static char	*get_dest_path(char *first_arg, char **ev)
 	return (result);
 }
 
-int	c_cd(char **argv, t_alloc *heap)
+int	c_cd(char **argv, t_mshell *data)
 {
 	char	*dest_path;
 	char	*oldpwd;
@@ -58,7 +58,7 @@ int	c_cd(char **argv, t_alloc *heap)
 
 	if (argv[1] && argv[2])
 		return (puterr("cd", "too many arguments"), 1);
-	dest_path = get_dest_path(argv[1], heap->ev_clone);
+	dest_path = get_dest_path(argv[1], data->ev_clone);
 	if (!dest_path)
 		return (1);
 	oldpwd = getcwd(NULL, 0);
@@ -67,7 +67,7 @@ int	c_cd(char **argv, t_alloc *heap)
 	newpwd = getcwd(NULL, 0);
 	if (!newpwd)
 		puterr("cd", "error retrieving current directory");
-	update_pwd("OLDPWD=", oldpwd, heap);
-	update_pwd("PWD=", newpwd, heap);
+	update_pwd("OLDPWD=", oldpwd, data);
+	update_pwd("PWD=", newpwd, data);
 	return (0);
 }

@@ -30,7 +30,7 @@ static bool	is_unset_target(char *env_str, char **args)
 	return (false);
 }
 
-static int	recreate_env(char **args, t_alloc *heap, size_t new_size)
+static int	recreate_env(char **args, t_mshell *data, size_t new_size)
 {
 	char	**new_ev;
 	int		i;
@@ -38,42 +38,42 @@ static int	recreate_env(char **args, t_alloc *heap, size_t new_size)
 
 	new_ev = ft_calloc(new_size + 1, sizeof(char *));
 	if (!new_ev)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	i = 0;
 	j = 0;
-	while (heap->ev_clone[i])
+	while (data->ev_clone[i])
 	{
-		if (is_unset_target(heap->ev_clone[i], args) == false)
+		if (is_unset_target(data->ev_clone[i], args) == false)
 		{
-			new_ev[j] = ft_strdup(heap->ev_clone[i]);
+			new_ev[j] = ft_strdup(data->ev_clone[i]);
 			if (!new_ev[j])
-				(free_2d_array(&new_ev), cleanup(heap), exit(1));
+				(free_2d_array(&new_ev), cleanup(data), exit(1));
 			j++;
 		}
 		i++;
 	}
 	new_ev[j] = NULL;
-	free_2d_array(&(heap->ev_clone));
-	heap->ev_clone = new_ev;
+	free_2d_array(&(data->ev_clone));
+	data->ev_clone = new_ev;
 	return (0);
 }
 
-int	c_unset(char **line, t_alloc *heap)
+int	c_unset(char **line, t_mshell *data)
 {
 	int		i;
 	size_t	count;
 
-	if (!line || !heap->ev_clone)
+	if (!line || !data->ev_clone)
 		return (1);
 	if (!line[OPT])
 		return (0);
 	count = 0;
 	i = 0;
-	while (heap->ev_clone[i])
+	while (data->ev_clone[i])
 	{
-		if (is_unset_target(heap->ev_clone[i], line) == false)
+		if (is_unset_target(data->ev_clone[i], line) == false)
 			count++;
 		i++;
 	}
-	return (recreate_env(line, heap, count));
+	return (recreate_env(line, data, count));
 }

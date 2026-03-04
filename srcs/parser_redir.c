@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:07:35 by shunwata          #+#    #+#             */
-/*   Updated: 2026/01/27 02:05:13 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/04 22:00:19 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	set_redir_mode_fd(t_token *redir_token, int *mode, int *fd)
 	}
 }
 
-t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
+t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_mshell *data)
 {
 	t_token	*redir_token;
 	char	*filename;
@@ -52,11 +52,11 @@ t_cmd	*parse_redirection(t_cmd *cmd, t_token **tokens, t_alloc *heap)
 		return (free_ast(cmd), NULL);
 	filename = ft_strdup((*tokens)->value);
 	if (!filename)
-		(free_ast(cmd), cleanup(heap), exit(1));
+		(free_ast(cmd), cleanup(data), exit(1));
 	*tokens = (*tokens)->next;
 	set_redir_mode_fd(redir_token, &mode, &fd);
 	new_redir_node = redir_cmd_constructor(cmd, filename, mode, fd);
 	if (!new_redir_node)
-		(free_ast(cmd), free(filename), cleanup(heap), exit(1));
+		(free_ast(cmd), free(filename), cleanup(data), exit(1));
 	return (new_redir_node);
 }

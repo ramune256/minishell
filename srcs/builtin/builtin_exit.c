@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include "builtin.h"
 
-int	c_exit(char **line, t_alloc *heap)
+int	c_exit(char **line, t_mshell *data)
 {
 	long long	arg;
 	bool		error;
@@ -21,7 +21,7 @@ int	c_exit(char **line, t_alloc *heap)
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", 2);
 	if (!line || !line[1])
-		(cleanup(heap), exit(heap->exit_status));
+		(cleanup(data), exit(data->exit_status));
 	error = false;
 	arg = ft_atol(line[1], &error);
 	if (error)
@@ -29,11 +29,11 @@ int	c_exit(char **line, t_alloc *heap)
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(line[1], 2);
 		ft_putendl_fd(": numeric argument required", 2);
-		(cleanup(heap), exit(2));
+		(cleanup(data), exit(2));
 	}
 	if (line[2])
 		return (puterr("exit", "too many arguments"), 2);
-	cleanup(heap);
+	cleanup(data);
 	exit((unsigned char)arg);
 	return (0);
 }

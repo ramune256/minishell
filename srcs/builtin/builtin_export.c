@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include "builtin.h"
 
-static int	print_sorted_env(char **ev_clone, t_alloc *heap)
+static int	print_sorted_env(char **ev_clone, t_mshell *data)
 {
 	char	**sorted_ev;
 	size_t	size;
@@ -24,7 +24,7 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 	size = get_arr_size(ev_clone);
 	sorted_ev = ft_calloc(size + 1, sizeof(char *));
 	if (!sorted_ev)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	i = 0;
 	while (i < size)
 	{
@@ -41,35 +41,35 @@ static int	print_sorted_env(char **ev_clone, t_alloc *heap)
 	return (0);
 }
 
-static void	replace_env(char *arg, t_alloc *heap, int i)
+static void	replace_env(char *arg, t_mshell *data, int i)
 {
 	char	*tmp;
 
 	tmp = ft_strdup(arg);
 	if (!tmp)
-		(cleanup(heap), exit(1));
-	free(heap->ev_clone[i]);
-	heap->ev_clone[i] = tmp;
+		(cleanup(data), exit(1));
+	free(data->ev_clone[i]);
+	data->ev_clone[i] = tmp;
 }
 
-void	update_existing_env(char *arg, t_alloc *heap, int i, bool append_flag)
+void	update_existing_env(char *arg, t_mshell *data, int i, bool append_flag)
 {
 	if (!ft_strchr(arg, '='))
 		return ;
 	if (append_flag)
-		append_env_val(arg, heap, i);
+		append_env_val(arg, data, i);
 	else
-		replace_env(arg, heap, i);
+		replace_env(arg, data, i);
 }
 
-void	update_env(char *arg, t_alloc *heap)
+void	update_env(char *arg, t_mshell *data)
 {
 	size_t	key_len;
 	int		i;
 	bool	append_flag;
 	char	**ev_c;
 
-	ev_c = heap->ev_clone;
+	ev_c = data->ev_clone;
 	append_flag = false;
 	key_len = get_key_len(arg, &append_flag);
 	i = 0;
@@ -79,23 +79,23 @@ void	update_env(char *arg, t_alloc *heap)
 		{
 			if (ev_c[i][key_len] == '=' || ev_c[i][key_len] == '\0')
 			{
-				update_existing_env(arg, heap, i, append_flag);
+				update_existing_env(arg, data, i, append_flag);
 				return ;
 			}
 		}
 		i++;
 	}
-	append_ev(arg, i, heap);
+	append_ev(arg, i, data);
 }
 
-int	c_export(char **argv, t_alloc *heap)
+int	c_export(char **argv, t_mshell *data)
 {
 	int	i;
 	int	status;
 
 	status = 0;
 	if (!argv[1])
-		return (print_sorted_env(heap->ev_clone, heap));
+		return (print_sorted_env(data->ev_clone, data));
 	i = 1;
 	while (argv[i])
 	{
@@ -107,7 +107,7 @@ int	c_export(char **argv, t_alloc *heap)
 			status = 1;
 		}
 		else
-			update_env(argv[i], heap);
+			update_env(argv[i], data);
 		i++;
 	}
 	return (status);

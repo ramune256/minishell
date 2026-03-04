@@ -13,12 +13,12 @@
 #include "minishell.h"
 #include "builtin.h"
 
-int	c_pwd(char **line, t_alloc *heap)
+int	c_pwd(char **line, t_mshell *data)
 {
 	char	*tmp;
 
 	(void)line;
-	tmp = search_get_env(heap->ev_clone, "PWD");
+	tmp = search_get_env(data->ev_clone, "PWD");
 	if (!tmp)
 	{
 		tmp = getcwd(NULL, 0);
