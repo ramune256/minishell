@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 20:01:10 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/01 16:40:29 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/03 19:24:00 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,6 @@
 # define _GNU_SOURCE
 
 # include <signal.h>
-# include <unistd.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-// # include <stdio.h>
-// # include <limits.h>
 
 extern volatile sig_atomic_t	g_sig_status;
 

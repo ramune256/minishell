@@ -16,14 +16,8 @@
 # define CMD 0
 # define OPT 1
 
-# include <stdbool.h>
 # include <stddef.h>
 # include <stdint.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <unistd.h>
-# include "minishell.h"
 
 int			c_echo(char **line, t_alloc *heap);
 int			c_pwd(char **line, t_alloc *heap);

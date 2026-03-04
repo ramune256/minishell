@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 static bool	echo_print(char **line)
 {

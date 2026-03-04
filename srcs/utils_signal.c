@@ -1,31 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_pwd.c                                      :+:      :+:    :+:   */
+/*   utils_signal.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
+/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/13 17:02:45 by nmasuda           #+#    #+#             */
-/*   Updated: 2025/12/27 01:41:30 by shunwata         ###   ########.fr       */
+/*   Created: 2026/03/03 19:21:32 by nmasuda           #+#    #+#             */
+/*   Updated: 2026/03/03 19:21:36 by nmasuda          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "builtin.h"
+#include "minishell_signal.h"
 
-int	c_pwd(char **line, t_alloc *heap)
+void	import_signal_status(t_alloc *heap)
 {
-	char	*tmp;
-
-	(void)line;
-	tmp = search_get_env(heap->ev_clone, "PWD");
-	if (!tmp)
+	if (g_sig_status)
 	{
-		tmp = getcwd(NULL, 0);
-		if (!tmp)
-			return (1);
+		heap->exit_status = 128 + SIGINT;
+		g_sig_status = 0;
 	}
-	ft_putstr_fd(tmp, STDOUT_FILENO);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	return (0);
 }
