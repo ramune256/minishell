@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 static void	append_new_env(char *arg, t_alloc *heap, char **new_ev, int i)
 {

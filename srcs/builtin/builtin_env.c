@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 int	c_env(char **line, t_alloc *heap)
 {

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 #include "minishell_signal.h"
 
 void	import_signal_status(t_alloc *heap)

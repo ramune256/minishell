@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtin.h"
 
 int	c_pwd(char **line, t_alloc *heap)
 {

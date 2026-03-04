@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 #include "minishell_signal.h"
 
 volatile sig_atomic_t	g_sig_status = 0;

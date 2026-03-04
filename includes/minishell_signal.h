@@ -15,11 +15,7 @@
 
 # define _GNU_SOURCE
 
-# include "minishell.h"
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <signal.h>
-# include <unistd.h>
 
 extern volatile sig_atomic_t	g_sig_status;
 
