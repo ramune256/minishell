@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:34:38 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/01 17:57:48 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/04 21:37:47 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,13 @@ void	get_exit_status(t_alloc *heap, int status);
 void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap);
 pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap);
 char	**split_path_keep_empty(const char *s);
+t_cmd	*get_exec_node(t_cmd *node);
+void	backup_stdio(int backups[2], t_alloc *heap);
+void	restore_stdio(int backups[2], t_alloc *heap);
+bool	apply_redirections(t_cmd *node);
 
 bool	is_parent_builtin(t_cmd *node);
+void	execute_parent_builtin(t_cmd *node, t_alloc *heap);
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap);
 
 void	heredoc(t_cmd *node, t_alloc *heap);

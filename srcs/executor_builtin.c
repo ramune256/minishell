@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 18:00:39 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/25 20:40:20 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 21:34:27 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,23 @@ bool	is_parent_builtin(t_cmd *node)
 	if (ft_strcmp(cmd, "unset") == 0)
 		return (true);
 	return (false);
+}
+
+void	execute_parent_builtin(t_cmd *node, t_alloc *heap)
+{
+	int		backups[2];
+
+	backup_stdio(backups, heap);
+	if (apply_redirections(node) == false)
+	{
+		restore_stdio(backups, heap);
+		heap->exit_status = 1;
+		cleanup_tmp_files(&heap->tmp_files);
+		return ;
+	}
+	execute_builtin(get_exec_node(node), heap);
+	restore_stdio(backups, heap);
+	cleanup_tmp_files(&heap->tmp_files);
 }
 
 bool	execute_builtin(t_cmd *exec_node, t_alloc *heap)

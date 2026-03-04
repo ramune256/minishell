@@ -6,74 +6,12 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/11 12:53:45 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 21:30:53 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "minishell_signal.h"
-
-t_cmd	*get_exec_node(t_cmd *node)
-{
-	while (node && node->type == NODE_REDIR)
-		node = node->subcmd;
-	return (node);
-}
-
-void	restore_stdio(int backups[2], t_alloc *heap)
-{
-	if (dup2(backups[STDIN_FILENO], STDIN_FILENO) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
-	if (dup2(backups[STDOUT_FILENO], STDOUT_FILENO) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
-	close(backups[STDIN_FILENO]);
-	close(backups[STDOUT_FILENO]);
-}
-
-void	backup_stdio(int backups[2], t_alloc *heap)
-{
-	backups[STDIN_FILENO] = dup(STDIN_FILENO);
-	backups[STDOUT_FILENO] = dup(STDOUT_FILENO);
-	if (backups[STDIN_FILENO] == -1 || backups[STDOUT_FILENO] == -1)
-		(perror("dup"), cleanup(heap), exit(1));
-}
-
-bool	apply_redirections(t_cmd *node)
-{
-	int	file_fd;
-
-	if (!node || node->type != NODE_REDIR)
-		return (true);
-	if (node->subcmd && node->subcmd->type == NODE_REDIR)
-	{
-		if (apply_redirections(node->subcmd) == false)
-			return (false);
-	}
-	file_fd = open(node->file, node->mode, 0644);
-	if (file_fd == -1)
-		return (perror(node->file), false);
-	if (dup2(file_fd, node->fd) == -1)
-		return (perror("dup2"), close(file_fd), false);
-	close(file_fd);
-	return (true);
-}
-
-static void	execute_parent_builtin(t_cmd *node, t_alloc *heap)
-{
-	int		backups[2];
-
-	backup_stdio(backups, heap);
-	if (apply_redirections(node) == false)
-	{
-		restore_stdio(backups, heap);
-		heap->exit_status = 1;
-		cleanup_tmp_files(&heap->tmp_files);
-		return ;
-	}
-	execute_builtin(get_exec_node(node), heap);
-	restore_stdio(backups, heap);
-	cleanup_tmp_files(&heap->tmp_files);
-}
 
 static void	execute_command(t_cmd *node, t_alloc *heap)
 {
