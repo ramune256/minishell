@@ -6,13 +6,13 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 18:36:55 by shunwata          #+#    #+#             */
-/*   Updated: 2025/11/30 17:29:37 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 22:00:38 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	clone_ev(char **ev, t_alloc *heap)
+void	clone_ev(char **ev, t_mshell *data)
 {
 	int	i;
 
@@ -21,16 +21,16 @@ void	clone_ev(char **ev, t_alloc *heap)
 	i = 0;
 	while (ev[i])
 		i++;
-	heap->ev_clone = ft_calloc(i + 1, sizeof(char *));
-	if (!heap->ev_clone)
-		(cleanup(heap), exit(1));
+	data->ev_clone = ft_calloc(i + 1, sizeof(char *));
+	if (!data->ev_clone)
+		(cleanup(data), exit(1));
 	i = 0;
 	while (ev[i])
 	{
-		heap->ev_clone[i] = ft_strdup(ev[i]);
-		if (!heap->ev_clone[i])
-			(cleanup(heap), exit(1));
+		data->ev_clone[i] = ft_strdup(ev[i]);
+		if (!data->ev_clone[i])
+			(cleanup(data), exit(1));
 		i++;
 	}
-	heap->ev_clone[i] = NULL;
+	data->ev_clone[i] = NULL;
 }

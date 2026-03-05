@@ -6,36 +6,36 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:18 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/28 22:55:03 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/04 22:00:14 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	cleanup(t_alloc *alloc)
+void	cleanup(t_mshell *data)
 {
-	t_alloc	tmp;
+	t_mshell	tmp;
 
-	ft_bzero(&tmp, sizeof(t_alloc));
-	tmp.ev_clone = alloc->ev_clone;
-	tmp.exit_status = alloc->exit_status;
-	tmp.success = alloc->success;
-	tmp.av = alloc->av;
-	tmp.ac = alloc->ac;
-	(free(alloc->line), free_tokens(alloc->head), free_ast(alloc->node));
-	cleanup_tmp_files(&alloc->tmp_files);
+	ft_bzero(&tmp, sizeof(t_mshell));
+	tmp.ev_clone = data->ev_clone;
+	tmp.exit_status = data->exit_status;
+	tmp.success = data->success;
+	tmp.av = data->av;
+	tmp.ac = data->ac;
+	(free(data->line), free_tokens(data->head), free_ast(data->node));
+	cleanup_tmp_files(&data->tmp_files);
 	if (tmp.success == false)
 	{
-		free_2d_array(&(alloc->ev_clone));
+		free_2d_array(&(data->ev_clone));
 		rl_clear_history();
 	}
-	ft_bzero(alloc, sizeof(t_alloc));
+	ft_bzero(data, sizeof(t_mshell));
 	if (tmp.success == true)
 	{
-		alloc->ev_clone = tmp.ev_clone;
-		alloc->exit_status = tmp.exit_status;
-		alloc->av = tmp.av;
-		alloc->ac = tmp.ac;
+		data->ev_clone = tmp.ev_clone;
+		data->exit_status = tmp.exit_status;
+		data->av = tmp.av;
+		data->ac = tmp.ac;
 	}
 }
 
@@ -47,10 +47,10 @@ void	get_input(char **line, const char *message)
 		*line = get_next_line(STDIN_FILENO);
 }
 
-void	print_exit(t_alloc *heap)
+void	print_exit(t_mshell *data)
 {
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", 2);
-	cleanup(heap);
+	cleanup(data);
 	exit(0);
 }

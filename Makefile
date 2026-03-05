@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+         #
+#    By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/18 21:38:29 by shunwata          #+#    #+#              #
-#    Updated: 2026/03/03 19:22:08 by nmasuda          ###   ########.fr        #
+#    Updated: 2026/03/04 22:02:09 by shunwata         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,8 +33,8 @@ MAIN_SRC		= $(addprefix $(SRC_DIR)/, core_executor.c core_parser.c \
 					expander_env.c expander_quotes.c get_fullpath.c \
 					heredoc.c init.c main.c parser_redir.c puterr.c \
 					signal.c utils_signal.c utils_common.c utils_executor.c \
-					utils_heredoc.c utils_parser.c utils_parser_is.c \
-					utils_tokenizer.c utils_tokenizer2.c)
+					utils_executor2.c utils_heredoc.c utils_parser.c \
+					utils_parser_is.c utils_tokenizer.c utils_tokenizer2.c)
 
 BUILTIN_SRC		= $(addprefix $(BUILTIN_DIR)/, builtin_cd.c builtin_echo.c builtin_env.c \
 					builtin_exit.c builtin_export.c builtin_pwd.c builtin_unset.c)

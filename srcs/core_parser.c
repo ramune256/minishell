@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/09 21:55:21 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/01 17:52:04 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/04 21:59:21 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define ERR_SYNTAX "minishell: syntax error\n"
 #define ERR_NOCMD "minishell: syntax error near unexpected token '|'\n"
 
-static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
+static void	append_an_arg(t_cmd *cmd, char *arg, t_mshell *data)
 {
 	char	**new_argv;
 	int		size;
@@ -29,7 +29,7 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 			size++;
 	new_argv = ft_calloc(size + 1 + 1, sizeof(char *));
 	if (!new_argv)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	i = 0;
 	while (i < size)
 	{
@@ -38,44 +38,44 @@ static void	append_an_arg(t_cmd *cmd, char *arg, t_alloc *heap)
 	}
 	new_argv[i] = ft_strdup(arg);
 	if (!new_argv[i])
-		(free(new_argv), cleanup(heap), exit(1));
+		(free(new_argv), cleanup(data), exit(1));
 	free(cmd->argv);
 	cmd->argv = new_argv;
 }
 
-static t_cmd	*parse_command_unit(t_token **tokens, t_alloc *heap)
+static t_cmd	*parse_command_unit(t_token **tokens, t_mshell *data)
 {
 	t_cmd			*node_exec;
 	t_cmd			*result_ptr;
 
 	node_exec = exec_cmd_constructor();
 	if (!node_exec)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	result_ptr = node_exec;
 	while (!is_end_cmd(*tokens))
 	{
 		if (is_redirection((*tokens)->type))
 		{
-			result_ptr = parse_redirection(result_ptr, tokens, heap);
+			result_ptr = parse_redirection(result_ptr, tokens, data);
 			if (!result_ptr)
 				return (NULL);
 		}
 		else
 		{
-			append_an_arg(node_exec, (*tokens)->value, heap);
+			append_an_arg(node_exec, (*tokens)->value, data);
 			*tokens = (*tokens)->next;
 		}
 	}
 	return (result_ptr);
 }
 
-static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
+static t_cmd	*parse_pipeline(t_token **tokens, t_mshell *data)
 {
 	t_cmd	*cmd;
 	t_cmd	*right;
 	t_cmd	*new_pipe_node;
 
-	cmd = parse_command_unit(tokens, heap);
+	cmd = parse_command_unit(tokens, data);
 	if (!cmd)
 		return (ft_putstr_fd(ERR_SYNTAX, 2), NULL);
 	if ((*tokens)->type == TOKEN_PIPE)
@@ -85,33 +85,33 @@ static t_cmd	*parse_pipeline(t_token **tokens, t_alloc *heap)
 		*tokens = (*tokens)->next;
 		if ((*tokens)->type == TOKEN_EOF || (*tokens)->type == TOKEN_PIPE)
 			return (free_ast(cmd), ft_putstr_fd(ERR_NOCMD, 2), NULL);
-		right = parse_pipeline(tokens, heap);
+		right = parse_pipeline(tokens, data);
 		if (!right)
 			return (free_ast(cmd), NULL);
 		new_pipe_node = pipe_cmd_constructor(cmd, right);
 		if (!new_pipe_node)
-			(free_ast(cmd), free_ast(right), cleanup(heap), exit(1));
+			(free_ast(cmd), free_ast(right), cleanup(data), exit(1));
 		cmd = new_pipe_node;
 	}
 	return (cmd);
 }
 
-void	parse(t_alloc *heap)
+void	parse(t_mshell *data)
 {
 	t_token	*tokens;
 
-	tokens = heap->head;
+	tokens = data->head;
 	if (!tokens || tokens->type == TOKEN_EOF)
 		return ;
-	heap->node = parse_pipeline(&tokens, heap);
-	if (!heap->node)
+	data->node = parse_pipeline(&tokens, data);
+	if (!data->node)
 	{
-		heap->exit_status = 2;
+		data->exit_status = 2;
 		return ;
 	}
 	if (tokens->type != TOKEN_EOF)
 	{
-		free_ast(heap->node);
-		heap->node = NULL;
+		free_ast(data->node);
+		data->node = NULL;
 	}
 }

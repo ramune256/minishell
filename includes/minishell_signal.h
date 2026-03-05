@@ -6,7 +6,7 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 20:01:10 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/03 19:24:00 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/04 22:01:53 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 extern volatile sig_atomic_t	g_sig_status;
 
-void	import_signal_status(t_alloc *heap);
+void	import_signal_status(t_mshell *data);
 void	set_signal_shell(void);
 void	set_signal_child(void);
 void	set_signal_parent(void);

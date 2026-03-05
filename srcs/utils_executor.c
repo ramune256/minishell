@@ -6,22 +6,22 @@
 /*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/25 20:13:40 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/02 19:11:58 by nmasuda          ###   ########.fr       */
+/*   Updated: 2026/03/04 22:02:22 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "minishell_signal.h"
 
-void	get_exit_status(t_alloc *heap, int status)
+void	get_exit_status(t_mshell *data, int status)
 {
 	if (WIFEXITED(status))
-		heap->exit_status = WEXITSTATUS(status);
+		data->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
-		heap->exit_status = 128 + WTERMSIG(status);
+		data->exit_status = 128 + WTERMSIG(status);
 }
 
-void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap)
+void	set_pipeend(int pipefd[2], int dest_fd, t_mshell *data)
 {
 	int	src_fd;
 
@@ -30,23 +30,23 @@ void	set_pipeend(int pipefd[2], int dest_fd, t_alloc *heap)
 	else
 		src_fd = pipefd[0];
 	if (dup2(src_fd, dest_fd) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
+		(perror("dup2"), cleanup(data), exit(1));
 	(close(pipefd[0]), close(pipefd[1]));
 }
 
-pid_t	execute_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_alloc *heap)
+pid_t	exec_subnode(t_cmd *node, int pipefd[2], int dest_fd, t_mshell *data)
 {
 	pid_t	child;
 
 	child = fork();
 	if (child == -1)
-		(perror("fork"), cleanup(heap), exit(1));
+		(perror("fork"), cleanup(data), exit(1));
 	if (child == 0)
 	{
 		set_signal_child();
-		set_pipeend(pipefd, dest_fd, heap);
-		execute(node, heap);
-		(cleanup(heap), exit(heap->exit_status));
+		set_pipeend(pipefd, dest_fd, data);
+		execute(node, data);
+		(cleanup(data), exit(data->exit_status));
 	}
 	return (child);
 }

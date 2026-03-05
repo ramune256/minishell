@@ -6,76 +6,14 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:31 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/11 12:53:45 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 21:59:17 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "minishell_signal.h"
 
-t_cmd	*get_exec_node(t_cmd *node)
-{
-	while (node && node->type == NODE_REDIR)
-		node = node->subcmd;
-	return (node);
-}
-
-void	restore_stdio(int backups[2], t_alloc *heap)
-{
-	if (dup2(backups[STDIN_FILENO], STDIN_FILENO) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
-	if (dup2(backups[STDOUT_FILENO], STDOUT_FILENO) == -1)
-		(perror("dup2"), cleanup(heap), exit(1));
-	close(backups[STDIN_FILENO]);
-	close(backups[STDOUT_FILENO]);
-}
-
-void	backup_stdio(int backups[2], t_alloc *heap)
-{
-	backups[STDIN_FILENO] = dup(STDIN_FILENO);
-	backups[STDOUT_FILENO] = dup(STDOUT_FILENO);
-	if (backups[STDIN_FILENO] == -1 || backups[STDOUT_FILENO] == -1)
-		(perror("dup"), cleanup(heap), exit(1));
-}
-
-bool	apply_redirections(t_cmd *node)
-{
-	int	file_fd;
-
-	if (!node || node->type != NODE_REDIR)
-		return (true);
-	if (node->subcmd && node->subcmd->type == NODE_REDIR)
-	{
-		if (apply_redirections(node->subcmd) == false)
-			return (false);
-	}
-	file_fd = open(node->file, node->mode, 0644);
-	if (file_fd == -1)
-		return (perror(node->file), false);
-	if (dup2(file_fd, node->fd) == -1)
-		return (perror("dup2"), close(file_fd), false);
-	close(file_fd);
-	return (true);
-}
-
-static void	execute_parent_builtin(t_cmd *node, t_alloc *heap)
-{
-	int		backups[2];
-
-	backup_stdio(backups, heap);
-	if (apply_redirections(node) == false)
-	{
-		restore_stdio(backups, heap);
-		heap->exit_status = 1;
-		cleanup_tmp_files(&heap->tmp_files);
-		return ;
-	}
-	execute_builtin(get_exec_node(node), heap);
-	restore_stdio(backups, heap);
-	cleanup_tmp_files(&heap->tmp_files);
-}
-
-static void	execute_command(t_cmd *node, t_alloc *heap)
+static void	execute_command(t_cmd *node, t_mshell *data)
 {
 	t_cmd	*exec_node;
 	char	*fullpath;
@@ -83,26 +21,26 @@ static void	execute_command(t_cmd *node, t_alloc *heap)
 
 	set_signal_child();
 	if (!apply_redirections(node))
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	exec_node = get_exec_node(node);
-	if (execute_builtin(exec_node, heap))
+	if (execute_builtin(exec_node, data))
 	{
-		tmp_exit_status = heap->exit_status;
-		(cleanup(heap), exit(tmp_exit_status));
+		tmp_exit_status = data->exit_status;
+		(cleanup(data), exit(tmp_exit_status));
 	}
 	if ((!exec_node->argv))
-		(cleanup(heap), exit(0));
-	fullpath = get_fullpath(exec_node->argv[0], heap);
+		(cleanup(data), exit(0));
+	fullpath = get_fullpath(exec_node->argv[0], data);
 	if (fullpath == NULL)
 	{
-		tmp_exit_status = heap->exit_status;
-		(cleanup(heap), exit(tmp_exit_status));
+		tmp_exit_status = data->exit_status;
+		(cleanup(data), exit(tmp_exit_status));
 	}
-	if (execve(fullpath, exec_node->argv, heap->ev_clone) == -1)
-		(perror(fullpath), free(fullpath), cleanup(heap), exit(126));
+	if (execve(fullpath, exec_node->argv, data->ev_clone) == -1)
+		(perror(fullpath), free(fullpath), cleanup(data), exit(126));
 }
 
-static void	execute_exec(t_cmd *node, t_alloc *heap)
+static void	execute_exec(t_cmd *node, t_mshell *data)
 {
 	pid_t	pid;
 	int		status;
@@ -111,9 +49,9 @@ static void	execute_exec(t_cmd *node, t_alloc *heap)
 		return ;
 	pid = fork();
 	if (pid == -1)
-		(perror("fork"), cleanup(heap), exit(1));
+		(perror("fork"), cleanup(data), exit(1));
 	if (pid == 0)
-		execute_command(node, heap);
+		execute_command(node, data);
 	set_signal_parent();
 	waitpid(pid, &status, 0);
 	set_signal_shell();
@@ -121,11 +59,11 @@ static void	execute_exec(t_cmd *node, t_alloc *heap)
 		ft_putstr_fd("\n", STDOUT_FILENO);
 	else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGQUIT)
 		ft_putstr_fd("Quit (core dumped)\n", STDOUT_FILENO);
-	get_exit_status(heap, status);
-	cleanup_tmp_files(&heap->tmp_files);
+	get_exit_status(data, status);
+	cleanup_tmp_files(&data->tmp_files);
 }
 
-static void	execute_pipe(t_cmd *node, t_alloc *heap)
+static void	execute_pipe(t_cmd *node, t_mshell *data)
 {
 	int		status;
 	int		pipefd[2];
@@ -134,38 +72,38 @@ static void	execute_pipe(t_cmd *node, t_alloc *heap)
 
 	if (node->type == NODE_EXEC)
 	{
-		execute_exec(node, heap);
+		execute_exec(node, data);
 		return ;
 	}
 	if (pipe(pipefd) == -1)
-		(perror("pipe"), cleanup(heap), exit(1));
-	pid_left = execute_subnode(node->left, pipefd, STDOUT_FILENO, heap);
-	pid_right = execute_subnode(node->right, pipefd, STDIN_FILENO, heap);
+		(perror("pipe"), cleanup(data), exit(1));
+	pid_left = exec_subnode(node->left, pipefd, STDOUT_FILENO, data);
+	pid_right = exec_subnode(node->right, pipefd, STDIN_FILENO, data);
 	(close(pipefd[0]), close(pipefd[1]));
 	set_signal_parent();
 	(waitpid(pid_left, NULL, 0), waitpid(pid_right, &status, 0));
 	set_signal_shell();
-	get_exit_status(heap, status);
+	get_exit_status(data, status);
 }
 
-void	execute(t_cmd *node, t_alloc *heap)
+void	execute(t_cmd *node, t_mshell *data)
 {
 	if (node == NULL)
 		return ;
 	if (node->type == NODE_PIPE)
-		execute_pipe(node, heap);
+		execute_pipe(node, data);
 	else if (node->type == NODE_REDIR)
 	{
 		if (is_parent_builtin(get_exec_node(node)))
-			execute_parent_builtin(node, heap);
+			execute_parent_builtin(node, data);
 		else
-			execute_exec(node, heap);
+			execute_exec(node, data);
 	}
 	else if (node->type == NODE_EXEC)
 	{
 		if (is_parent_builtin(node))
-			execute_builtin(node, heap);
+			execute_builtin(node, data);
 		else
-			execute_exec(node, heap);
+			execute_exec(node, data);
 	}
 }

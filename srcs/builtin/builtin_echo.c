@@ -41,12 +41,12 @@ static bool	is_n_opt(const char *arg)
 	return (true);
 }
 
-int	c_echo(char **line, t_alloc *heap)
+int	c_echo(char **line, t_mshell *data)
 {
 	int	i;
 
 	i = 1;
-	(void)heap;
+	(void)data;
 	if (!line)
 		return (1);
 	if (!line[1])

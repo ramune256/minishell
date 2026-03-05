@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:19:23 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/27 15:35:11 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 21:59:28 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	append_token(t_lexer *lx, t_token_type token_type, char *value)
 
 	new_token = (t_token *)ft_calloc(1, sizeof(t_token));
 	if (!new_token || (value == NULL && token_type != TOKEN_EOF))
-		(cleanup(lx->heap), exit(1));
+		(cleanup(lx->data), exit(1));
 	new_token->type = token_type;
 	new_token->value = value;
 	new_token->next = NULL;
@@ -84,13 +84,13 @@ static bool	scan_word(t_lexer *lx)
 	return (true);
 }
 
-void	tokenize(t_alloc *heap)
+void	tokenize(t_mshell *data)
 {
 	t_lexer	lx;
 
 	ft_bzero(&lx, sizeof(t_lexer));
-	lx.line = heap->line;
-	lx.heap = heap;
+	lx.line = data->line;
+	lx.data = data;
 	while (lx.line[lx.index])
 	{
 		skip_spaces(&lx);
@@ -105,5 +105,5 @@ void	tokenize(t_alloc *heap)
 		}
 	}
 	append_token(&lx, TOKEN_EOF, NULL);
-	heap->head = lx.head;
+	data->head = lx.head;
 }

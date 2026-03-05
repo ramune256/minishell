@@ -6,7 +6,7 @@
 /*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 14:08:52 by shunwata          #+#    #+#             */
-/*   Updated: 2026/02/11 14:10:36 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/03/04 22:02:16 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ bool	is_delimiter(const char *line, const char *delimiter)
 	return (false);
 }
 
-char	*generate_tmp_filename(t_alloc *heap)
+char	*generate_tmp_filename(t_mshell *data)
 {
 	static int	id = 0;
 	char		*num;
@@ -51,10 +51,10 @@ char	*generate_tmp_filename(t_alloc *heap)
 
 	num = ft_itoa(id++);
 	if (!num)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	filename = ft_strjoin("/tmp/.minishell_heredoc_", num);
 	free(num);
 	if (!filename)
-		(cleanup(heap), exit(1));
+		(cleanup(data), exit(1));
 	return (filename);
 }
