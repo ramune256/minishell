@@ -1,9 +1,11 @@
 *This project has been created as part of the 42 curriculum by shunwata, nmasuda.*
 
+```
            __         __         __            __  __
 .--------.|__|.-----.|__|.-----.|  |--..-----.|  ||  |
 |        ||  ||     ||  ||__ --||     ||  -__||  ||  |
 |__|__|__||__||__|__||__||_____||__|__||_____||__||__|
+```
 
 # minishell
 
