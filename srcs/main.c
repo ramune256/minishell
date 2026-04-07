@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmasuda <nmasuda@student.42.fr>            +#+  +:+       +#+        */
+/*   By: shunwata <shunwata@student.42tokyo.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 21:10:07 by shunwata          #+#    #+#             */
-/*   Updated: 2026/03/04 22:00:21 by shunwata         ###   ########.fr       */
+/*   Updated: 2026/04/07 17:00:43 by shunwata         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,26 @@ static void	interpret(t_mshell *data)
 	execute(data->node, data);
 }
 
+static void	put_ascii(void)
+{
+	int		fd;
+	char	*line;
+
+	if (!isatty(STDIN_FILENO))
+		return ;
+	fd = open("ascii.txt", O_RDONLY);
+	if (fd < 0)
+		return ;
+	line = get_next_line(fd);
+	while (line)
+	{
+		ft_putstr(line);
+		free(line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+}
+
 int	main(int ac, char **av, char **ev)
 {
 	t_mshell	data;
@@ -33,6 +53,7 @@ int	main(int ac, char **av, char **ev)
 	data.ac = ac;
 	data.av = av;
 	set_signal_shell();
+	put_ascii();
 	while (1)
 	{
 		get_input(&data.line, "minishell> ");
